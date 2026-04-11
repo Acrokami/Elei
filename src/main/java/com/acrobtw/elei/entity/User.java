@@ -6,18 +6,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Getter
-@Setter
-@ToString
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "users")
 public class User {
 
@@ -25,6 +17,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
+
 
     @Column(name = "username", nullable = false, unique = true)
     private String username;
@@ -40,4 +33,9 @@ public class User {
         this.email = email;
         this.password = password;
     }
+
+    public void changePassword(String newEncodedPassword) {
+    this.password = newEncodedPassword;
+}
+
 }

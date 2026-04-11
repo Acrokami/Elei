@@ -1,19 +1,18 @@
 package com.acrobtw.elei.controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.acrobtw.elei.dto.AuthRequest;
-import com.acrobtw.elei.dto.RegisterRequestDto;
-import com.acrobtw.elei.entity.User;
-import com.acrobtw.elei.repository.UserRepository;
+import com.acrobtw.elei.dto.AuthResponse;
 import com.acrobtw.elei.service.UserService;
+
+import jakarta.validation.Valid;
 
 @RestController
 public class AuthController {
@@ -26,8 +25,16 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register (@RequestBody AuthRequest request) {
+    public ResponseEntity<AuthResponse> register (@Valid @RequestBody AuthRequest request) {
         userService.registerNewUser(request.email(), request.username(), request.password());
-        return ResponseEntity.ok("Everything done! " + request.username() + "");
+
+        AuthResponse response = new AuthResponse(
+        HttpStatus.OK.value(),
+        "User registered successfully",
+        request.username(),
+        LocalDateTime.now()
+    );
+
+        return ResponseEntity.ok(response);
 }
 }
