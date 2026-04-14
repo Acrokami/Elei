@@ -39,6 +39,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<DiaryEntry> diaries = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<ExperienceLog> experienceLogs = new ArrayList<>();
+
 
     public User(String username, String email, String password) {
         this.username = username;

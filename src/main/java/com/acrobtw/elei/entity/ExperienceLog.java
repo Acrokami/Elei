@@ -1,0 +1,37 @@
+package com.acrobtw.elei.entity;
+
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@Table(name = "experience_logs")
+public class ExperienceLog {
+
+
+@Column(name = "points")
+private Integer points;
+
+@Column(name = "created_at")
+private LocalDateTime createdAt;
+
+
+@ManyToOne(fetch = FetchType.LAZY, optional = false)
+@JoinColumn(name = "user_id", nullable = false)
+private User user;
+
+@ManyToOne(fetch = FetchType.LAZY, optional = false)
+@JoinColumn(name = "activity_id", nullable = false)
+private Activity activity;
+}
