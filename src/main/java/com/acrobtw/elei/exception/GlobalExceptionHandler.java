@@ -3,6 +3,7 @@ package com.acrobtw.elei.exception;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -28,14 +29,6 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.BAD_REQUEST, "Bad request", ex.getMessage());
     }
 
-    // 404
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ApiErrorResponse> handleUserNotFound(UserNotFoundException ex) {
-        log.warn("404: Not Found: {}", ex.getMessage());
-        return buildResponse(HttpStatus.NOT_FOUND, "Not Found", ex.getMessage());
-    }
-
-    
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiErrorResponse> handleNotValidArgument(MethodArgumentNotValidException ex) {
         log.warn("Not Valid Argument: {}", ex.getBindingResult().getFieldErrors());
@@ -44,6 +37,19 @@ public class GlobalExceptionHandler {
         .map(FieldError::getDefaultMessage)
         .collect(Collectors.joining(", "));
         return buildResponse(HttpStatus.BAD_REQUEST, "Validation Error", error);
+    }
+
+    // 404
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleUserNotFound(UserNotFoundException ex) {
+        log.warn("404: Not Found: {}", ex.getMessage());
+        return buildResponse(HttpStatus.NOT_FOUND, "Not Found", ex.getMessage());
+    }
+
+    @ExceptionHandler(ActivityNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleActivityNotFound(ActivityNotFoundException ex) {
+        log.warn("404: Not Found: {}", ex.getMessage());
+        return buildResponse(HttpStatus.NOT_FOUND, "Not Found", ex.getMessage());
     }
 
 

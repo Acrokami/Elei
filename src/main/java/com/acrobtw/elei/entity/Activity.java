@@ -34,4 +34,9 @@ public class Activity {
 
     @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, orphanRemoval = true)
     List<ExperienceLog> experienceLogs = new ArrayList<>();
+
+    public Activity(String name, Integer baseExperience) {
+        this.name = name;
+        this.baseExperience = baseExperience;
+    }
 }

@@ -23,7 +23,7 @@ public class UserTest {
     private TestEntityManager entityManager;
 
     @Test
-    public void userFields() {
+    public void shouldPersistAndRetrieveUserByEmail() {
         User user = new User("Test", "test@gmail.com", "test");
         User savedUser = userRepository.save(user);
 
@@ -34,7 +34,7 @@ public class UserTest {
         orElseThrow(() -> new IllegalArgumentException("This user is not exist"));
 
         assertNotNull(foundUser);
-        assertNotNull(foundUser.getId(), "ID Should be Generated");
+        assertNotNull(foundUser.getId(), "ID Should Be Generated");
         assertEquals("Test", foundUser.getUsername());
         assertEquals("test@gmail.com", foundUser.getEmail());
     }
