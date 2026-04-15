@@ -5,33 +5,27 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.acrobtw.elei.entity.Activity;
+import com.acrobtw.elei.entity.ExperienceLog;
 import com.acrobtw.elei.entity.User;
-import com.acrobtw.elei.exception.ActivityNotFoundException;
-import com.acrobtw.elei.exception.UserNotFoundException;
+import com.acrobtw.elei.exception.ResourceNotFoundException;
 import com.acrobtw.elei.repository.ActivityRepository;
+import com.acrobtw.elei.repository.ExperienceLogRepository;
 import com.acrobtw.elei.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@SuppressWarnings("unused")
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final ActivityRepository activityRepository;
+    private final ExperienceLogRepository experienceLogRepository;
     private final PasswordEncoder passwordEncoder;
 
 
-    public UserService(
-        UserRepository userRepository,
-        ActivityRepository activityRepository,
-        PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.activityRepository = activityRepository;
-    }
-
     public void registerNewUser(String username, String email, String password) {
-        if(userRepository.findByEmail(email).isPresent()) throw new IllegalArgumentException("This email is taken");
+        if(userRepository.existsByEmail(email)) throw new IllegalArgumentException("This email is taken");
 
         String hashPassword = passwordEncoder.encode(password);
         User user = new User(username, email, hashPassword);
@@ -42,7 +36,7 @@ public class UserService {
     @Transactional
     public void updatePassword(Long userId, String newRawPassword) {
         User user = userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException(userId));
+        .orElseThrow(() -> new ResourceNotFoundException("User", userId));
 
         String encodedPassword = passwordEncoder.encode(newRawPassword);
         user.changePassword(encodedPassword);
@@ -52,9 +46,21 @@ public class UserService {
     @Transactional
     public void addExperience(Long userId, Long activityId, double multiplier) {
         User user = userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException(userId));
+        .orElseThrow(() -> new ResourceNotFoundException("User", userId));
 
         Activity activity = activityRepository.findById(activityId)
-        .orElseThrow(() -> new ActivityNotFoundException(activityId));
+        .orElseThrow(() -> new ResourceNotFoundException("Activity", activityId));
+
+        int experience = activity.getBaseExperience();
+        double multiplierExperience = experience * multiplier;
+        int finalExperience = (int) Math.round(multiplierExperience);
+
+        ExperienceLog log = new ExperienceLog(finalExperience);
+        log.setUser(user);
+        log.setActivity(activity);
+
+        user.setTotalExperience(user.getTotalExperience() + finalExperience);
+
+        experienceLogRepository.save(log);
     }
 }

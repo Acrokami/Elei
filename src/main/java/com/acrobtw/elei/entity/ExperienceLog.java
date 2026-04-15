@@ -2,6 +2,8 @@ package com.acrobtw.elei.entity;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -24,12 +26,14 @@ public class ExperienceLog {
 
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Column(name = "experience_id")
 private Long id;
 
 @Column(name = "points")
 private Integer points;
 
-@Column(name = "created_at")
+@Column(name = "created_at", nullable = false, updatable = false)
+@CreationTimestamp
 private LocalDateTime createdAt;
 
 
@@ -40,4 +44,8 @@ private User user;
 @ManyToOne(fetch = FetchType.LAZY, optional = false)
 @JoinColumn(name = "activity_id", nullable = false)
 private Activity activity;
+
+public ExperienceLog(Integer points) {
+    this.points = points;
+}
 }

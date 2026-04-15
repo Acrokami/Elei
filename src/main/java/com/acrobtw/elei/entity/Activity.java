@@ -33,7 +33,7 @@ public class Activity {
     private Integer baseExperience;
 
     @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<ExperienceLog> experienceLogs = new ArrayList<>();
+    private List<ExperienceLog> experienceLogs = new ArrayList<>();
 
     public Activity(String name, Integer baseExperience) {
         this.name = name;

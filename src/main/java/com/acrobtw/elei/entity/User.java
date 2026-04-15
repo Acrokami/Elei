@@ -5,6 +5,7 @@ import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Transient;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,9 +14,11 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "users")
 public class User {
@@ -35,12 +38,14 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "total_experience")
+    private Long totalExperience = 0L;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<DiaryEntry> diaries = new ArrayList<>();
+    private List<DiaryEntry> diaries = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<ExperienceLog> experienceLogs = new ArrayList<>();
+    private List<ExperienceLog> experienceLogs = new ArrayList<>();
 
 
     public User(String username, String email, String password) {
@@ -49,8 +54,16 @@ public class User {
         this.password = password;
     }
 
+
+
     public void changePassword(String newEncodedPassword) {
     this.password = newEncodedPassword;
 }
+
+    @Transient
+    public int getLevel() {
+        if (totalExperience <= 0) return 1;
+        return (int) (0.1 * Math.sqrt(totalExperience)) + 1;
+    }
 
 }
