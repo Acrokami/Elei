@@ -1,15 +1,22 @@
 package com.acrobtw.elei.entity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Transient;
+import jakarta.persistence.Version;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -41,11 +48,20 @@ public class User {
     @Column(name = "total_experience")
     private Long totalExperience = 0L;
 
+    @Version
+    private Integer version;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DiaryEntry> diaries = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExperienceLog> experienceLogs = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
 
     public User(String username, String email, String password) {
@@ -58,12 +74,17 @@ public class User {
 
     public void changePassword(String newEncodedPassword) {
     this.password = newEncodedPassword;
-}
+    }
 
     @Transient
     public int getLevel() {
         if (totalExperience <= 0) return 1;
         return (int) (0.1 * Math.sqrt(totalExperience)) + 1;
+    }
+
+    public void addExperienceLog(ExperienceLog log) {
+        experienceLogs.add(log);
+        log.setUser(this);
     }
 
 }

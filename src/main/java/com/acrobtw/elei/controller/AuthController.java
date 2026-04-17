@@ -13,16 +13,14 @@ import com.acrobtw.elei.dto.AuthResponse;
 import com.acrobtw.elei.service.UserService;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 public class AuthController {
 
     private final UserService userService;
 
-
-    public AuthController(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody AuthRequest request) {

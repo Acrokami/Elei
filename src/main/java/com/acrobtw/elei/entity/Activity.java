@@ -39,4 +39,10 @@ public class Activity {
         this.name = name;
         this.baseExperience = baseExperience;
     }
+
+
+    public void addExperienceLog(ExperienceLog log) {
+        experienceLogs.add(log);
+        log.setActivity(this);
+    }
 }

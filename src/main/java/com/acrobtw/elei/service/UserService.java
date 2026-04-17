@@ -16,6 +16,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
+@SuppressWarnings("unused")
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
@@ -42,7 +43,7 @@ public class UserService {
         user.changePassword(encodedPassword);
     }
 
-    // TODO: Add experience to user when they complete an activity, and calculate the level up if necessary
+    
     @Transactional
     public void addExperience(Long userId, Long activityId, double multiplier) {
         User user = userRepository.findById(userId)
@@ -52,15 +53,13 @@ public class UserService {
         .orElseThrow(() -> new ResourceNotFoundException("Activity", activityId));
 
         int experience = activity.getBaseExperience();
-        double multiplierExperience = experience * multiplier;
-        int finalExperience = (int) Math.round(multiplierExperience);
+        int finalExperience = (int) Math.round(experience * multiplier);
 
         ExperienceLog log = new ExperienceLog(finalExperience);
-        log.setUser(user);
-        log.setActivity(activity);
+
+        user.addExperienceLog(log);
+        activity.addExperienceLog(log);
 
         user.setTotalExperience(user.getTotalExperience() + finalExperience);
-
-        experienceLogRepository.save(log);
     }
 }
