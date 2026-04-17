@@ -1,4 +1,4 @@
-package com.acrobtw.elei.service;
+package com.acrobtw.elei.security.jwt;
 
 import javax.crypto.SecretKey;
 
