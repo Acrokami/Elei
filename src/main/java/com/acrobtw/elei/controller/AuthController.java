@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.acrobtw.elei.dto.AuthRequest;
-import com.acrobtw.elei.dto.AuthResponse;
+import com.acrobtw.elei.dto.AuthenticationRequest;
+import com.acrobtw.elei.dto.RegisterResponse;
 import com.acrobtw.elei.service.UserService;
 
 import jakarta.validation.Valid;
@@ -23,10 +23,10 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody AuthRequest request) {
+    public ResponseEntity<RegisterResponse> register(@Valid @RequestBody AuthenticationRequest request) {
         userService.registerNewUser(request.email(), request.username(), request.password());
 
-        AuthResponse response = new AuthResponse(
+        RegisterResponse response = new RegisterResponse(
         HttpStatus.OK.value(),
         "User registered successfully",
         request.username(),
@@ -34,5 +34,5 @@ public class AuthController {
     );
 
         return ResponseEntity.ok(response);
-}
+  }
 }

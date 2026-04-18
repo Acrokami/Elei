@@ -10,6 +10,7 @@ import com.acrobtw.elei.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping("/activities")
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class ActivityController {
 
     private final UserService userService;
 
-    // TODO after JWT logic complete
+    // TODO after AuthController /login logic
     // @PostMapping("/complete")
     // public void completeActivity(@RequestBody ActivityCompletionDto dto) {
     //     userService.addExperience(null, dto.activityId(), dto.multiplier());

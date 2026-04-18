@@ -2,7 +2,7 @@ package com.acrobtw.elei.dto;
 
 import java.time.LocalDateTime;
 
-public record AuthResponse(
+public record RegisterResponse(
     int status,
     String message,
     String username,

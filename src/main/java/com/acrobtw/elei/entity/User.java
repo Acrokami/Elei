@@ -92,7 +92,7 @@ public class User implements UserDetails {
     }
 
 
-
+     // TODO : Implement authorities based on roles
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
