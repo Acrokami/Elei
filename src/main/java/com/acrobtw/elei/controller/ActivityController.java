@@ -1,16 +1,19 @@
 package com.acrobtw.elei.controller;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.acrobtw.elei.dto.ActivityCompletionDto;
+import com.acrobtw.elei.entity.User;
 import com.acrobtw.elei.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
-@SuppressWarnings("unused")
+
 @RestController
 @RequestMapping("/activities")
 @RequiredArgsConstructor
@@ -18,9 +21,13 @@ public class ActivityController {
 
     private final UserService userService;
 
-    // TODO after AuthController /login logic
-    // @PostMapping("/complete")
-    // public void completeActivity(@RequestBody ActivityCompletionDto dto) {
-    //     userService.addExperience(null, dto.activityId(), dto.multiplier());
-    // }
+
+    @PostMapping("/complete")
+    public ResponseEntity<Void> completeActivity(
+        @RequestBody ActivityCompletionDto dto,
+        @AuthenticationPrincipal User user
+    ) {
+        userService.addExperience(user.getId(), dto.activityId(), dto.multiplier());
+        return ResponseEntity.ok().build();
+    }
 }
