@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.CascadeType;
@@ -92,11 +93,10 @@ public class User implements UserDetails {
     }
 
 
-     // TODO : Implement authorities based on roles
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override

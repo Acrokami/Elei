@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 
 @RestController
-@RequestMapping("/activities")
+@RequestMapping("/activity")
 @RequiredArgsConstructor
 public class ActivityController {
 
