@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import com.acrobtw.elei.exception.ResourceNotFoundException;
 
 
-import com.acrobtw.elei.dto.AuthenticationRequest;
 import com.acrobtw.elei.dto.AuthenticationResponse;
+import com.acrobtw.elei.dto.LoginRequest;
 import com.acrobtw.elei.repository.UserRepository;
 import com.acrobtw.elei.security.jwt.JwtService;
 
@@ -24,7 +24,7 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(LoginRequest request) {
         authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(request.username(), request.password())
         );

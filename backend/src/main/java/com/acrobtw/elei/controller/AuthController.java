@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.acrobtw.elei.dto.AuthenticationRequest;
 import com.acrobtw.elei.dto.AuthenticationResponse;
+import com.acrobtw.elei.dto.LoginRequest;
 import com.acrobtw.elei.dto.RegisterResponse;
 import com.acrobtw.elei.service.AuthenticationService;
 import com.acrobtw.elei.service.UserService;
@@ -29,7 +30,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@Valid @RequestBody AuthenticationRequest request) {
-        userService.registerNewUser(request.email(), request.username(), request.password());
+        userService.registerNewUser(request.username(), request.email(), request.password());
 
         RegisterResponse response = new RegisterResponse(
         HttpStatus.OK.value(),
@@ -43,7 +44,7 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request) {
+    public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authenticationService.authenticate(request));
   }
 }

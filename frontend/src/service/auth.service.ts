@@ -1,20 +1,33 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080'
+const API_URL = 'http://localhost:8080/api/auth/'
 
 class AuthService{
+
+     async register(username:string, email:string,password:string) {
+        const registerResponse = await axios.post(API_URL + "register", {
+            username,
+            email,
+            password
+        });
+
+        return registerResponse.data
+    }
+
+
     async login(username: string, password: string) {
-        const response = await axios.post(API_URL + "/login", {
+        const loginResponse = await axios.post(API_URL + "login", {
             username,
             password
         });
 
-        if(response.data.token) {
-            localStorage.setItem('user_token', response.data.token)
+        if(loginResponse.data.token) {
+            localStorage.setItem('user_token', loginResponse.data.token)
         }
 
-        return response.data;
+        return loginResponse.data;
     }
+
 }
 
 export default new AuthService();
