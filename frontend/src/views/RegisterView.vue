@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, reactive, type Ref, } from 'vue';
 import { useRouter } from 'vue-router';
 import authService from '../service/auth.service';
 
-// TODO need to implement requirements for password/email/username
+
 
 const router = useRouter();
 const errorMessage = ref('');
@@ -12,11 +12,55 @@ const username = ref('');
 const email = ref('');
 const password = ref('');
 
+const errors = reactive({
+  username: '',
+  email: '',
+  password: ''
+});
+
+
+
+const validators = {
+  username: (val: string) => {
+    if(!val.trim()) return 'Username cannot be empty'
+    if(val.length < 3 || val.length > 20) return 'Username must be between 3 and 20 characters'
+    return ''
+  },
+  email: (val: string) => {
+    if(!val.trim()) return 'Email cannot be empty'
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) return 'Invalid email format'
+    return ''
+  },
+  password: (val: string) => {
+    if(!val.trim()) return 'Password cannot be empty'
+    if(val.length < 6) return 'Password must be at least 6 characters long'
+    return ''
+  }
+};
+
+type FieldName = 'username' | 'email' | 'password';
+const fieldRefs: Record<FieldName, Ref<string>> = { username, email, password };
+
+const validateField = (field: FieldName) => {
+  errors[field] = validators[field](fieldRefs[field].value);
+}
+
+const validateAll = () => {
+  let isValid = true
+  for (const field of Object.keys(validators) as FieldName[]) {
+    errors[field] = validators[field](fieldRefs[field].value)
+    if (errors[field]) isValid = false
+  }
+  return isValid
+}
 
 
 const handleRegister = async() => {
+     errorMessage.value = '';
+     if(!validateAll()) return;
      try {
         await authService.register(username.value, email.value, password.value);
+        await authService.login(username.value, password.value)
         router.push('/')
      } catch (error) {
         errorMessage.value = 'Register error'
@@ -39,18 +83,39 @@ const handleRegister = async() => {
         </div>
 
       <div class="input-group">
-        <label>Login</label>
-        <input v-model="username" type="text" placeholder="Enter your username"/>
+        <label>Username</label>
+        <input
+         v-model="username"
+         type="text"
+         placeholder="Enter your username"
+         :class="{'input-error': errors.username}"
+         @blur="validateField('username')"
+         />
+         <span v-if="errors.username" class="field-error">{{ errors.username }}</span>
       </div>
 
       <div class="input input-group">
         <label>Email</label>
-        <input v-model="email" type="email" placeholder="Enter your email"/>
+        <input
+        v-model="email"
+        type="email"
+        placeholder="Enter your email"
+        :class="{'input-error': errors.email}"
+        @blur="validateField('email')"
+        />
+        <span v-if="errors.email" class="field-error">{{ errors.email }}</span>
       </div>
 
       <div class="input-group">
         <label>Password</label>
-        <input v-model="password" type="password" placeholder="Enter your password"/>
+        <input
+        v-model="password"
+        type="password"
+        placeholder="Enter your password"
+        :class="{'input-error': errors.password}"
+        @blur="validateField('password')"
+        />
+        <span v-if="errors.password" class="field-error">{{ errors.password }}</span>
       </div>
 
       <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p>
@@ -138,6 +203,10 @@ input::placeholder {
   color: #334155;
 }
 
+.input-error {
+  border-color: #e53e3e !important;
+}
+
 .signup-btn {
   width: 100%;
   padding: 12px;
@@ -153,6 +222,13 @@ input::placeholder {
 
 .signup-btn:hover {
   background-color: #1d4ed8;
+}
+
+.field-error {
+  color: #f87171;
+  font-size: 0.78rem;
+  margin-top: 4px;
+  display: block
 }
 
 .error-text {

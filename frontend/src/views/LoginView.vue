@@ -17,7 +17,7 @@ const handleLogin = async() => {
         await authService.login(username.value, password.value);
         router.push('/')
      } catch (error) {
-        errorMessage.value = 'Incorrect login/password or Server is Unavailable'
+        errorMessage.value = 'Incorrect login/password'
      }
 }
 

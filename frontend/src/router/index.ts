@@ -10,7 +10,7 @@ const router = createRouter({
             name: 'register',
             component: RegisterView
         },
-        
+
         {
             path: '/login',
             name: 'login',
@@ -19,9 +19,21 @@ const router = createRouter({
         {
             path: '/',
             name: 'home',
-            component: () => import('../views/HomeView.vue')
+            component: () => import('../views/HomeView.vue'),
+            meta: { requiresAuth: true }
         }
     ]
 });
+
+router.beforeEach((to, from, next) => {
+    const token = localStorage.getItem('user_token');
+    const isProtected = to.meta.requiresAuth;
+
+    if(isProtected && !token) {
+        next('/login')
+    } else {
+        next();
+    }
+})
 
 export default router;
