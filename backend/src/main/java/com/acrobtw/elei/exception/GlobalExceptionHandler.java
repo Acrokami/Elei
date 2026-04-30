@@ -17,7 +17,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.acrobtw.elei.dto.ApiErrorResponse;
+import com.acrobtw.elei.exception.dto.ApiErrorResponse;
 
 import io.jsonwebtoken.JwtException;
 

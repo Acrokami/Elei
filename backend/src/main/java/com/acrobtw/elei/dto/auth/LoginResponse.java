@@ -1,10 +1,10 @@
-package com.acrobtw.elei.dto;
+package com.acrobtw.elei.dto.auth;
 
 import java.time.LocalDateTime;
 
-public record RegisterResponse(
+public record LoginResponse(
     int status,
-    String message,
     String username,
+    String token,
     LocalDateTime timestamp
 ) {}

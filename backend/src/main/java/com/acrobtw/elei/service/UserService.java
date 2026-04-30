@@ -25,12 +25,12 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
 
-    public void registerNewUser(String username, String email, String password) {
+    public User registerNewUser(String username, String email, String password) {
         if(userRepository.existsByEmail(email)) throw new IllegalArgumentException("This email is taken");
 
         String hashPassword = passwordEncoder.encode(password);
         User user = new User(username, email, hashPassword);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
 
@@ -43,7 +43,7 @@ public class UserService {
         user.changePassword(encodedPassword);
     }
 
-    
+
     @Transactional
     public void addExperience(Long userId, Long activityId, double multiplier) {
         User user = userRepository.findById(userId)

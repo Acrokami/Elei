@@ -1,9 +1,10 @@
 
 
 
-spring.datasource.url=jdbc:postrgresql://localhost:5432/your_database_name
+spring.datasource.url=jdbc:postgresql://localhost:5432/your_database_name
 spring.datasource.username=your_database_username
 spring.datasource.password=your_database_password
+spring.jpa.hibernate.ddl-auto=update
 
 jwt.secret=your_generated_secret_key
 # time in ms 86400000 = 24 hours

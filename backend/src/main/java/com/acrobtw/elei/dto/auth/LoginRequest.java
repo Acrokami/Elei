@@ -1,4 +1,4 @@
-package com.acrobtw.elei.dto;
+package com.acrobtw.elei.dto.auth;
 
 import jakarta.validation.constraints.NotBlank;
 

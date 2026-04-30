@@ -10,6 +10,10 @@ class AuthService {
             password
         });
 
+        if(registerResponse.data.token) {
+            localStorage.setItem('user_token', registerResponse.data.token);
+        }
+
         return registerResponse.data
     }
 
@@ -21,7 +25,8 @@ class AuthService {
         });
 
         if(loginResponse.data.token) {
-            localStorage.setItem('user_token', loginResponse.data.token)
+            localStorage.setItem('user_token', loginResponse.data.token);
+            localStorage.setItem('username', loginResponse.data.username)
         }
 
         return loginResponse.data;
