@@ -32,6 +32,10 @@ class AuthService {
         return loginResponse.data;
     }
 
+    logout() {
+        localStorage.removeItem('user_token');
+    }
+
 }
 
 export default new AuthService();

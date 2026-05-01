@@ -2,7 +2,9 @@ import api from "./api";
 
 class UserService {
     async getUserProfile() {
-
         const response = await api.get('users/profile');
+        return response.data;
     }
 }
+
+export default new UserService()

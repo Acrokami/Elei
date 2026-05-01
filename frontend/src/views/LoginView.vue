@@ -11,7 +11,6 @@ const username = ref('');
 const password = ref('');
 
 
-
 const handleLogin = async() => {
      try {
         await authService.login(username.value, password.value);
@@ -19,6 +18,10 @@ const handleLogin = async() => {
      } catch (error) {
         errorMessage.value = 'Incorrect login/password'
      }
+}
+
+const handleRegister = () => {
+  router.push('/register');
 }
 
 </script>
@@ -51,6 +54,10 @@ const handleLogin = async() => {
       <button class="login-btn" @click="handleLogin" type="submit">
         Login
       </button>
+
+      <button class="register-btn" @click="handleRegister">
+      Don't an have account? <span>Sign up</span>
+    </button>
     </div>
 </div>
 </template>
@@ -146,6 +153,24 @@ input::placeholder {
 
 .login-btn:hover {
   background-color: #1d4ed8;
+}
+
+
+.register-btn {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  color: #64748b;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s
+}
+
+.register-btn:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
 }
 
 .error-text {

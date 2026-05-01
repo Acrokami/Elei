@@ -32,6 +32,9 @@ private Long id;
 @Column(name = "points")
 private Integer points;
 
+@Column(name = "amount")
+private Integer amount;
+
 @Column(name = "created_at", nullable = false, updatable = false)
 @CreationTimestamp
 private LocalDateTime createdAt;
@@ -47,5 +50,10 @@ private Activity activity;
 
 public ExperienceLog(Integer points) {
     this.points = points;
+}
+
+public ExperienceLog(Integer points, Integer amount) {
+    this.points = points;
+    this.amount = amount;
 }
 }
