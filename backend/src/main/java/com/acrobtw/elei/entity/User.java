@@ -90,6 +90,7 @@ public class User implements UserDetails {
     public void addExperienceLog(ExperienceLog log) {
         experienceLogs.add(log);
         log.setUser(this);
+        this.totalExperience += log.getPoints();
     }
 
 

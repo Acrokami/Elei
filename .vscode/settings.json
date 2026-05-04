@@ -10,5 +10,6 @@
             "database": "elei",
             "username": "postgres"
         }
-    ]
+    ],
+    "java.compile.nullAnalysis.mode": "automatic"
 }

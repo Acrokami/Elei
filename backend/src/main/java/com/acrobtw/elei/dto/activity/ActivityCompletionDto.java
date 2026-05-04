@@ -1,6 +1,6 @@
-package com.acrobtw.elei.dto;
+package com.acrobtw.elei.dto.activity;
 
 public record ActivityCompletionDto(
     Long activityId,
-    double multiplier
+    Integer amount
 ) {}

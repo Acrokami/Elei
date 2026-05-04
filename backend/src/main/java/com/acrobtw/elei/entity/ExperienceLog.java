@@ -48,12 +48,9 @@ private User user;
 @JoinColumn(name = "activity_id", nullable = false)
 private Activity activity;
 
-public ExperienceLog(Integer points) {
-    this.points = points;
-}
-
-public ExperienceLog(Integer points, Integer amount) {
-    this.points = points;
+public ExperienceLog(Activity activity, Integer amount) {
+    this.activity = activity;
     this.amount = amount;
+    this.points = amount * activity.getBaseExperience();
 }
 }

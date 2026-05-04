@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.acrobtw.elei.dto.ActivityCompletionDto;
+import com.acrobtw.elei.dto.activity.ActivityCompletionDto;
 import com.acrobtw.elei.entity.User;
 import com.acrobtw.elei.exception.GlobalExceptionHandler;
 import com.acrobtw.elei.security.SecurityConfig;
@@ -26,6 +26,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 import tools.jackson.databind.ObjectMapper;
+
+
+// TODO REFACTOR
 
 
 @WebMvcTest(controllers = {ActivityController.class, GlobalExceptionHandler.class})
@@ -53,7 +56,7 @@ public class ActivityControllerTest {
     @Test
     public void shouldGiveNotValidCompleteActivityExperience() throws Exception {
         Long mockActivityId = 1L;
-        ActivityCompletionDto dto = new ActivityCompletionDto(mockActivityId, 2.5);
+        ActivityCompletionDto dto = new ActivityCompletionDto(mockActivityId, 2);
 
         mockMvc.perform(post("/activity/complete")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -71,7 +74,7 @@ public class ActivityControllerTest {
 
 
         Long mockActivityId = 1L;
-        ActivityCompletionDto dto = new ActivityCompletionDto(mockActivityId, 2.5);
+        ActivityCompletionDto dto = new ActivityCompletionDto(mockActivityId, 2);
 
         mockMvc.perform(post("/activity/complete")
                 .with(user(mockUser))
