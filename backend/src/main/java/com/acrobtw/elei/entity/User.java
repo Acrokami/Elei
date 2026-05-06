@@ -2,9 +2,7 @@ package com.acrobtw.elei.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,13 +13,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Transient;
 import jakarta.persistence.Version;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -40,7 +34,6 @@ public class User implements UserDetails {
     @Column(name = "user_id")
     private Long id;
 
-
     @Column(name = "username", nullable = false, unique = true)
     private String username;
 
@@ -57,16 +50,7 @@ public class User implements UserDetails {
     private Integer version;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DiaryEntry> diaries = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExperienceLog> experienceLogs = new ArrayList<>();
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
 
 
     public User(String username, String email, String password) {
@@ -75,24 +59,22 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-
-
     public void changePassword(String newEncodedPassword) {
-    this.password = newEncodedPassword;
+        this.password = newEncodedPassword;
     }
 
     @Transient
     public int getLevel() {
-        if (totalExperience <= 0) return 1;
+        if (totalExperience <= 0)
+            return 1;
         return (int) (0.1 * Math.sqrt(totalExperience)) + 1;
     }
 
     public void addExperienceLog(ExperienceLog log) {
         experienceLogs.add(log);
         log.setUser(this);
-        this.totalExperience += log.getPoints();
+        this.totalExperience += log.getUnitsCompleted();
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -101,12 +83,23 @@ public class User implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonExpired() { return true; }
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
     @Override
-    public boolean isAccountNonLocked() { return true; }
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
     @Override
-    public boolean isCredentialsNonExpired() { return true; }
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
     @Override
-    public boolean isEnabled() { return true; }
+    public boolean isEnabled() {
+        return true;
+    }
 
 }

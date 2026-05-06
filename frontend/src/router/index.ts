@@ -1,6 +1,7 @@
 import {createRouter, createWebHistory} from 'vue-router';
 import LoginView from '../views/LoginView.vue';
 import RegisterView from '../views/RegisterView.vue';
+import ActivityView from '../views/ActivityView.vue';
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,6 +22,11 @@ const router = createRouter({
             name: 'home',
             component: () => import('../views/HomeView.vue'),
             meta: { requiresAuth: true }
+        },
+        {
+            path: '/activity',
+            name: 'activity',
+            component: ActivityView
         }
     ]
 });

@@ -24,33 +24,32 @@ import lombok.Setter;
 @Table(name = "experience_logs")
 public class ExperienceLog {
 
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-@Column(name = "experience_id")
-private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "experience_id")
+    private Long id;
 
-@Column(name = "points")
-private Integer points;
+    @Column(name = "unitsCompleted")
+    private Integer unitsCompleted;
 
-@Column(name = "amount")
-private Integer amount;
+    @Column(name = "earnedXp")
+    private Integer earnedXp;
 
-@Column(name = "created_at", nullable = false, updatable = false)
-@CreationTimestamp
-private LocalDateTime createdAt;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-@ManyToOne(fetch = FetchType.LAZY, optional = false)
-@JoinColumn(name = "user_id", nullable = false)
-private User user;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "activity_id", nullable = false)
+    private Activity activity;
 
-@ManyToOne(fetch = FetchType.LAZY, optional = false)
-@JoinColumn(name = "activity_id", nullable = false)
-private Activity activity;
-
-public ExperienceLog(Activity activity, Integer amount) {
-    this.activity = activity;
-    this.amount = amount;
-    this.points = amount * activity.getBaseExperience();
-}
+    public ExperienceLog(Activity activity, Integer earnedXp) {
+        this.activity = activity;
+        this.earnedXp = earnedXp;
+        this.unitsCompleted = earnedXp * activity.getPointsMultiplier();
+    }
 }

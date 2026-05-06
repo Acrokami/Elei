@@ -20,7 +20,8 @@ public class ActivityTest {
 
     @Test
     public void shouldPersistAndRetrieveActivityByName() {
-        Activity sport = new Activity("Sports", 0);
+        User user = new User("Test", "test@gmail.com", "test");
+        Activity sport = new Activity(user, "Sports", 0, "minutes");
         Activity savedActivity = activityRepository.save(sport);
 
         entityManager.flush();

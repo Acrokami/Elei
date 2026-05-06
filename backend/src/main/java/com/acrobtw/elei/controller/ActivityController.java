@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 
 @RestController
-@RequestMapping("/activity")
+@RequestMapping("/api/activity")
 @RequiredArgsConstructor
 public class ActivityController {
 
@@ -29,7 +29,7 @@ public class ActivityController {
         @RequestBody ActivityCompletionDto dto,
         @AuthenticationPrincipal User user
     ) {
-        activityService.addExperience(user.getId(), dto.activityId(), dto.amount());
+        activityService.addExperience(user.getId(), dto.activityId(), dto.unitsCompleted());
         return ResponseEntity.ok().build();
     }
 

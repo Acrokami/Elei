@@ -8,6 +8,6 @@ import com.acrobtw.elei.entity.ExperienceLog;
 
 public interface ExperienceLogRepository extends JpaRepository<ExperienceLog, Long> {
 
-    @Query("SELECT COALESCE(SUM(l.points), 0) FROM ExperienceLog l WHERE l.user.id = :userId AND l.activity_id = :activityId")
+    @Query("SELECT COALESCE(SUM(l.points), 0) FROM ExperienceLog l WHERE l.user.id = :userId AND l.activity.id = :activityId")
     Integer sumPointsByUserAndActivity(@Param("userId") Long userId, @Param("activityId") Long activityId);
 }

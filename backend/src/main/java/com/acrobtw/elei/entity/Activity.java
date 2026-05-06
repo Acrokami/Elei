@@ -3,9 +3,12 @@ package com.acrobtw.elei.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -26,20 +29,30 @@ public class Activity {
     @Column(name = "activity_id")
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String name;
 
-    @Column(name = "base_experience", nullable = false)
-    private Integer baseExperience;
+    @Column(name = "points_multiplier", nullable = false)
+    private Integer pointsMultiplier;
+
+    // TODO
+    // New field for storing words: "minute", "page", "time", I understand that the field looks misleading and it is not immediately clear what it is, then I will do a rename or refactor
+    @Column(name = "unit_name", nullable = false)
+    private String unitName;
 
     @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExperienceLog> experienceLogs = new ArrayList<>();
 
-    public Activity(String name, Integer baseExperience) {
-        this.name = name;
-        this.baseExperience = baseExperience;
-    }
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
+    public Activity(User user, String name, Integer pointsMultiplier, String unitName) {
+        this.user = user;
+        this.name = name;
+        this.pointsMultiplier = pointsMultiplier;
+        this.unitName = unitName;
+    }
 
     public void addExperienceLog(ExperienceLog log) {
         experienceLogs.add(log);

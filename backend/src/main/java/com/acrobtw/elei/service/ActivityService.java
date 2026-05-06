@@ -25,16 +25,15 @@ public class ActivityService {
     private final ActivityRepository activityRepository;
     private final ExperienceLogRepository experienceLogRepository;
 
-
-      @Transactional
-    public void addExperience(Long userId, Long activityId, Integer amount) {
+    @Transactional
+    public void addExperience(Long userId, Long activityId, Integer unitsCompleted) {
         User user = userRepository.findById(userId)
-        .orElseThrow(() -> new ResourceNotFoundException("User", userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User", userId));
 
         Activity activity = activityRepository.findById(activityId)
-        .orElseThrow(() -> new ResourceNotFoundException("Activity", activityId));
+                .orElseThrow(() -> new ResourceNotFoundException("Activity", activityId));
 
-        ExperienceLog log = new ExperienceLog(activity, amount);
+        ExperienceLog log = new ExperienceLog(activity, unitsCompleted);
         user.addExperienceLog(log);
         activity.addExperienceLog(log);
 
@@ -46,21 +45,19 @@ public class ActivityService {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", userId));
         List<Activity> allActivities = activityRepository.findAll();
         List<CategoryProgressDto> categories = allActivities.stream()
-            .map(activity -> {
-                Integer sum = experienceLogRepository.sumPointsByUserAndActivity(userId, activity.getId());
-                return new CategoryProgressDto(
-                    activity.getId(),
-                    activity.getName(),
-                    activity.getBaseExperience(),
-                    sum
-                );
-            })
-            .toList();
+                .map(activity -> {
+                    Integer sum = experienceLogRepository.sumPointsByUserAndActivity(userId, activity.getId());
+                    return new CategoryProgressDto(
+                            activity.getId(),
+                            activity.getName(),
+                            activity.getPointsMultiplier(),
+                            sum);
+                })
+                .toList();
 
-            return new ActivityStatsResponse(
+        return new ActivityStatsResponse(
                 user.getTotalExperience(),
                 user.getLevel(),
-                categories
-            );
+                categories);
     }
 }
