@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.acrobtw.elei.dto.activity.ActivityStatsResponse;
 import com.acrobtw.elei.dto.activity.CategoryProgressDto;
+import com.acrobtw.elei.dto.activity.CreateActivityDto;
 import com.acrobtw.elei.entity.Activity;
 import com.acrobtw.elei.entity.ExperienceLog;
 import com.acrobtw.elei.entity.User;
@@ -25,6 +26,17 @@ public class ActivityService {
     private final ActivityRepository activityRepository;
     private final ExperienceLogRepository experienceLogRepository;
 
+
+
+
+    @Transactional
+    public void createActivity(Long userId, CreateActivityDto dto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", userId));
+        Activity activity = new Activity(user, dto.name(), dto.pointsMultiplier(), dto.unitName());
+        activityRepository.save(activity);
+    }
+
     @Transactional
     public void addExperience(Long userId, Long activityId, Integer unitsCompleted) {
         User user = userRepository.findById(userId)
@@ -42,16 +54,20 @@ public class ActivityService {
 
     @Transactional
     public ActivityStatsResponse getUserActivityStats(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", userId));
-        List<Activity> allActivities = activityRepository.findAll();
-        List<CategoryProgressDto> categories = allActivities.stream()
+        User user = userRepository.findById(userId)
+        .orElseThrow(() -> new ResourceNotFoundException("User", userId));
+
+        List<Activity> userActivities = activityRepository.findByUserId(userId);
+
+        List<CategoryProgressDto> categories = userActivities.stream()
                 .map(activity -> {
                     Integer sum = experienceLogRepository.sumPointsByUserAndActivity(userId, activity.getId());
+                    int safeSum = (sum != null) ? sum : 0;
                     return new CategoryProgressDto(
                             activity.getId(),
                             activity.getName(),
                             activity.getPointsMultiplier(),
-                            sum);
+                            safeSum);
                 })
                 .toList();
 

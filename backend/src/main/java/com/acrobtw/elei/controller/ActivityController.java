@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.acrobtw.elei.dto.activity.ActivityCompletionDto;
 import com.acrobtw.elei.dto.activity.ActivityStatsResponse;
+import com.acrobtw.elei.dto.activity.CreateActivityDto;
 import com.acrobtw.elei.entity.User;
 import com.acrobtw.elei.service.ActivityService;
 
@@ -23,6 +24,14 @@ public class ActivityController {
 
     private final ActivityService activityService;
 
+
+    @PostMapping
+    public ResponseEntity<Void> createActivity(
+        @RequestBody CreateActivityDto dto,
+        @AuthenticationPrincipal User user) {
+        activityService.createActivity(user.getId(), dto);
+        return ResponseEntity.ok().build();
+    }
 
     @PostMapping("/complete")
     public ResponseEntity<Void> completeActivity(
@@ -39,5 +48,4 @@ public class ActivityController {
     ) {
         return ResponseEntity.ok(activityService.getUserActivityStats(user.getId()));
     }
-
 }

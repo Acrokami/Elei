@@ -2,14 +2,21 @@ import api from "./api";
 
 
 class ActivityService {
+
+
+    async createActivity(data: {name: string, pointsMultiplier: number, unitName: string}) {
+        const response = await api.post('/activity', data);
+        return response.data;
+    }
+
     async getStats() {
         const response = await api.get('/activity/stats')
         return response.data;
     }
-    async completeActivity(activityId: number, amount:number) {
+    async completeActivity(activityId: number, unitsCompleted:number) {
         const response = await api.post('/activity/complete', {
             activityId: activityId,
-            amount:amount
+            unitsCompleted:unitsCompleted
         });
         return response.data;
     }
