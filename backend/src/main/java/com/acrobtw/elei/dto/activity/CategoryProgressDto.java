@@ -4,5 +4,6 @@ public record CategoryProgressDto(
     Long activityId,
     String name,
     Integer pointsMultiplier,
-    Integer userCategoryExperience
+    Integer userCategoryExperience,
+    String unitName
 ) {}

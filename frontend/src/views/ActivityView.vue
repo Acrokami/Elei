@@ -2,58 +2,41 @@
 import {ref, onMounted} from 'vue';
 import {useRouter} from 'vue-router';
 import activityService from '../service/activity.service';
+import CreateActivityForm from '../components/CreateActivityForm.vue';
+import ActivityList from '../components/ActivityList.vue';
 
 const router = useRouter();
 
 const totalExperience = ref(0);
 const currentLevel = ref(1);
 const categories = ref<any[]>([]);
+const feed = ref<any[]>([]);
 
 
-const showCreateForm = ref(false);
-const newActivity = ref({
-  name: '',
-  pointsMultiplier: 1,
-  unitName: ''
-});
+
+const formatTime = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString([], {hour: '2-digit', minute: '2-digit'});
+};
 
 const loadStats = async () => {
     try {
         const stats = await activityService.getStats();
-        console.log('stats:', stats); //
         totalExperience.value = stats.totalExperience;
         currentLevel.value = stats.currentLevel;
         categories.value = stats.categories;
+        feed.value = await activityService.getFeed();
     } catch (error) {
         console.error("Error compiling statistics");
     }
 }
 
-const handleAddActivity = async (activityId: number, amount: number) => {
-    try {
-    await activityService.completeActivity(activityId, amount);
-    await loadStats();
 
-    } catch (error) {
-        console.error("Error adding activity:", error);
-    }
-}
 
 const handleHome = () => {
   router.push('/')
 }
 
-const handleCreateActivity = async() => {
-  try {
-    await activityService.createActivity(newActivity.value)
-    newActivity.value = {name: '', pointsMultiplier: 1, unitName: ''}
-    showCreateForm.value = false;
-
-    await loadStats();
-  } catch(error) {
-    console.error("Error creating new activity", error)
-  }
-}
 
 onMounted(() => {
     loadStats()
@@ -82,42 +65,28 @@ onMounted(() => {
       </div>
 
 
-      <div class="actions-header">
-        <button class="toggle-form-btn" @click="showCreateForm = !showCreateForm">
-          {{ showCreateForm ? 'Cancel' : '+ Create Activity' }}
-        </button>
-      </div>
+      <CreateActivityForm @activity-created="loadStats"/>
+
+      <ActivityList
+      :categories="categories"
+      @experience-added="loadStats"/>
 
 
-      <div v-if="showCreateForm" class="create-form-card">
-        <form @submit.prevent="handleCreateActivity" class="create-form">
-          <div class="form-group">
-            <label>Name (Example: Reading)</label>
-            <input v-model="newActivity.name" type="text" required placeholder="Enter name"/>
+
+     <div class="feed-section" v-if="feed.length > 0">
+        <h2 class="section-title">Activity History</h2>
+        <div class="feed-list">
+          <div class="feed-item" v-for="item in feed" :key="item.logId">
+            <div class="feed-time">{{ formatTime(item.createdAt) }}</div>
+            <div class="feed-content">
+              <div class="feed-dot"></div>
+              <div class="feed-details">
+                <span class="feed-activity-name">{{ item.activityName }}</span>
+                <span class="feed-units">{{ item.unitsCompleted }} {{ item.unitName }}</span>
+              </div>
+            </div>
+            <div class="feed-xp">+{{ item.earnedXp }} XP</div>
           </div>
-
-          <div class="form-group">
-            <label>XP Multiplier</label>
-            <input v-model="newActivity.pointsMultiplier" type="number" required placeholder="Enter name"/>
-          </div>
-
-          <div class="form-group">
-            <label>What is it measured in (minutes, pages)</label>
-            <input v-model="newActivity.unitName" type="text" required placeholder="Enter name"/>
-          </div>
-          <button type="submit" class="submit-btn">Save</button>
-        </form>
-      </div>
-
-      <div class="categories">
-        <div class="category-card" v-for="category in categories" :key="category.activityId">
-          <div class="category-info">
-            <h3>{{ category.name }}</h3>
-            <p>{{ category.userCategoryExperience }} XP collected</p>
-          </div>
-          <button class="add-btn" @click="handleAddActivity(category.activityId, 10)">
-            + Add
-          </button>
         </div>
       </div>
 
@@ -191,132 +160,8 @@ onMounted(() => {
   margin: 0;
 }
 
-.categories {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.category-card {
-  background: #1e293b;
-  border: 1px solid #1e293b;
-  border-radius: 12px;
-  padding: 20px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: border-color 0.2s;
-}
-
-.category-card:hover {
-  border-color: #334155;
-}
-
-.category-info h3 {
-  color: #f1f5f9;
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 4px;
-}
-
-.category-info p {
-  color: #64748b;
-  font-size: 13px;
-  margin: 0;
-}
-
-.add-btn {
-  padding: 8px 18px;
-  background: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-  white-space: nowrap;
-}
-
-.add-btn:hover {
-  background: #1d4ed8;
-}
 
 
-.actions-header {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.toggle-form-btn {
-  background: transparent;
-  color: #38bdf8;
-  border: 1px solid #38bdf8;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.toggle-form-btn:hover {
-  background: #38bdf8;
-  color: #0f172a;
-}
-
-.create-form-card {
-  background: #1e293b;
-  border: 1px solid #334155;
-  border-radius: 12px;
-  padding: 24px;
-}
-
-.create-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-group label {
-  color: #94a3b8;
-  font-size: 14px;
-}
-
-.form-group input {
-  background: #0f172a;
-  border: 1px solid #334155;
-  border-radius: 8px;
-  padding: 10px 12px;
-  color: #f1f5f9;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.form-group input:focus {
-  border-color: #38bdf8;
-}
-
-.submit-btn {
-  margin-top: 8px;
-  padding: 12px;
-  background: #10b981;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.submit-btn:hover {
-  background: #059669;
-}
 
 .home-btn {
   background: transparent;
@@ -335,4 +180,87 @@ onMounted(() => {
   border-color: #475547;
   color: #94a3b8
 }
+
+
+.feed-section {
+  margin-top: 32px;
+}
+
+.section-title {
+  color: #f1f5f9;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.feed-list {
+  display: flex;
+  flex-direction: column;
+  background: #1e293b;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #334155;
+}
+
+.feed-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #334155
+}
+
+.feed-item:last-child {
+  border-bottom: none;
+}
+
+.feed-time {
+  color: #64748b;
+  font-size: 12px;
+  width: 50px;
+  flex-shrink: 0;
+}
+
+
+.feed-content {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 12px;
+  padding-left: 12px;
+}
+
+.feed-dot {
+  width: 8px;
+  height: 8px;
+  background: #38bdf8;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+}
+
+.feed-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.feed-activity-name {
+  color: #f1f5f9;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.feed-units {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.feed-xp {
+  color: #10b981;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+
+
+
+
 </style>

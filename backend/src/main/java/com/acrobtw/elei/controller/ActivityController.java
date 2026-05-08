@@ -1,5 +1,7 @@
 package com.acrobtw.elei.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.acrobtw.elei.dto.activity.ActivityCompletionDto;
+import com.acrobtw.elei.dto.activity.ActivityFeedItemDto;
 import com.acrobtw.elei.dto.activity.ActivityStatsResponse;
 import com.acrobtw.elei.dto.activity.CreateActivityDto;
 import com.acrobtw.elei.entity.User;
@@ -47,5 +50,10 @@ public class ActivityController {
         @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.ok(activityService.getUserActivityStats(user.getId()));
+    }
+
+    @GetMapping("/feed")
+    public ResponseEntity<List<ActivityFeedItemDto>> getFeed(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(activityService.getActivityFeed(user.getId()));
     }
 }

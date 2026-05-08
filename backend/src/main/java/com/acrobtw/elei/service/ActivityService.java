@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.acrobtw.elei.dto.activity.ActivityFeedItemDto;
 import com.acrobtw.elei.dto.activity.ActivityStatsResponse;
 import com.acrobtw.elei.dto.activity.CategoryProgressDto;
 import com.acrobtw.elei.dto.activity.CreateActivityDto;
@@ -67,7 +68,8 @@ public class ActivityService {
                             activity.getId(),
                             activity.getName(),
                             activity.getPointsMultiplier(),
-                            safeSum);
+                            safeSum,
+                            activity.getUnitName());
                 })
                 .toList();
 
@@ -75,5 +77,21 @@ public class ActivityService {
                 user.getTotalExperience(),
                 user.getLevel(),
                 categories);
+    }
+
+
+    @Transactional
+    public List<ActivityFeedItemDto> getActivityFeed(Long userId) {
+        return experienceLogRepository.findTop30ByUserIdOrderByCreatedAtDesc(userId)
+        .stream()
+        .map(log -> new ActivityFeedItemDto(
+                log.getId(),
+                log.getActivity().getName(),
+                log.getUnitsCompleted(),
+                log.getActivity().getUnitName(),
+                log.getEarnedXp(),
+                log.getCreatedAt()
+        ))
+        .toList();
     }
 }

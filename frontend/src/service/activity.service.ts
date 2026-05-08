@@ -9,10 +9,6 @@ class ActivityService {
         return response.data;
     }
 
-    async getStats() {
-        const response = await api.get('/activity/stats')
-        return response.data;
-    }
     async completeActivity(activityId: number, unitsCompleted:number) {
         const response = await api.post('/activity/complete', {
             activityId: activityId,
@@ -20,6 +16,17 @@ class ActivityService {
         });
         return response.data;
     }
+
+    async getStats() {
+        const response = await api.get('/activity/stats')
+        return response.data;
+    }
+
+    async getFeed() {
+        const response = await api.get('activity/feed');
+        return response.data;
+    }
+
 }
 
 export default new ActivityService()
