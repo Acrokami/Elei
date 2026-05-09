@@ -9,6 +9,10 @@ class ActivityService {
         return response.data;
     }
 
+    async deleteActivity(activityId: number) {
+        await api.delete(`activity/${activityId}`);
+    };
+
     async completeActivity(activityId: number, unitsCompleted:number) {
         const response = await api.post('/activity/complete', {
             activityId: activityId,

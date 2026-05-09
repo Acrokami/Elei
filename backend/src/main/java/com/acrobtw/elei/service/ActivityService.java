@@ -39,6 +39,19 @@ public class ActivityService {
     }
 
     @Transactional
+    public void deleteActivity(Long userId, Long activityId) {
+        Activity activity = activityRepository.findById(activityId)
+        .orElseThrow(() -> new ResourceNotFoundException("Activity", activityId));
+
+        if(!activity.getUser().getId().equals(userId)) {
+           throw new SecurityException("Access denied. Thats not your activity");
+        }
+
+        experienceLogRepository.deleteByActivityId(activityId);
+        activityRepository.delete(activity);
+    }
+
+    @Transactional
     public void addExperience(Long userId, Long activityId, Integer unitsCompleted) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", userId));

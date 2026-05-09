@@ -47,9 +47,9 @@ public class ExperienceLog {
     @JoinColumn(name = "activity_id", nullable = false)
     private Activity activity;
 
-    public ExperienceLog(Activity activity, Integer earnedXp) {
+    public ExperienceLog(Activity activity, Integer unitsCompleted) {
         this.activity = activity;
-        this.earnedXp = earnedXp;
-        this.unitsCompleted = earnedXp * activity.getPointsMultiplier();
+        this.unitsCompleted = unitsCompleted;
+        this.earnedXp = unitsCompleted * activity.getPointsMultiplier();
     }
 }
