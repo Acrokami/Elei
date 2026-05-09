@@ -9,8 +9,20 @@ spring.jpa.hibernate.ddl-auto=update
 # Optional: log SQL queries
 spring.jpa.show-sql=true
 
+
+
+# Go to Github.com -> Settings -> Developer Setting
+# And Generate your client-secret key
+spring.security.oauth2.client.registration.github.client-id=
+spring.security.oauth2.client.registration.github.client-secret=
+spring.security.oauth2.client.registration.github.scope=read:user,user:email
+
+
 # JWT
 # Generate secret: openssl rand -base64 64
 jwt.secret=your_generated_secret_key
 # Time in ms (86400000 = 24 hours)
 jwt.expiration=86400000
+
+# frontend url
+app.frontend.url=

@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.acrobtw.elei.dto.activity.ActivityFeedItemDto;
-import com.acrobtw.elei.dto.activity.ActivityStatsResponse;
+import com.acrobtw.elei.dto.activity.UserStatsDto;
 import com.acrobtw.elei.dto.activity.CategoryProgressDto;
 import com.acrobtw.elei.dto.activity.CreateActivityDto;
 import com.acrobtw.elei.entity.Activity;
@@ -26,6 +26,7 @@ public class ActivityService {
     private final UserRepository userRepository;
     private final ActivityRepository activityRepository;
     private final ExperienceLogRepository experienceLogRepository;
+    private final LevelService levelService;
 
 
 
@@ -67,9 +68,14 @@ public class ActivityService {
     }
 
     @Transactional
-    public ActivityStatsResponse getUserActivityStats(Long userId) {
+    public UserStatsDto getUserStats(Long userId) {
         User user = userRepository.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException("User", userId));
+        Long totalXp = user.getTotalExperience() != null ? user.getTotalExperience() : 0;
+
+        Long currentLevel = levelService.calculateLevel(totalXp);
+        Long nextLevelUp = levelService.calculateNextLevelUp(currentLevel);
+
 
         List<Activity> userActivities = activityRepository.findByUserId(userId);
 
@@ -86,9 +92,10 @@ public class ActivityService {
                 })
                 .toList();
 
-        return new ActivityStatsResponse(
-                user.getTotalExperience(),
-                user.getLevel(),
+        return new UserStatsDto(
+                totalXp,
+                currentLevel,
+                nextLevelUp,
                 categories);
     }
 

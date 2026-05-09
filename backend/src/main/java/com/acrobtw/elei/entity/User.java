@@ -46,8 +46,12 @@ public class User implements UserDetails {
     @Column(name = "total_experience")
     private Long totalExperience = 0L;
 
+    @Column(name = "provider")
+    private String provider = "local";
+
     @Version
     private Integer version;
+
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExperienceLog> experienceLogs = new ArrayList<>();

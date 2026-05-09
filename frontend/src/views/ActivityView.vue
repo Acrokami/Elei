@@ -14,11 +14,14 @@ const currentLevel = ref(1);
 const categories = ref<any[]>([]);
 const feed = ref<any[]>([]);
 
+const nextLevelXp = ref(100);
+
 const loadStats = async () => {
   try {
     const stats = await activityService.getStats();
     totalExperience.value = stats.totalExperience;
     currentLevel.value = stats.currentLevel;
+    nextLevelXp.value = stats.nextLevelXp;
     categories.value = stats.categories;
     feed.value = await activityService.getFeed();
   } catch (error) {
@@ -42,7 +45,10 @@ onMounted(() => {
     </div>
 
     <div class="content">
-      <UserStats :xp="totalExperience" :level="currentLevel" />
+      <UserStats :xp="totalExperience"
+       :level="currentLevel"
+       :nextLevelXp="nextLevelXp"
+        />
 
       <CreateActivityForm @activity-created="loadStats"
        />

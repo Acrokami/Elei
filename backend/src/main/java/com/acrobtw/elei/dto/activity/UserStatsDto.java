@@ -2,8 +2,9 @@ package com.acrobtw.elei.dto.activity;
 
 import java.util.List;
 
-public record ActivityStatsResponse(
+public record UserStatsDto(
     Long totalExperience,
-    int currentLevel,
+    Long currentLevel,
+    Long nextLevelXp,
     List<CategoryProgressDto> categories
 ) {}

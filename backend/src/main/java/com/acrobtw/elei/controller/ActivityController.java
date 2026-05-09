@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.acrobtw.elei.dto.activity.ActivityCompletionDto;
 import com.acrobtw.elei.dto.activity.ActivityFeedItemDto;
-import com.acrobtw.elei.dto.activity.ActivityStatsResponse;
+import com.acrobtw.elei.dto.activity.UserStatsDto;
 import com.acrobtw.elei.dto.activity.CreateActivityDto;
 import com.acrobtw.elei.entity.User;
 import com.acrobtw.elei.service.ActivityService;
@@ -48,10 +48,10 @@ public class ActivityController {
     }
 
     @GetMapping("/stats")
-    public ResponseEntity<ActivityStatsResponse> getActivityStats(
+    public ResponseEntity<UserStatsDto> getActivityStats(
         @AuthenticationPrincipal User user
     ) {
-        return ResponseEntity.ok(activityService.getUserActivityStats(user.getId()));
+        return ResponseEntity.ok(activityService.getUserStats(user.getId()));
     }
 
     @GetMapping("/feed")
