@@ -1,4 +1,8 @@
+spring.application.name=elei
+
+
 # Database
+# Replace with your actual database host, name, user and password
 spring.datasource.url=jdbc:postgresql://localhost:5432/your_database_name
 spring.datasource.username=your_database_username
 spring.datasource.password=your_database_password
@@ -24,5 +28,5 @@ jwt.secret=your_generated_secret_key
 # Time in ms (86400000 = 24 hours)
 jwt.expiration=86400000
 
-# frontend url
+# Frontend URL (e.g. http://localhost:5173 for local Vite dev server)
 app.frontend.url=

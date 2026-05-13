@@ -9,6 +9,7 @@ const errorMessage = ref('');
 
 const username = ref('');
 const password = ref('');
+const apiUrl = import.meta.env.VITE_API_URL;
 
 
 const handleLogin = async() => {
@@ -58,6 +59,10 @@ const handleRegister = () => {
       <button class="register-btn" @click="handleRegister">
       Don't an have account? <span>Sign up</span>
     </button>
+
+    <a :href="`${apiUrl}/oauth2/authorization/github`" class="github-btn">
+      Login via GitHub
+    </a>
     </div>
 </div>
 </template>
@@ -171,6 +176,26 @@ input::placeholder {
 .register-btn:hover {
   border-color: #3b82f6;
   color: #3b82f6;
+}
+
+
+.github-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 12px;
+  margin-top: 16px;
+  background-color: #24292e;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background-color 0.2s
+}
+
+.github-btn:hover {
+  background-color: #1b1f23;
 }
 
 .error-text {

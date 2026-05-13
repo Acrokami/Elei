@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Transient;
 import jakarta.persistence.Version;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -67,17 +66,10 @@ public class User implements UserDetails {
         this.password = newEncodedPassword;
     }
 
-    @Transient
-    public int getLevel() {
-        if (totalExperience <= 0)
-            return 1;
-        return (int) (0.1 * Math.sqrt(totalExperience)) + 1;
-    }
 
     public void addExperienceLog(ExperienceLog log) {
         experienceLogs.add(log);
         log.setUser(this);
-        this.totalExperience += log.getUnitsCompleted();
     }
 
     @Override

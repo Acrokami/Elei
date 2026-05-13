@@ -2,6 +2,7 @@ import {createRouter, createWebHistory} from 'vue-router';
 import LoginView from '../views/LoginView.vue';
 import RegisterView from '../views/RegisterView.vue';
 import ActivityView from '../views/ActivityView.vue';
+import OAuth2Redirect from '../components/OAuth2Redirect.vue';
 
 
 
@@ -13,7 +14,11 @@ const router = createRouter({
             name: 'register',
             component: RegisterView
         },
-
+        {
+            path: '/oauth2/redirect',
+            name: 'oauth2-redirect',
+            component: OAuth2Redirect
+        },
         {
             path: '/login',
             name: 'login',

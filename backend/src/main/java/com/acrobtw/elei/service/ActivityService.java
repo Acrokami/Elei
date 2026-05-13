@@ -61,8 +61,12 @@ public class ActivityService {
                 .orElseThrow(() -> new ResourceNotFoundException("Activity", activityId));
 
         ExperienceLog log = new ExperienceLog(activity, unitsCompleted);
+
         user.addExperienceLog(log);
         activity.addExperienceLog(log);
+
+        long currentTotalXp = user.getTotalExperience() != null ? user.getTotalExperience() : 0L;
+        user.setTotalExperience(currentTotalXp + log.getEarnedXp());
 
         experienceLogRepository.save(log);
     }
