@@ -1,6 +1,5 @@
-
 services:
-# Database
+  # Database
   postgres-db:
     image: postgres:15-alpine
     container_name: elei-postgres
@@ -13,6 +12,8 @@ services:
       - "5432:5432"
     volumes:
       - elei-pg-data:/var/lib/postgresql/data
+    networks:
+      - elei-network
 
   backend:
     build:
@@ -24,12 +25,17 @@ services:
       DB_USER: ${POSTGRES_USER:-postgres}
       DB_PASS: ${POSTGRES_PASSWORD:-root}
       DB_NAME: ${POSTGRES_DB:-elei}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
     ports:
       - "8080:8080"
     depends_on:
-      - postgres-db
-
-
+      postgres-db:
+        condition: service_started
+      kafka:
+        condition: service_healthy
+    networks:
+      - elei-network
 
   frontend:
     build:
@@ -40,7 +46,38 @@ services:
       - "5173:80"
     depends_on:
       - backend
+    networks:
+      - elei-network
 
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: elei-kafka
+    restart: always
+    ports:
+      - "9092:9092"
+    environment:
+        KAFKA_NODE_ID: 1
+        KAFKA_PROCESS_ROLES: broker,controller
+        KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_INTERNAL://0.0.0.0:29092,CONTROLLER://0.0.0.0:9093
+        KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+        KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+        KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+        KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+        KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
+        KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+        CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/29092"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - elei-network
+
+networks:
+  elei-network:
+    driver: bridge
 
 volumes:
   elei-pg-data:

@@ -12,6 +12,7 @@ import com.acrobtw.elei.entity.Activity;
 import com.acrobtw.elei.entity.ExperienceLog;
 import com.acrobtw.elei.entity.User;
 import com.acrobtw.elei.exception.ResourceNotFoundException;
+import com.acrobtw.elei.kafka.LevelUpProducer;
 import com.acrobtw.elei.repository.ActivityRepository;
 import com.acrobtw.elei.repository.ExperienceLogRepository;
 import com.acrobtw.elei.repository.UserRepository;
@@ -28,8 +29,7 @@ public class ActivityService {
     private final ExperienceLogRepository experienceLogRepository;
     private final LevelService levelService;
 
-
-
+    private final LevelUpProducer levelUpProducer;
 
     @Transactional
     public void createActivity(Long userId, CreateActivityDto dto) {
@@ -60,15 +60,23 @@ public class ActivityService {
         Activity activity = activityRepository.findById(activityId)
                 .orElseThrow(() -> new ResourceNotFoundException("Activity", activityId));
 
-        ExperienceLog log = new ExperienceLog(activity, unitsCompleted);
 
+
+        long currentTotalXp = user.getTotalExperience() != null ? user.getTotalExperience() : 0L;
+        Long oldLevel = levelService.calculateLevel(currentTotalXp);
+
+        ExperienceLog log = new ExperienceLog(activity, unitsCompleted);
         user.addExperienceLog(log);
         activity.addExperienceLog(log);
 
-        long currentTotalXp = user.getTotalExperience() != null ? user.getTotalExperience() : 0L;
-        user.setTotalExperience(currentTotalXp + log.getEarnedXp());
-
+        Long newTotalXp = currentTotalXp + log.getEarnedXp();
+        user.setTotalExperience(newTotalXp);
         experienceLogRepository.save(log);
+
+        Long newLevel = levelService.calculateLevel(newTotalXp);
+        if(newLevel > oldLevel) {
+            levelUpProducer.sendLevelUpEvent(userId, newLevel);
+        }
     }
 
     @Transactional
