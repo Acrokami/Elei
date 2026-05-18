@@ -27,7 +27,7 @@ jobs:
       run: mvn clean package -DskipTests
 
 
-build-frontend:
+  build-frontend:
     name: Build Vue.js Frontend
     runs-on: ubuntu-latest
 
