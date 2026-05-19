@@ -23,6 +23,10 @@ spring.security.oauth2.client.registration.github.client-id=
 spring.security.oauth2.client.registration.github.client-secret=
 spring.security.oauth2.client.registration.github.scope=read:user,user:email
 
+# Redis
+spring.data.redis.host=${REDIS_HOST:localhost}
+spring.data.redis.port=6379
+
 
 # JWT
 # Generate secret: openssl rand -base64 64

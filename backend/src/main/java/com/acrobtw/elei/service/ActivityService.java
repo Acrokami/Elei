@@ -2,6 +2,8 @@ package com.acrobtw.elei.service;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.acrobtw.elei.dto.activity.ActivityFeedItemDto;
@@ -31,6 +33,7 @@ public class ActivityService {
 
     private final LevelUpProducer levelUpProducer;
 
+    @CacheEvict(value = "userStats", key = "#userId")
     @Transactional
     public void createActivity(Long userId, CreateActivityDto dto) {
         User user = userRepository.findById(userId)
@@ -39,6 +42,7 @@ public class ActivityService {
         activityRepository.save(activity);
     }
 
+    @CacheEvict(value = "userStats", key = "#userId")
     @Transactional
     public void deleteActivity(Long userId, Long activityId) {
         Activity activity = activityRepository.findById(activityId)
@@ -52,6 +56,7 @@ public class ActivityService {
         activityRepository.delete(activity);
     }
 
+    @CacheEvict(value = "userStats", key = "#userId")
     @Transactional
     public void addExperience(Long userId, Long activityId, Integer unitsCompleted) {
         User user = userRepository.findById(userId)
@@ -79,8 +84,10 @@ public class ActivityService {
         }
     }
 
+    @Cacheable(value = "userStats", key = "#userId")
     @Transactional
     public UserStatsDto getUserStats(Long userId) {
+        System.out.println("[DB] We're going to a heavy PostgreSQL database for statistics...");
         User user = userRepository.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException("User", userId));
         Long totalXp = user.getTotalExperience() != null ? user.getTotalExperience() : 0;

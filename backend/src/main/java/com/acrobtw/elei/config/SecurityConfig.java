@@ -1,4 +1,4 @@
-package com.acrobtw.elei.security;
+package com.acrobtw.elei.config;
 
 
 import java.util.List;
@@ -16,6 +16,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.acrobtw.elei.security.OAuth2LoginSuccessHandler;
 import com.acrobtw.elei.security.jwt.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
