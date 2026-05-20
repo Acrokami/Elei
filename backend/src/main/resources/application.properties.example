@@ -15,7 +15,8 @@ spring.jpa.show-sql=true
 
 
 # Kafka
-spring.kafka.bootstrap-servers=${KAFKA_HOST:localhost}:9092
+kafka.bootstrap-servers=${KAFKA_HOST:localhost}:9092
+kafka.topics.level-up=level-up-events
 
 # Go to Github.com -> Settings -> Developer Setting
 # And Generate your client-secret key

@@ -13,9 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class KafkaConfig {
+public class KafkaProducerConfig {
 
-    @Value("${spring.kafka.bootstrap-servers:localhost:9092}")
+    @Value("${kafka.bootstrap-servers:localhost:9092}")
     private String bootstrapServers;
 
     @Bean

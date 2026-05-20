@@ -6,9 +6,16 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class TelegramSenderService {
 
     @Value("${telegram.bot.token}")
@@ -17,10 +24,13 @@ public class TelegramSenderService {
     @Value("${telegram.admin.chat-id}")
     private String chatId;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    @Value("${telegram.api.url}")
+    private String apiUrl;
+
+    private final RestTemplate restTemplate;
 
     public void sendMessage(String text) {
-        String url = "https://api.telegram.org/bot" + botToken + "/sendMessage";
+        String url = apiUrl + "/bot" + botToken + "/sendMessage";
 
         Map<String, String> request = new HashMap<>();
         request.put("chat_id", chatId);
@@ -29,9 +39,9 @@ public class TelegramSenderService {
 
         try {
             restTemplate.postForObject(url, request, String.class);
-            System.out.println("[TELEGRAM] Notification successfully delivered");
-        } catch (Exception e) {
-            System.err.println("[TELEGRAM] Delivery error: " + e.getMessage());
+            log.info("Telegram notification successfully delivered");
+        } catch (RestClientException e) {
+            log.error("Failed to send Telegram notification", e);
         }
     }
 }

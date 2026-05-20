@@ -13,5 +13,10 @@
     "name": "telegram.admin.chat-id",
     "type": "java.lang.String",
     "description": "A description for 'telegram.admin.chat-id'"
+  },
+  {
+    "name": "telegram.api.url",
+    "type": "java.lang.String",
+    "description": "A description for 'telegram.api.url'"
   }
 ]}

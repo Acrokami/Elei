@@ -18,5 +18,20 @@
     "name": "spring.kafka.bootstrap-servers",
     "type": "java.lang.String",
     "description": "A description for 'spring.kafka.bootstrap-servers'"
+  },
+  {
+    "name": "spring.kafka.topics.level-up",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.kafka.topics.level-up'"
+  },
+  {
+    "name": "kafka.topics.level-up",
+    "type": "java.lang.String",
+    "description": "A description for 'kafka.topics.level-up'"
+  },
+  {
+    "name": "kafka.bootstrap-servers",
+    "type": "java.lang.String",
+    "description": "A description for 'kafka.bootstrap-servers'"
   }
 ]}
