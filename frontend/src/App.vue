@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterView }from 'vue-router';
 import AppFooter from './components/layouts/AppFooter.vue';
+import NotificationToast from './components/notification/NotificationToast.vue';
 </script>
 
 
@@ -9,6 +10,7 @@ import AppFooter from './components/layouts/AppFooter.vue';
   <div class="app-root">
   <RouterView class="main-content"/>
   <AppFooter/>
+  <NotificationToast/>
   </div>
 </template>
 
