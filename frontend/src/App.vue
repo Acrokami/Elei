@@ -2,7 +2,6 @@
 import { RouterView }from 'vue-router';
 import AppFooter from './components/layouts/AppFooter.vue';
 import NotificationToast from './components/notification/NotificationToast.vue';
-
 </script>
 
 

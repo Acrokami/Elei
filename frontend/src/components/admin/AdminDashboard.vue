@@ -18,7 +18,7 @@ const errorMessage = ref<string>('');
 onMounted(async () => {
     try {
         const token = localStorage.getItem('user_token');
-        const response = await fetch('http://localhost:8080/api/v1/admin/telemetry', {
+        const response = await fetch('http://localhost:8080/api/admin/telemetry', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

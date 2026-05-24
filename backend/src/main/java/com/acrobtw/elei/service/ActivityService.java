@@ -29,7 +29,9 @@ public class ActivityService {
     private final UserRepository userRepository;
     private final ActivityRepository activityRepository;
     private final ExperienceLogRepository experienceLogRepository;
+
     private final LevelService levelService;
+    private final LeaderboardService leaderboardService;
 
     private final LevelUpProducer levelUpProducer;
 
@@ -77,6 +79,8 @@ public class ActivityService {
         Long newTotalXp = currentTotalXp + log.getEarnedXp();
         user.setTotalExperience(newTotalXp);
         experienceLogRepository.save(log);
+
+        leaderboardService.updateScore(userId, newTotalXp);
 
         Long newLevel = levelService.calculateLevel(newTotalXp);
         if(newLevel > oldLevel) {
