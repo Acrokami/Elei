@@ -6,14 +6,36 @@ import authService from '../service/auth.service';
 
 const router = useRouter();
 const userProfile = ref<any>(null)
+const isAdmin = ref(false);
 
 onMounted(async () => {
     try {
         userProfile.value = await userService.getUserProfile();
+        checkAdminStatus();
     } catch (error) {
         console.error("Error retrieving profile");
     }
 });
+
+const checkAdminStatus = () => {
+  const token = localStorage.getItem('user_token');
+
+  if(token) {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      const payload = JSON.parse(jsonPayload);
+      if (payload.role === 'ADMIN') {
+        isAdmin.value = true;
+      }
+    } catch (e) {
+      console.error('Error parsing JWT token:', e)
+    }
+  }
+}
 
 const handleLogout = () => {
     authService.logout();
@@ -47,6 +69,14 @@ const handleLogout = () => {
             <div class="nav-text">
               <span class="nav-title">Activity & XP</span>
               <span class="nav-subtitle">Track your progress</span>
+            </div>
+          </router-link>
+
+          <router-link v-if="isAdmin" to="/admin" class="nav-btn">
+            <div class="nav-icon">🛡️</div>
+            <div class="nav-text">
+              <span class="nav-title">Admin Dashboard</span>
+              <span class="nav-subtitle">Manage system</span>
             </div>
           </router-link>
         </div>
