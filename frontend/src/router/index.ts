@@ -3,6 +3,7 @@ import LoginView from '../views/LoginView.vue';
 import RegisterView from '../views/RegisterView.vue';
 import ActivityView from '../views/ActivityView.vue';
 import OAuth2Redirect from '../components/OAuth2Redirect.vue';
+import AdminDashboard from '../components/admin/AdminDashboard.vue';
 
 
 
@@ -34,6 +35,11 @@ const router = createRouter({
             path: '/activity',
             name: 'activity',
             component: ActivityView
+        },
+        {
+            path: '/admin',
+            name: 'admin-dashboard',
+            component: AdminDashboard
         }
     ]
 });

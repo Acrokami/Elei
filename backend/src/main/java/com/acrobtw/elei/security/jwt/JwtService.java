@@ -10,7 +10,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
 import java.util.Date;
-import java.util.Map;
 import java.util.function.Function;
 
 import com.acrobtw.elei.entity.User;
@@ -30,10 +29,9 @@ public class JwtService {
     }
 
     public String generateToken(User user) {
-        Map<String, Object> extraClaims = Map.of("userId", user.getId());
-
         return Jwts.builder()
-        .claims(extraClaims)
+        .claim("userId", user.getId())
+        .claim("role", user.getRole().name())
         .subject(user.getUsername())
         .issuedAt(new Date(System.currentTimeMillis()))
         .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
@@ -69,5 +67,9 @@ public class JwtService {
         .build()
         .parseSignedClaims(token)
         .getPayload();
+    }
+
+    public String extractRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
     }
 }
