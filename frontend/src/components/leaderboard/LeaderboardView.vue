@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import  {ref, onMounted} from 'vue';
 interface LeaderboardEntry {
-    value: string;
-    score: number;
+    id: number;
+    username: string;
+    score:number;
 }
 const leaderboard = ref<LeaderboardEntry[]>([]);
 const isLoading = ref<boolean>(true);
@@ -66,7 +67,7 @@ const getRankBadge = (index: number) => {
     <TransitionGroup v-else name="list" tag="div" class="ranking-list">
       <div
         v-for="(player, index) in leaderboard"
-        :key="player.value"
+        :key="player.id"
         class="rank-card"
         :class="{ 'rank-1': index === 0, 'rank-2': index === 1, 'rank-3': index === 2 }"
       >
@@ -75,7 +76,7 @@ const getRankBadge = (index: number) => {
         </div>
 
         <div class="player-info">
-          <span class="player-name">Citizen #{{ player.value }}</span>
+          <span class="player-name">{{ player.username }}</span>
         </div>
 
         <div class="player-score">
@@ -150,6 +151,7 @@ const getRankBadge = (index: number) => {
 .rank-card {
   display: flex;
   align-items: center;
+  gap: 16px;
   background: rgba(31, 40, 51, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 12px;
@@ -174,6 +176,7 @@ const getRankBadge = (index: number) => {
 
 .player-info {
   flex-grow: 1;
+  margin-right: 16px;
 }
 
 .player-name {
