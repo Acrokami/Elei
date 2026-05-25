@@ -79,6 +79,14 @@ const handleLogout = () => {
               <span class="nav-subtitle">Manage system</span>
             </div>
           </router-link>
+
+          <router-link to="/leaderboard" class="nav-btn">
+            <div class="nav-icon">🏆</div>
+            <div class="nav-text">
+              <span class="nav-title">Leaderboard</span>
+              <span class="nav-subtitle">List of the best users!</span>
+            </div>
+          </router-link>
         </div>
       </div>
     </div>
