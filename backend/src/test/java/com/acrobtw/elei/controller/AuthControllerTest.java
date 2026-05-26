@@ -19,8 +19,8 @@ import com.acrobtw.elei.dto.auth.RegisterRequest;
 import com.acrobtw.elei.dto.auth.RegisterResponse;
 import com.acrobtw.elei.exception.GlobalExceptionHandler;
 import com.acrobtw.elei.security.jwt.JwtAuthenticationFilter;
-import com.acrobtw.elei.service.AuthenticationService;
-import com.acrobtw.elei.service.UserService;
+import com.acrobtw.elei.service.security.AuthenticationService;
+import com.acrobtw.elei.service.user.UserService;
 
 import tools.jackson.databind.ObjectMapper;
 

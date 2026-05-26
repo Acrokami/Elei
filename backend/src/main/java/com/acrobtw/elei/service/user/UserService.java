@@ -1,4 +1,4 @@
-package com.acrobtw.elei.service;
+package com.acrobtw.elei.service.user;
 
 
 import org.springframework.security.crypto.password.PasswordEncoder;

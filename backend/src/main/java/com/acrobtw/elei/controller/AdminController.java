@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.acrobtw.elei.dto.admin.SystemStatsDto;
-import com.acrobtw.elei.service.AdminService;
+import com.acrobtw.elei.service.user.AdminService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

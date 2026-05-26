@@ -17,7 +17,7 @@ import com.acrobtw.elei.dto.activity.ActivityFeedItemDto;
 import com.acrobtw.elei.dto.activity.UserStatsDto;
 import com.acrobtw.elei.dto.activity.CreateActivityDto;
 import com.acrobtw.elei.entity.User;
-import com.acrobtw.elei.service.ActivityService;
+import com.acrobtw.elei.service.progression.ActivityService;
 
 import lombok.RequiredArgsConstructor;
 

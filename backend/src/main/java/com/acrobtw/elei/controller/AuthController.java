@@ -11,8 +11,7 @@ import com.acrobtw.elei.dto.auth.LoginResponse;
 import com.acrobtw.elei.dto.auth.LoginRequest;
 import com.acrobtw.elei.dto.auth.RegisterRequest;
 import com.acrobtw.elei.dto.auth.RegisterResponse;
-import com.acrobtw.elei.service.AuthenticationService;
-
+import com.acrobtw.elei.service.security.AuthenticationService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

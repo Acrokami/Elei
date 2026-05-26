@@ -1,4 +1,4 @@
-package com.acrobtw.elei.service;
+package com.acrobtw.elei.service.security;
 
 
 
@@ -17,6 +17,7 @@ import com.acrobtw.elei.entity.User;
 import com.acrobtw.elei.dto.auth.LoginRequest;
 import com.acrobtw.elei.repository.UserRepository;
 import com.acrobtw.elei.security.jwt.JwtService;
+import com.acrobtw.elei.service.user.UserService;
 
 import lombok.RequiredArgsConstructor;
 

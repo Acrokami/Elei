@@ -15,7 +15,8 @@ import com.acrobtw.elei.entity.User;
 import com.acrobtw.elei.exception.GlobalExceptionHandler;
 import com.acrobtw.elei.security.jwt.JwtAuthenticationFilter;
 import com.acrobtw.elei.security.jwt.JwtService;
-import com.acrobtw.elei.service.UserService;
+import com.acrobtw.elei.service.user.UserService;
+
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.userdetails.UserDetailsService;
