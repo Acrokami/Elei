@@ -35,5 +35,11 @@ jwt.secret=your_generated_secret_key
 # Time in ms (86400000 = 24 hours)
 jwt.expiration=86400000
 
+# Actuator
+management.endpoints.web.exposure.include=prometheus,health,info,metrics
+management.endpoint.prometheus.enabled=true
+management.prometheus.metrics.export.enabled=true
+
+
 # Frontend URL (e.g. http://localhost:5173 for local Vite dev server)
 app.frontend.url=
