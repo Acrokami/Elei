@@ -23,27 +23,50 @@ const progressPercentage = computed(() => {
 
 <template>
   <div class="stats-container">
-   <div class="stats-header">
-    <div class="stat-card">
-      <p class="stat-label">Total XP</p>
-      <p class="stat-value">{{ xp }}</p>
-    </div>
-    <div class="stat-card">
-      <p class="stat-label">Level</p>
-      <p class="stat-value">{{ level }}</p>
-    </div>
-  </div>
 
-  <div class="progress-section">
-      <div class="progress-labels">
-        <span>Level Progress</span>
-        <span>{{ xp }} / {{ nextLevelXp }} XP</span>
+    <div class="stats-header">
+      <div class="stat-card glass-panel">
+        <div class="stat-icon-wrapper blue-glow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-icon">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <p class="stat-label">Total XP</p>
+          <p class="stat-value">{{ xp }}</p>
+        </div>
       </div>
+
+      <div class="stat-card glass-panel">
+        <div class="stat-icon-wrapper purple-glow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-icon">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <p class="stat-label">Current Level</p>
+          <p class="stat-value">{{ level }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="progress-section glass-panel">
+      <div class="progress-labels">
+        <span class="progress-title">Level Progress</span>
+        <span class="progress-numbers"><span class="highlight">{{ xp }}</span> / {{ nextLevelXp }} XP</span>
+      </div>
+
       <div class="progress-bar-bg">
         <div
           class="progress-bar-fill"
           :style="{ width: progressPercentage + '%' }"
-        ></div>
+        >
+          <div class="progress-glow"></div>
+        </div>
+      </div>
+
+      <div class="progress-footer">
+        <span>{{ Math.round(progressPercentage) }}% to Level {{ level + 1 }}</span>
       </div>
     </div>
 
@@ -51,53 +74,177 @@ const progressPercentage = computed(() => {
 </template>
 
 <style scoped>
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
 .stats-container {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  width: 100%;
 }
-.stats-header {display: flex; gap:16px}
-.stat-card {flex: 1; background: #1e293b; border: 1px solid #1e293b; border-radius: 12px; padding: 20px;
-text-align: center;}
-.stat-label {color: #64748b; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 8px;}
-.stat-value { color: #f1f5f9; font-size: 32px; font-weight: 700; margin: 0; }
+
+
+.glass-panel {
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+
+.stats-header {
+  display: flex;
+  gap: 16px;
+}
+
+.stat-card {
+  flex: 1;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.stat-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+}
+
+.stat-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.blue-glow {
+  color: #3b82f6;
+  box-shadow: inset 0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+.purple-glow {
+  color: #a855f7;
+  box-shadow: inset 0 0 15px rgba(168, 85, 247, 0.2);
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  color: #94a3b8;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  margin: 0;
+}
+
+.stat-value {
+  color: #f8fafc;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
 
 
 .progress-section {
-  background: #1e293b;
-  border: 1px solid #334155;
-  border-radius: 12px;
-  padding: 16px 20px;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .progress-labels {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 12px;
+  align-items: flex-end;
+}
+
+.progress-title {
   font-size: 14px;
-  color: #94a3b8;
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.progress-numbers {
+  font-size: 14px;
+  color: #64748b;
   font-weight: 500;
 }
 
-
-.progress-labels span:last-child {
-  color: #f1f5f9;
+.progress-numbers .highlight {
+  color: #f8fafc;
+  font-weight: 700;
 }
 
 .progress-bar-bg {
   width: 100%;
   height: 12px;
-  background-color: #0f172a;
-  border-radius: 6px;
+  background-color: rgba(15, 23, 42, 0.6);
+  border-radius: 8px;
   overflow: hidden;
-  border: 1px solid #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .progress-bar-fill {
   height: 100%;
   background: linear-gradient(90deg, #3b82f6, #06b6d4);
-  border-radius: 6px;
-  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+  border-radius: 8px;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+
+.progress-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: shimmer 2.5s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.progress-footer {
+  text-align: right;
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
 }
 </style>

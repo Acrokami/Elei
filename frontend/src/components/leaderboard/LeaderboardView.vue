@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import  {ref, onMounted} from 'vue';
+import { useRouter } from 'vue-router';
 interface LeaderboardEntry {
     id: number;
     username: string;
     score:number;
 }
+
+const router = useRouter();
 const leaderboard = ref<LeaderboardEntry[]>([]);
 const isLoading = ref<boolean>(true);
 const errorMessage = ref<string | null>(null);
@@ -42,60 +45,187 @@ const getRankBadge = (index: number) => {
     if (index === 2) return '🥉';
     return `#${index + 1}`;
 };
+
+
+const handleHome = () => {
+  router.push('/');
+}
 </script>
 
 
 <template>
+  <div class="page-wrapper">
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+
+    <div class="topbar">
+      <span class="logo">Elei<span>.</span></span>
+      <button class="back-btn" @click="handleHome">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="back-icon">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Dashboard
+      </button>
+    </div>
 
     <div class="leaderboard-container">
-    <div class="header-section">
-      <h1 class="glow-title">Hall of Fame</h1>
-      <p class="subtitle">Top 10 citizens of Elei</p>
-    </div>
-
-    <div v-if="isLoading" class="status-message error-text">
-      <span class="loader-icon">⏰</span>
-      Loading rankings...
-    </div>
-
-    <div v-else-if="leaderboard.length === 0 " class="status-message">
-      No one is here yet. Be the first!
-    </div>
-
-
-
-    <TransitionGroup v-else name="list" tag="div" class="ranking-list">
-      <div
-        v-for="(player, index) in leaderboard"
-        :key="player.id"
-        class="rank-card"
-        :class="{ 'rank-1': index === 0, 'rank-2': index === 1, 'rank-3': index === 2 }"
-      >
-        <div class="rank-position">
-          <span class="badge">{{ getRankBadge(index) }}</span>
-        </div>
-
-        <div class="player-info">
-          <span class="player-name">{{ player.username }}</span>
-        </div>
-
-        <div class="player-score">
-          <span class="xp-value">{{ player.score }}</span>
-          <span class="xp-label">XP</span>
-        </div>
+      <div class="header-section">
+        <h1 class="glow-title">Hall of Fame</h1>
+        <p class="subtitle">Top 10 citizens of Elei</p>
       </div>
-    </TransitionGroup>
 
+      <div v-if="isLoading" class="status-message">
+        <span class="loader-icon">⌛</span>
+        Loading rankings...
+      </div>
+
+      <div v-else-if="errorMessage" class="status-message error-text">
+        {{ errorMessage }}
+      </div>
+
+      <div v-else-if="leaderboard.length === 0" class="status-message">
+        No one is here yet. Be the first!
+      </div>
+
+      <TransitionGroup v-else name="list" tag="div" class="ranking-list">
+        <div
+          v-for="(player, index) in leaderboard"
+          :key="player.id"
+          class="rank-card glass-panel"
+          :class="{ 'rank-1': index === 0, 'rank-2': index === 1, 'rank-3': index === 2 }"
+        >
+          <div class="rank-position">
+            <span class="badge">{{ getRankBadge(index) }}</span>
+          </div>
+
+          <div class="player-info">
+            <span class="player-name">{{ player.username }}</span>
+          </div>
+
+          <div class="player-score">
+            <span class="xp-value">{{ player.score }}</span>
+            <span class="xp-label">XP</span>
+          </div>
+        </div>
+      </TransitionGroup>
+    </div>
   </div>
-
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+.page-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #0b1120;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
+}
+
+
+.ambient-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  z-index: 0;
+  opacity: 0.2;
+  pointer-events: none;
+}
+.glow-1 {
+  width: 500px;
+  height: 500px;
+  background: rgba(251, 191, 36, 0.3);
+  top: -150px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.glow-2 {
+  width: 400px;
+  height: 400px;
+  background: rgba(59, 130, 246, 0.2);
+  bottom: 0;
+  right: -100px;
+}
+
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  background: rgba(11, 17, 32, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: linear-gradient(to right, #ffffff, #94a3b8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logo span {
+  color: #3b82f6;
+  -webkit-text-fill-color: #3b82f6;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(-2px);
+}
+
+.back-icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.back-btn:hover .back-icon {
+  transform: translateX(-3px);
+}
+
+
 .leaderboard-container {
   max-width: 800px;
+  width: 100%;
   margin: 0 auto;
   padding: 40px 20px;
   color: #e5e7eb;
+  position: relative;
+  z-index: 1;
 }
 
 .header-section {
@@ -118,11 +248,12 @@ const getRankBadge = (index: number) => {
   font-weight: 600;
 }
 
-
 .status-message {
   text-align: center;
   padding: 40px;
-  background: rgba(31, 40, 51, 0.2);
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 12px;
   color: #9ca3af;
   font-size: 1.1rem;
@@ -131,6 +262,7 @@ const getRankBadge = (index: number) => {
 .error-text {
   color: #ef4444;
   border: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.05);
 }
 
 .loader-icon {
@@ -148,20 +280,27 @@ const getRankBadge = (index: number) => {
   gap: 12px;
 }
 
+
+.glass-panel {
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
 .rank-card {
   display: flex;
   align-items: center;
   gap: 16px;
-  background: rgba(31, 40, 51, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 12px;
   padding: 16px 24px;
-  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .rank-card:hover {
   transform: translateX(5px);
-  background: rgba(31, 40, 51, 0.8);
+  background: rgba(30, 41, 59, 0.6);
+  border-color: rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
@@ -182,7 +321,7 @@ const getRankBadge = (index: number) => {
 .player-name {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #f3f4f6;
+  color: #f8fafc;
   letter-spacing: 0.02em;
 }
 
@@ -207,21 +346,20 @@ const getRankBadge = (index: number) => {
 
 
 .rank-1 {
-  background: linear-gradient(90deg, rgba(251, 191, 36, 0.1), rgba(31, 40, 51, 0.4));
+  background: linear-gradient(90deg, rgba(251, 191, 36, 0.15), rgba(30, 41, 59, 0.4));
   border-left: 4px solid #fbbf24;
 }
 .rank-1 .player-name { color: #fbbf24; }
 
 .rank-2 {
-  background: linear-gradient(90deg, rgba(156, 163, 175, 0.1), rgba(31, 40, 51, 0.4));
+  background: linear-gradient(90deg, rgba(156, 163, 175, 0.15), rgba(30, 41, 59, 0.4));
   border-left: 4px solid #9ca3af;
 }
 
 .rank-3 {
-  background: linear-gradient(90deg, rgba(180, 83, 9, 0.1), rgba(31, 40, 51, 0.4));
+  background: linear-gradient(90deg, rgba(180, 83, 9, 0.15), rgba(30, 41, 59, 0.4));
   border-left: 4px solid #d97706;
 }
-
 
 .list-enter-active,
 .list-leave-active {

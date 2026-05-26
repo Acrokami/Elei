@@ -50,126 +50,149 @@ const handleDeleteActivity = async (activityId: number) => {
 </script>
 
 <template>
-  <div class="categories">
-    <div
-      class="category-card"
-      v-for="category in categories"
-      :key="category.activityId"
-    >
-      <div class="category-info">
-        <div class="title-row">
-        <h3>{{ category.name }}</h3>
-        <button class="delete-btn" @click="handleDeleteActivity(category.activityId)" title="Delete">×</button>
-        </div>
-        <p>{{ category.userCategoryExperience }} XP collected</p>
-      </div>
+  <div class="categories-container">
 
-      <div class="activity-action">
-        <input
-          type="number"
-          v-model="amounts[category.activityId]"
-          :placeholder="category.unitName"
-          class="amount-input"
-          min="1"
-        />
-        <button
-          class="add-btn"
-          @click="handleAddActivity(category.activityId)"
-          :disabled="!amounts[category.activityId]"
-        >
-          +
-        </button>
+    <TransitionGroup v-if="categories && categories.length > 0" name="list" tag="div" class="categories">
+      <div
+        class="category-card glass-panel"
+        v-for="category in categories"
+        :key="category.activityId"
+      >
+        <div class="category-info">
+          <div class="title-row">
+            <h3>{{ category.name }}</h3>
+            <button class="delete-btn" @click="handleDeleteActivity(category.activityId)" title="Delete category">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          </div>
+
+          <div class="xp-badge">
+            <span class="xp-value">{{ category.userCategoryExperience }}</span>
+            <span class="xp-label">XP Collected</span>
+          </div>
+        </div>
+
+        <div class="activity-action">
+          <div class="input-wrapper">
+            <input
+              type="number"
+              v-model="amounts[category.activityId]"
+              :placeholder="category.unitName"
+              class="amount-input"
+              min="1"
+            />
+          </div>
+          <button
+            class="add-btn"
+            @click="handleAddActivity(category.activityId)"
+            :disabled="!amounts[category.activityId]"
+            title="Add progress"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        </div>
       </div>
+    </TransitionGroup>
+
+    <div v-else class="empty-state glass-panel">
+      <div class="empty-icon-wrapper">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="12" y1="8" x2="12" y2="16"></line>
+          <line x1="8" y1="12" x2="16" y2="12"></line>
+        </svg>
+      </div>
+      <p class="empty-title">No categories found</p>
+      <p class="empty-subtitle">Create your first category above to start tracking progress.</p>
     </div>
+
   </div>
 </template>
 
 <style scoped>
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+.categories-container {
+  width: 100%;
+}
+
 .categories {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
+
+
+.glass-panel {
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
 .category-card {
-  background: #1e293b;
-  border: 1px solid #1e293b;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 20px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: border-color 0.2s;
+  transition: all 0.3s ease;
 }
+
 .category-card:hover {
-  border-color: #334155;
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(30, 41, 59, 0.6);
+  transform: translateY(-2px);
 }
-.category-info h3 {
-  color: #f1f5f9;
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 4px;
-}
-.category-info p {
-  color: #64748b;
-  font-size: 13px;
-  margin: 0;
-}
-.activity-action {
+
+.category-info {
   display: flex;
+  flex-direction: column;
   gap: 8px;
-  align-items: center;
-}
-.amount-input {
-  width: 100px;
-  background: #0f172a;
-  border: 1px solid #334155;
-  border-radius: 8px;
-  padding: 8px 12px;
-  color: #f1f5f9;
-  outline: none;
-  font-size: 14px;
-  transition: border-color 0.2s;
-}
-.amount-input:focus {
-  border-color: #38bdf8;
-}
-.add-btn {
-  padding: 8px 14px;
-  background: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.add-btn:hover:not(:disabled) {
-  background: #1d4ed8;
-}
-.add-btn:disabled {
-  background: #334155;
-  color: #64748b;
-  cursor: not-allowed;
+  flex: 1;
+  padding-right: 20px;
 }
 
 .title-row {
-  display:flex;
-  justify-content: space-between;
+  display: flex;
   align-items: center;
-  margin-bottom: 4px;
+  gap: 12px;
+}
+
+.category-info h3 {
+  color: #f8fafc;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.01em;
 }
 
 .delete-btn {
   background: transparent;
   color: #64748b;
   border: none;
-  font-size: 20px;
-  line-height: 1;
+  padding: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  padding: 0 4px;
-  border-radius: 4px;
-  transition: color 0.2s, background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.delete-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
 .delete-btn:hover {
@@ -177,10 +200,147 @@ const handleDeleteActivity = async (activityId: number) => {
   background: rgba(239, 68, 68, 0.1);
 }
 
-.category-info h3 {
+.xp-badge {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.xp-value {
+  color: #10b981;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.xp-label {
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.activity-action {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.amount-input {
+  width: 120px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px 14px;
   color: #f1f5f9;
+  outline: none;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.amount-input:focus {
+  border-color: #38bdf8;
+  background: rgba(15, 23, 42, 0.8);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+}
+
+.amount-input::placeholder {
+  color: #475569;
+}
+
+.add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  flex-shrink: 0;
+}
+
+.add-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.add-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+}
+
+.add-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.add-btn:disabled {
+  background: rgba(255, 255, 255, 0.05);
+  color: #475569;
+  box-shadow: none;
+  cursor: not-allowed;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  border-radius: 16px;
+}
+
+.empty-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  background: rgba(56, 189, 248, 0.1);
+  color: #38bdf8;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.empty-icon-wrapper svg {
+  width: 24px;
+  height: 24px;
+}
+
+.empty-title {
+  color: #f8fafc;
   font-size: 16px;
   font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
+.empty-subtitle {
+  color: #64748b;
+  font-size: 14px;
   margin: 0;
+}
+
+
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+.list-leave-active {
+  position: absolute;
+  width: 100%;
 }
 </style>
