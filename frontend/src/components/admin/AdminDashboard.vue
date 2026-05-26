@@ -14,6 +14,7 @@ const router = useRouter();
 const stats = ref<SystemStats | null>(null);
 const isLoading = ref<boolean>(true);
 const errorMessage = ref<string>('');
+const grafanaUrl = import.meta.env.VITE_GRAFANA_URL;
 
 
 onMounted(async () => {
@@ -49,8 +50,21 @@ const handleHome = () => {
 <template>
   <div class="dashboard-container">
 
+
+
     <div class="topbar">
       <span class="logo">Elei<span class="logo-dot">.</span></span>
+
+
+      <div class="topbar-actions">
+        <a :href="grafanaUrl" target="_blank" rel="noopener noreferrer" class="grafana-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="action-icon">
+            <path d="M2 12h4l2-9 5 18 2-9h5"></path>
+          </svg>
+          Grafana
+        </a>
+      </div>
+
       <button class="back-btn" @click="handleHome">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="back-icon">
           <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -148,6 +162,40 @@ const handleHome = () => {
   position: sticky;
   top: 0;
   z-index: 50;
+}
+
+.back-btn, .grafana-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(102, 252, 241, 0.05);
+  color: #c5c6c7;
+  border: 1px solid rgba(102, 252, 241, 0.2);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.back-btn:hover, .grafana-btn:hover {
+  background: rgba(102, 252, 241, 0.1);
+  border-color: rgba(102, 252, 241, 0.4);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.grafana-btn:hover {
+  background: rgba(244, 104, 0, 0.1);
+  border-color: rgba(244, 104, 0, 0.4);
+  color: #ff9d5c;
+}
+
+.action-icon {
+  width: 16px;
+  height: 16px;
 }
 
 .logo {
