@@ -39,27 +39,38 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) authentication;
         OAuth2User oAuth2User = token.getPrincipal();
 
-        String email = oAuth2User.getAttribute("email");
-        String username = oAuth2User.getAttribute("login");
+        String provider = token.getAuthorizedClientRegistrationId();
 
-        if(email == null) {
-            email = username + "@github.local";
+        String email = null;
+        String username = null;
+
+        if("github".equalsIgnoreCase(provider)) {
+            username = oAuth2User.getAttribute("login");
+            email = oAuth2User.getAttribute("email");
+            if(email == null) {
+                email = username + "@github.local";
+            }
+        } else if ("google".equalsIgnoreCase(provider)) {
+            email = oAuth2User.getAttribute("email");
+            username = email != null ? email.split("@")[0] : oAuth2User.getAttribute("name");
         }
 
         String finalEmail = email;
-        User user = userRepository.findByUsername(username).orElseGet(() -> {
+        String finalUsername = username;
+
+        User user = userRepository.findByUsername(finalUsername).orElseGet(() -> {
             User newUser = new User();
-            newUser.setUsername(username);
+            newUser.setUsername(finalUsername);
             newUser.setEmail(finalEmail);
             newUser.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
-            newUser.setTotalExperience((long)0);
+            newUser.setTotalExperience(0L);
             return userRepository.save(newUser);
         });
-        String jwtToken = jwtService.generateToken(user);
 
+        String jwtToken = jwtService.generateToken(user);
         String targetUrl = UriComponentsBuilder.fromUriString(frontendUrl + "/oauth2/redirect")
-        .queryParam("token", jwtToken)
-        .build().toUriString();
+                .queryParam("token", jwtToken)
+                .build().toUriString();
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
