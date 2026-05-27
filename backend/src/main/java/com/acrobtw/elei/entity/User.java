@@ -1,5 +1,6 @@
 package com.acrobtw.elei.entity;
 
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -7,6 +8,9 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.acrobtw.elei.enums.AuthProvider;
+import com.acrobtw.elei.enums.Role;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -47,8 +51,12 @@ public class User implements UserDetails {
     @Column(name = "total_experience")
     private Long totalExperience = 0L;
 
-    @Column(name = "provider")
-    private String provider = "local";
+    @Enumerated(EnumType.STRING)
+    @Column(name = "provider", nullable = false)
+    private AuthProvider provider = AuthProvider.LOCAL;
+
+    @Column(name = "provider_id")
+    private String providerId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
@@ -66,6 +74,7 @@ public class User implements UserDetails {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.provider = AuthProvider.LOCAL;
     }
 
     public void changePassword(String newEncodedPassword) {
