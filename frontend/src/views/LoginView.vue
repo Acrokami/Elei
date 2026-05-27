@@ -1,16 +1,25 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import authService from '../service/auth.service';
 
 
 const router = useRouter();
+const route = useRoute();
 const errorMessage = ref('');
 
 const username = ref('');
 const password = ref('');
 const apiUrl = import.meta.env.VITE_API_URL;
 
+
+onMounted(() => {
+  const errorParam = route.query.error;
+  if(errorParam === 'provider_conflict') {
+    errorMessage.value = 'This email is already linked to another provider. Please use the correct login method.';
+    router.replace({ query: {} });
+  }
+})
 
 const handleLogin = async() => {
      try {
@@ -97,7 +106,7 @@ const handleRegister = () => {
           Don't have an account? <span>Sign up</span>
         </button>
       </div>
-    
+
 
  </div>
 </template>
