@@ -1,4 +1,4 @@
-package com.acrobtw.elei.entity;
+package com.acrobtw.elei.enums;
 
 public enum Role {
     USER,
