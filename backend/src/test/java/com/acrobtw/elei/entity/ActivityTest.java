@@ -5,8 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 
+import com.acrobtw.elei.domain.activity.Activity;
+import com.acrobtw.elei.domain.activity.ActivityRepository;
+import com.acrobtw.elei.domain.user.User;
+
 import static org.junit.jupiter.api.Assertions.*;
-import com.acrobtw.elei.repository.ActivityRepository;
 
 @DataJpaTest
 @SuppressWarnings("unused")

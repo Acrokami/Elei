@@ -4,9 +4,11 @@ package com.acrobtw.elei.entity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
-import org.junit.jupiter.api.Test;
 
-import com.acrobtw.elei.repository.UserRepository;
+import com.acrobtw.elei.domain.user.User;
+import com.acrobtw.elei.domain.user.UserRepository;
+
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 

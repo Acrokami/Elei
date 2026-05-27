@@ -9,7 +9,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.acrobtw.elei.entity.User;
+import com.acrobtw.elei.core.security.jwt.JwtService;
+import com.acrobtw.elei.domain.user.User;
 
 import io.jsonwebtoken.ExpiredJwtException;
 

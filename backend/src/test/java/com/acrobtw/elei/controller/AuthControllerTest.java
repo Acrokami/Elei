@@ -15,12 +15,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.ArgumentMatchers.any;
 
-import com.acrobtw.elei.dto.auth.RegisterRequest;
-import com.acrobtw.elei.dto.auth.RegisterResponse;
-import com.acrobtw.elei.exception.GlobalExceptionHandler;
-import com.acrobtw.elei.security.jwt.JwtAuthenticationFilter;
-import com.acrobtw.elei.service.security.AuthenticationService;
-import com.acrobtw.elei.service.user.UserService;
+import com.acrobtw.elei.core.exception.GlobalExceptionHandler;
+import com.acrobtw.elei.core.security.jwt.JwtAuthenticationFilter;
+import com.acrobtw.elei.domain.auth.AuthController;
+import com.acrobtw.elei.domain.auth.AuthenticationService;
+import com.acrobtw.elei.domain.auth.dto.RegisterRequest;
+import com.acrobtw.elei.domain.auth.dto.RegisterResponse;
+import com.acrobtw.elei.domain.user.UserService;
 
 import tools.jackson.databind.ObjectMapper;
 

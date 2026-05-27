@@ -9,13 +9,14 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.acrobtw.elei.config.SecurityConfig;
-import com.acrobtw.elei.dto.activity.ActivityCompletionDto;
-import com.acrobtw.elei.entity.User;
-import com.acrobtw.elei.exception.GlobalExceptionHandler;
-import com.acrobtw.elei.security.jwt.JwtAuthenticationFilter;
-import com.acrobtw.elei.security.jwt.JwtService;
-import com.acrobtw.elei.service.user.UserService;
+import com.acrobtw.elei.core.config.SecurityConfig;
+import com.acrobtw.elei.core.exception.GlobalExceptionHandler;
+import com.acrobtw.elei.core.security.jwt.JwtAuthenticationFilter;
+import com.acrobtw.elei.core.security.jwt.JwtService;
+import com.acrobtw.elei.domain.activity.ActivityController;
+import com.acrobtw.elei.domain.activity.dto.ActivityCompletionDto;
+import com.acrobtw.elei.domain.user.User;
+import com.acrobtw.elei.domain.user.UserService;
 
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationProvider;

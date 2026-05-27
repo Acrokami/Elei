@@ -1,0 +1,26 @@
+package com.acrobtw.elei.domain.leaderboard;
+
+import java.util.Set;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.acrobtw.elei.domain.leaderboard.dto.LeaderboardEntryDto;
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequestMapping("/api/leaderboard")
+@RequiredArgsConstructor
+public class LeaderboardController {
+
+    private final LeaderboardService leaderboardService;
+
+    @GetMapping("/top")
+    public ResponseEntity<Set<LeaderboardEntryDto>> getTopDashboard(@RequestParam(defaultValue = "10")int limit) {
+        return ResponseEntity.ok(leaderboardService.getTopPlayers(limit));
+    }
+}
