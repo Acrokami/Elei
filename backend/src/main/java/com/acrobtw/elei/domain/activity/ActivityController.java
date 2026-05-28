@@ -2,6 +2,7 @@ package com.acrobtw.elei.domain.activity;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +21,7 @@ import com.acrobtw.elei.domain.user.User;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 
@@ -34,16 +36,16 @@ public class ActivityController {
     @Operation(summary = "Create an activity", description = "Adds a new task or activity for the current user")
     @PostMapping
     public ResponseEntity<Void> createActivity(
-        @RequestBody CreateActivityDto dto,
+        @Valid @RequestBody CreateActivityDto dto,
         @AuthenticationPrincipal User user) {
         activityService.createActivity(user.getId(), dto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @Operation(summary = "Complete an activity", description = "Awards experience points for completing activity units")
     @PostMapping("/complete")
     public ResponseEntity<Void> completeActivity(
-        @RequestBody ActivityCompletionDto dto,
+        @Valid @RequestBody ActivityCompletionDto dto,
         @AuthenticationPrincipal User user
     ) {
         activityService.addExperience(user.getId(), dto.activityId(), dto.unitsCompleted());
@@ -69,7 +71,7 @@ public class ActivityController {
     @Operation(summary = "Delete an activity", description = "Permanently removes an activity by its ID")
     @DeleteMapping("/{activityId}")
     public ResponseEntity<Void>deleteActivity(
-        @PathVariable Long activityId,
+        @PathVariable("activityId") Long activityId,
         @AuthenticationPrincipal User user
     ) {
         activityService.deleteActivity(user.getId(), activityId);
