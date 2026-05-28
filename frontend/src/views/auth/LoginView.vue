@@ -52,18 +52,18 @@ const handleRegister = () => {
             <p>Enter your credentials to continue</p>
         </div>
 
-        <div class="form-container">
+        <form class="form-container" @submit.prevent="handleLogin">
           <div class="input-group">
             <label>Login</label>
             <div class="input-wrapper">
-              <input v-model="username" type="text" placeholder="Enter your login"/>
+              <input v-model="username" type="text" placeholder="Enter your login" required/>
             </div>
           </div>
 
           <div class="input-group">
             <label>Password</label>
             <div class="input-wrapper">
-              <input v-model="password" type="password" placeholder="Enter your password"/>
+              <input v-model="password" type="password" placeholder="Enter your password" required/>
             </div>
           </div>
 
@@ -73,10 +73,10 @@ const handleRegister = () => {
             </p>
           </Transition>
 
-          <button class="login-btn" @click="handleLogin" type="submit">
+          <button class="login-btn" type="submit">
             Login
           </button>
-        </div>
+        </form>
 
         <div class="divider">
           <span>or continue with</span>
@@ -313,7 +313,7 @@ input::placeholder {
   padding: 0 12px;
 }
 
--login-grid {
+.login-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;

@@ -1,14 +1,16 @@
 package com.acrobtw.elei.domain.activity;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import java.util.Map;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.acrobtw.elei.core.exception.ResourceNotFoundException;
 import com.acrobtw.elei.domain.activity.dto.ActivityFeedItemDto;
-import com.acrobtw.elei.domain.activity.dto.CategoryProgressDto;
+import com.acrobtw.elei.domain.activity.dto.ActivityProgressDto;
 import com.acrobtw.elei.domain.activity.dto.CreateActivityDto;
 import com.acrobtw.elei.domain.activity.dto.UserStatsDto;
 import com.acrobtw.elei.domain.leaderboard.LeaderboardService;
@@ -21,7 +23,10 @@ import com.acrobtw.elei.kafka.LevelUpProducer;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ActivityService {
@@ -91,27 +96,35 @@ public class ActivityService {
     @Cacheable(value = "userStats", key = "#userId")
     @Transactional
     public UserStatsDto getUserStats(Long userId) {
-        System.out.println("[DB] We're going to a heavy PostgreSQL database for statistics...");
+        log.info("[DB] Fetching heavy PostgreSQL statistics for user ID: {}", userId);
         User user = userRepository.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException("User", userId));
-        Long totalXp = user.getTotalExperience() != null ? user.getTotalExperience() : 0;
 
+        Long totalXp = user.getTotalExperience() != null ? user.getTotalExperience() : 0;
         Long currentLevel = levelService.calculateLevel(totalXp);
         Long nextLevelUp = levelService.calculateNextLevelUp(currentLevel);
 
 
         List<Activity> userActivities = activityRepository.findByUserId(userId);
+        List<Object[]> groupedXp = experienceLogRepository.sumAllPointsByUserGroupedByActivity(userId);
 
-        List<CategoryProgressDto> categories = userActivities.stream()
+        Map<Long, Integer> xpByActivityMap = groupedXp.stream()
+                .collect(Collectors.toMap(
+                        row -> (Long) row[0],
+                        row -> ((Number) row[1]).intValue()
+                ));
+
+        List<ActivityProgressDto> categories = userActivities.stream()
                 .map(activity -> {
-                    Integer sum = experienceLogRepository.sumPointsByUserAndActivity(userId, activity.getId());
-                    int safeSum = (sum != null) ? sum : 0;
-                    return new CategoryProgressDto(
+                    int sum = xpByActivityMap.getOrDefault(activity.getId(), 0);
+
+                    return new ActivityProgressDto(
                             activity.getId(),
                             activity.getName(),
                             activity.getPointsMultiplier(),
-                            safeSum,
-                            activity.getUnitName());
+                            sum,
+                            activity.getUnitName()
+                    );
                 })
                 .toList();
 

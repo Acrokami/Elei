@@ -1,20 +1,22 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import type { components } from '../../types/api-schemas';
 import activityService from "../../service/activity.service";
 
+type CreateActivityDto = components['schemas']['CreateActivityDto'];
 const emit = defineEmits(["activity-created"]);
 
 const showCreateForm = ref(false);
-const newActivity = ref({
+const newActivity = ref<CreateActivityDto>({
   name: "",
-  pointsMultiplier: 0,
+  pointsMultiplier: 1,
   unitName: "",
 });
 
 const handleCreateActivity = async () => {
   try {
     await activityService.createActivity(newActivity.value);
-    newActivity.value = { name: "", pointsMultiplier: 0, unitName: "" };
+    newActivity.value = { name: "", pointsMultiplier: 1, unitName: "" };
     showCreateForm.value = false;
 
     emit("activity-created");

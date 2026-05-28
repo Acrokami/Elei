@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
+import type { components } from '../../types/api-schemas';
 import activityService from "../../service/activity.service";
 
+type ActivityProgressDto = components['schemas']['ActivityProgressDto'];
+
 const props = defineProps<{
-  categories: any[];
+  categories: ActivityProgressDto[];
 }>();
 
 const emit = defineEmits(['experience-added', 'activity-deleted']);
@@ -13,7 +16,7 @@ const amounts = ref<Record<number, number | string>>({});
 watch(
   () => props.categories,
   (newCategories) => {
-    newCategories.forEach((cat: any) => {
+    newCategories.forEach((cat: ActivityProgressDto) => {
       if (amounts.value[cat.activityId] === undefined) {
         amounts.value[cat.activityId] = "";
       }

@@ -12,6 +12,7 @@ public record ActivityCompletionDto(
     Long activityId,
 
     @Schema(description = "Amount of units completed in this transaction", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull
     @Min(1)
     Integer unitsCompleted
 ) {}

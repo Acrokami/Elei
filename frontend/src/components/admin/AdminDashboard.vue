@@ -1,45 +1,34 @@
 <script setup lang="ts">
-import {ref, onMounted} from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import api from '../../service/api';
+import type { components } from '../../types/api-schemas';
 
-
-
-interface SystemStats {
-    totalUsers: number;
-    totalActivities: number;
-    totalExperienceLogs: number;
-}
+type SystemStatsDto = components['schemas']['SystemStatsDto'];
 
 const router = useRouter();
-const stats = ref<SystemStats | null>(null);
+
+const stats = ref<SystemStatsDto | null>(null);
 const isLoading = ref<boolean>(true);
 const errorMessage = ref<string>('');
 const grafanaUrl = import.meta.env.VITE_GRAFANA_URL;
 
-
 onMounted(async () => {
     try {
-        const token = localStorage.getItem('user_token');
-        const response = await fetch('http://localhost:8080/api/admin/telemetry', {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        if(response.status === 403) {
-            throw new Error('Access Denied: Level 4 Security Clearance (ADMIN) required');
-        }
-        if (!response.ok) {
-            throw new Error('Failed to synchronize with backend server.');
-        }
-
-        stats.value = await response.json();
+        isLoading.value = true;
+        const response = await api.get<SystemStatsDto>('/admin/telemetry');
+        stats.value = response.data;
     } catch (error: any) {
-        errorMessage.value = error.message;
+        if (error.message && error.message.includes('403')) {
+            errorMessage.value = 'Access Denied: Level 4 Security Clearance (ADMIN) required';
+        } else {
+            errorMessage.value = error.message || 'Failed to synchronize with backend server.';
+        }
     } finally {
         isLoading.value = false;
     }
 });
+
 
 const handleHome = () => {
   router.push('/');

@@ -1,42 +1,32 @@
 <script setup lang="ts">
-import  {ref, onMounted} from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-interface LeaderboardEntry {
-    id: number;
-    username: string;
-    score:number;
-}
+import leaderboardService from '../../service/leaderboard.service';
+import type { LeaderboardEntryDto } from '../../service/leaderboard.service';
 
 const router = useRouter();
-const leaderboard = ref<LeaderboardEntry[]>([]);
+const leaderboard = ref<LeaderboardEntryDto[]>([]);
 const isLoading = ref<boolean>(true);
 const errorMessage = ref<string | null>(null);
 
 const fetchLeaderboard = async () => {
     try {
-        const token = localStorage.getItem('user_token');
-        const response = await fetch('http://localhost:8080/api/leaderboard/top?limit=10', {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
+        isLoading.value = true;
+        errorMessage.value = null;
 
-        if(response.ok) {
-            leaderboard.value = await response.json();
-        } else {
-            errorMessage.value = 'Failed to load leaderboard. The server returned an error..';
-        }
+        
+        leaderboard.value = await leaderboardService.getTopCitizens(10);
 
     } catch (error) {
         console.error('Failed to load leaderboard', error);
-        errorMessage.value = 'Server connection error.';
+        errorMessage.value = 'Failed to load leaderboard. Server connection error.';
     } finally {
         isLoading.value = false;
     }
 };
 
 onMounted(() => {
-    fetchLeaderboard()
+    fetchLeaderboard();
 });
 
 const getRankBadge = (index: number) => {
@@ -45,7 +35,6 @@ const getRankBadge = (index: number) => {
     if (index === 2) return '🥉';
     return `#${index + 1}`;
 };
-
 
 const handleHome = () => {
   router.push('/');

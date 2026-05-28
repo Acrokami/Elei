@@ -12,7 +12,7 @@ public record CreateActivityDto(
     @NotBlank
     String name,
 
-    @Schema(description = "Experience points multiplier for this specific activity", example = "1")
+    @Schema(description = "Experience points multiplier for this specific activity", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     @Min(1)
     Integer pointsMultiplier,
 

@@ -2,6 +2,11 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import activityService from "../service/activity.service";
+
+
+import type { ActivityFeedItemDto } from "../service/activity.service";
+import type { components } from "../types/api-schemas";
+
 import UserStats from "../components/activity/UserStats.vue";
 import CreateActivityForm from "../components/activity/CreateActivityForm.vue";
 import ActivityList from "../components/activity/ActivityList.vue";
@@ -9,12 +14,16 @@ import ActivityFeed from "../components/activity/ActivityFeed.vue";
 
 const router = useRouter();
 
+
+type ActivityProgressDto = components['schemas']['ActivityProgressDto'];
+
 const totalExperience = ref(0);
 const currentLevel = ref(1);
-const categories = ref<any[]>([]);
-const feed = ref<any[]>([]);
-
 const nextLevelXp = ref(100);
+
+
+const categories = ref<ActivityProgressDto[]>([]);
+const feed = ref<ActivityFeedItemDto[]>([]);
 
 const loadStats = async () => {
   try {

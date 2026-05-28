@@ -2,22 +2,28 @@ package com.acrobtw.elei.domain.auth.dto;
 
 import java.time.LocalDateTime;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "User registration response with JWT token and status details")
 public record RegisterResponse(
 
-    @Schema(description = "HTTP status code or internal operation status", example = "200")
+    @Schema(description = "HTTP status code or internal operation status", example = "200", requiredMode = Schema.RequiredMode.REQUIRED)
     int status,
 
-    @Schema(description = "Informational message regarding the registration result", example = "User successfully registered")
+    @Schema(description = "Informational message regarding the registration result", example = "User successfully registered", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotBlank
     String message,
 
-    @Schema(description = "The registered username", example = "acrobtw")
+    @Schema(description = "The registered username", example = "acrobtw", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotBlank
     String username,
 
-    @Schema(description = "JWT access token for immediate API authorization", example = "eyJhbGciOiJIUzI1NiIsInR5c...")
+    @Schema(description = "JWT access token for immediate API authorization", example = "eyJhbGciOiJIUzI1NiIsInR5c...", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotBlank
     String token,
 
-    @Schema(description = "Timestamp of the successful registration process")
+    @Schema(description = "Timestamp of the successful registration process", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull
     LocalDateTime timestamp
 ) {}

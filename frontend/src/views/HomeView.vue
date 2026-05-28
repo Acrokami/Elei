@@ -2,10 +2,14 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router'
 import userService from '../service/user.service';
+
+import type { UserProfileResponse } from '../service/user.service';
 import authService from '../service/auth.service';
 
 const router = useRouter();
-const userProfile = ref<any>(null)
+
+
+const userProfile = ref<UserProfileResponse | null>(null);
 const isAdmin = ref(false);
 
 onMounted(async () => {
