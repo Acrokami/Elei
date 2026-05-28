@@ -1,8 +1,8 @@
 import {createRouter, createWebHistory} from 'vue-router';
-import LoginView from '../views/LoginView.vue';
-import RegisterView from '../views/RegisterView.vue';
+import LoginView from '../views/auth/LoginView.vue';
+import RegisterView from '../views/auth/RegisterView.vue';
 import ActivityView from '../views/ActivityView.vue';
-import OAuth2Redirect from '../components/OAuth2Redirect.vue';
+import OAuth2Redirect from '../views/auth/OAuth2Redirect.vue';
 import AdminDashboard from '../components/admin/AdminDashboard.vue';
 import LeaderboardView from '../components/leaderboard/LeaderboardView.vue';
 

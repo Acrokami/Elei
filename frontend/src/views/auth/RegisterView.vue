@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, type Ref, } from 'vue';
 import { useRouter } from 'vue-router';
-import authService from '../service/auth.service';
+import authService from '../../service/auth.service';
 
 
 

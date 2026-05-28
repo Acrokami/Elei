@@ -18,17 +18,20 @@ import com.acrobtw.elei.domain.activity.dto.CreateActivityDto;
 import com.acrobtw.elei.domain.activity.dto.UserStatsDto;
 import com.acrobtw.elei.domain.user.User;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 
 @RestController
 @RequestMapping("/api/activity")
 @RequiredArgsConstructor
+@Tag(name = "Activity", description = "User activity and progress management")
 public class ActivityController {
 
     private final ActivityService activityService;
 
-
+    @Operation(summary = "Create an activity", description = "Adds a new task or activity for the current user")
     @PostMapping
     public ResponseEntity<Void> createActivity(
         @RequestBody CreateActivityDto dto,
@@ -37,6 +40,7 @@ public class ActivityController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Complete an activity", description = "Awards experience points for completing activity units")
     @PostMapping("/complete")
     public ResponseEntity<Void> completeActivity(
         @RequestBody ActivityCompletionDto dto,
@@ -46,6 +50,7 @@ public class ActivityController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Get user statistics", description = "Returns aggregated activity statistics for the current user")
     @GetMapping("/stats")
     public ResponseEntity<UserStatsDto> getActivityStats(
         @AuthenticationPrincipal User user
@@ -53,12 +58,15 @@ public class ActivityController {
         return ResponseEntity.ok(activityService.getUserStats(user.getId()));
     }
 
+
+    @Operation(summary = "Get activity feed", description = "Returns a list of recent activities to display in the feed")
     @GetMapping("/feed")
     public ResponseEntity<List<ActivityFeedItemDto>> getFeed(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(activityService.getActivityFeed(user.getId()));
     }
 
 
+    @Operation(summary = "Delete an activity", description = "Permanently removes an activity by its ID")
     @DeleteMapping("/{activityId}")
     public ResponseEntity<Void>deleteActivity(
         @PathVariable Long activityId,

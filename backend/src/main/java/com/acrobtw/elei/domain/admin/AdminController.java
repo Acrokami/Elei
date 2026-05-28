@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.acrobtw.elei.domain.admin.dto.SystemStatsDto;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,9 +17,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
+@Tag(name = "Admin", description = "Administrative panel and system telemetry")
 public class AdminController {
     private final AdminService adminService;
 
+    @Operation(summary = "Get system telemetry", description = "Returns global system statistics. Requires ADMIN role")
     @GetMapping("/telemetry")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SystemStatsDto> getSystemTelemetry() {

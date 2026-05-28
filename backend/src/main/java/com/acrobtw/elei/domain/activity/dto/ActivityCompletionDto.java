@@ -1,6 +1,13 @@
 package com.acrobtw.elei.domain.activity.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Payload for submitting progress on a specific activity")
 public record ActivityCompletionDto(
+    
+    @Schema(description = "Unique identifier of the target activity", example = "42", requiredMode = Schema.RequiredMode.REQUIRED)
     Long activityId,
+
+    @Schema(description = "Amount of units completed in this transaction", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     Integer unitsCompleted
 ) {}
