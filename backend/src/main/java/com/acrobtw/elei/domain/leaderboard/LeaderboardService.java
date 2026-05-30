@@ -4,7 +4,6 @@ package com.acrobtw.elei.domain.leaderboard;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,8 +32,9 @@ public class LeaderboardService {
     private final UserRepository userRepository;
     private static final String LEADERBOARD_KEY = "elei:leaderboard";
 
-    public void updateScore(Long userId, Long newTotalXp) {
-        redisTemplate.opsForZSet().add(LEADERBOARD_KEY, userId.toString(), newTotalXp.doubleValue());
+    public void updateScore(Long userId, String username, Long newTotalXp) {
+        String member = userId + ":" + username;
+        redisTemplate.opsForZSet().add(LEADERBOARD_KEY, member, newTotalXp.doubleValue());
     }
 
 
@@ -46,27 +46,30 @@ public class LeaderboardService {
             return Collections.emptySet();
         }
 
-        List<Long> userIds = topRedis.stream()
-            .filter(tuple -> tuple.getValue() != null)
-            .map(tuple -> Long.parseLong(tuple.getValue()))
-            .toList();
-
-        List<User> users = userRepository.findAllById(userIds);
-        Map<Long, String> usernameMap = users.stream()
-            .collect(Collectors.toMap(User::getId, User::getUsername));
-
         return topRedis.stream()
         .filter(tuple -> tuple.getValue() != null)
         .map(tuple -> {
-            Long id = Long.parseLong(tuple.getValue());
-            String name = usernameMap.getOrDefault(id, "Unknown Citizen");
+            String member = tuple.getValue();
+            String[] parts = member.split(":", 2);
+
+            Long id = 0L;
+            String name = "Unknown citizen";
+            if(parts.length == 2) {
+                try {
+                    id = Long.parseLong(parts[0]);
+                    name = parts[1];
+                } catch (NumberFormatException ignored) {}
+            } else {
+                try {
+                    id = Long.parseLong(parts[0]);
+                } catch (NumberFormatException ignored) {}
+            }
             Long score = tuple.getScore() != null ? tuple.getScore().longValue() : 0L;
 
             return new LeaderboardEntryDto(id, name, score);
         })
         .collect(Collectors.toCollection(LinkedHashSet::new));
     }
-
     public Optional<Long> getUserRank(Long userId) {
         Long rank = redisTemplate.opsForZSet().reverseRank(LEADERBOARD_KEY, userId.toString());
         return Optional.ofNullable(rank).map(r -> r + 1);
