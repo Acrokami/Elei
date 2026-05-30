@@ -1,6 +1,7 @@
 package com.acrobtw.elei.domain.user;
 
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -52,6 +53,13 @@ public class User implements UserDetails {
     @Column(name = "total_experience")
     private Long totalExperience = 0L;
 
+
+    @Column(name = "current_streak")
+    private Integer currentStreak = 0;
+
+    @Column(name = "last_activity_date")
+    private LocalDate lastActivityDate;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "provider", nullable = false)
     private AuthProvider provider = AuthProvider.LOCAL;
@@ -91,7 +99,7 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
     }
 
     @Override
