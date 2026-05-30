@@ -13,8 +13,6 @@ const fetchLeaderboard = async () => {
     try {
         isLoading.value = true;
         errorMessage.value = null;
-
-        
         leaderboard.value = await leaderboardService.getTopCitizens(10);
 
     } catch (error) {

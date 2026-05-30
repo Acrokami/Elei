@@ -12,10 +12,10 @@ import com.acrobtw.elei.core.exception.ResourceNotFoundException;
 import com.acrobtw.elei.domain.activity.dto.ActivityFeedItemDto;
 import com.acrobtw.elei.domain.activity.dto.ActivityProgressDto;
 import com.acrobtw.elei.domain.activity.dto.CreateActivityDto;
-import com.acrobtw.elei.domain.activity.dto.UserStatsDto;
 import com.acrobtw.elei.domain.leaderboard.LeaderboardService;
 import com.acrobtw.elei.domain.user.User;
 import com.acrobtw.elei.domain.user.UserRepository;
+import com.acrobtw.elei.domain.user.dto.UserStatsDto;
 import com.acrobtw.elei.domain.user.experience.ExperienceLog;
 import com.acrobtw.elei.domain.user.experience.ExperienceLogRepository;
 import com.acrobtw.elei.domain.user.experience.LevelService;
@@ -85,8 +85,7 @@ public class ActivityService {
         user.setTotalExperience(newTotalXp);
         experienceLogRepository.save(log);
 
-        leaderboardService.updateScore(userId, newTotalXp);
-
+        leaderboardService.updateScore(user.getId(), user.getUsername(), newTotalXp);
         Long newLevel = levelService.calculateLevel(newTotalXp);
         if(newLevel > oldLevel) {
             levelUpProducer.sendLevelUpEvent(userId, newLevel);

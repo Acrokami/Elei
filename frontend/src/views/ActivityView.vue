@@ -12,6 +12,7 @@ import CreateActivityForm from "../components/activity/CreateActivityForm.vue";
 import ActivityList from "../components/activity/ActivityList.vue";
 import ActivityFeed from "../components/activity/ActivityFeed.vue";
 
+
 const router = useRouter();
 
 

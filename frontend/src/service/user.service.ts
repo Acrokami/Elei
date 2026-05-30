@@ -9,6 +9,16 @@ class UserService {
         const response = await api.get<UserProfileResponse>('/users/profile');
         return response.data;
     }
+
+
+    async activateDailyProtocol(): Promise<string | null> {
+        try {
+            const response = await api.post<string>('/users/check-in');
+            return response.data;
+        } catch (error) {
+            return null;
+        }
+    }
 }
 
 export default new UserService();

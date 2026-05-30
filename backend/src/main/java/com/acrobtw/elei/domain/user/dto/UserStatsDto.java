@@ -1,7 +1,9 @@
-package com.acrobtw.elei.domain.activity.dto;
+package com.acrobtw.elei.domain.user.dto;
 
 import java.io.Serializable;
 import java.util.List;
+
+import com.acrobtw.elei.domain.activity.dto.ActivityProgressDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;

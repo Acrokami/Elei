@@ -2,20 +2,39 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router'
 import userService from '../service/user.service';
-
 import type { UserProfileResponse } from '../service/user.service';
 import authService from '../service/auth.service';
 
-const router = useRouter();
 
+import ActivityHeatmap from '../components/activity/ActivityHeatmap.vue';
+
+const router = useRouter();
 
 const userProfile = ref<UserProfileResponse | null>(null);
 const isAdmin = ref(false);
+
+
+const isCheckedInToday = ref(false);
+const checkInMessage = ref('');
+
+
 
 onMounted(async () => {
     try {
         userProfile.value = await userService.getUserProfile();
         checkAdminStatus();
+
+
+        const message = await userService.activateDailyProtocol();
+        if (message) {
+            isCheckedInToday.value = true;
+            checkInMessage.value = message;
+
+
+            setTimeout(() => {
+                checkInMessage.value = '';
+            }, 5000);
+        }
     } catch (error) {
         console.error("Error retrieving profile");
     }
@@ -54,9 +73,18 @@ const handleLogout = () => {
 
     <div class="topbar">
       <span class="logo">Elei<span class="logo-dot">.</span></span>
-      <button class="logout-btn" @click="handleLogout">
-        <span>Logout</span>
-      </button>
+
+      <div class="topbar-actions">
+        <Transition name="fade">
+            <div v-if="isCheckedInToday" class="streak-badge">
+                <span class="fire-icon">🔥</span> Protocol Active
+            </div>
+        </Transition>
+
+        <button class="logout-btn" @click="handleLogout">
+          <span>Logout</span>
+        </button>
+      </div>
     </div>
 
     <div class="content">
@@ -65,52 +93,70 @@ const handleLogout = () => {
         <p>Connecting to servers...</p>
       </div>
 
-      <div v-else class="dashboard-container">
-        <div class="welcome-card glass-panel">
-          <div class="avatar-container">
-            <div class="avatar-ring"></div>
-            <div class="avatar">{{ userProfile.username[0].toUpperCase() }}</div>
+      <div v-else class="dashboard-layout">
+
+        <aside class="sidebar-nav">
+          <div class="nav-menu">
+            <router-link to="/activity" class="nav-btn glass-panel">
+              <div class="nav-icon-wrapper blue-glow">
+                <div class="nav-icon">⚡</div>
+              </div>
+              <div class="nav-text">
+                <span class="nav-title">Activity & XP</span>
+                <span class="nav-subtitle">Track progression</span>
+              </div>
+              <div class="nav-arrow">→</div>
+            </router-link>
+
+            <router-link v-if="isAdmin" to="/admin" class="nav-btn glass-panel">
+              <div class="nav-icon-wrapper purple-glow">
+                <div class="nav-icon">🛡️</div>
+              </div>
+              <div class="nav-text">
+                <span class="nav-title">Admin</span>
+                <span class="nav-subtitle">System overrides</span>
+              </div>
+              <div class="nav-arrow">→</div>
+            </router-link>
+
+            <router-link to="/leaderboard" class="nav-btn glass-panel">
+              <div class="nav-icon-wrapper gold-glow">
+                <div class="nav-icon">🏆</div>
+              </div>
+              <div class="nav-text">
+                <span class="nav-title">Leaderboard</span>
+                <span class="nav-subtitle">Global rankings</span>
+              </div>
+              <div class="nav-arrow">→</div>
+            </router-link>
           </div>
-          <div class="welcome-text">
-            <h1>Welcome back, <span>{{ userProfile.username }}</span></h1>
-            <p>Your dashboard is ready. What is our objective today?</p>
+        </aside>
+
+        <main class="main-workspace">
+
+          <Transition name="slide-down">
+              <div v-if="checkInMessage" class="checkin-toast glass-panel">
+                  <div class="toast-icon">✨</div>
+                  <div class="toast-text">{{ checkInMessage }}</div>
+              </div>
+          </Transition>
+
+          <div class="welcome-card glass-panel">
+            <div class="avatar-container">
+              <div class="avatar-ring"></div>
+              <div class="avatar">{{ userProfile.username[0].toUpperCase() }}</div>
+            </div>
+            <div class="welcome-text">
+              <h1>Welcome back, <span>{{ userProfile.username }}</span></h1>
+              <p>Your dashboard is ready. What is our objective today?</p>
+            </div>
           </div>
-        </div>
 
-        <div class="nav-menu">
-          <router-link to="/activity" class="nav-btn glass-panel">
-            <div class="nav-icon-wrapper blue-glow">
-              <div class="nav-icon">⚡</div>
-            </div>
-            <div class="nav-text">
-              <span class="nav-title">Activity & XP</span>
-              <span class="nav-subtitle">Track your progression metrics</span>
-            </div>
-            <div class="nav-arrow">→</div>
-          </router-link>
+          <div class="activity-section glass-panel">
+            <ActivityHeatmap :activeDates="userProfile?.activeDays || []" />
+          </div>
 
-          <router-link v-if="isAdmin" to="/admin" class="nav-btn glass-panel">
-            <div class="nav-icon-wrapper purple-glow">
-              <div class="nav-icon">🛡️</div>
-            </div>
-            <div class="nav-text">
-              <span class="nav-title">Admin Dashboard</span>
-              <span class="nav-subtitle">System management and overrides</span>
-            </div>
-            <div class="nav-arrow">→</div>
-          </router-link>
-
-          <router-link to="/leaderboard" class="nav-btn glass-panel">
-            <div class="nav-icon-wrapper gold-glow">
-              <div class="nav-icon">🏆</div>
-            </div>
-            <div class="nav-text">
-              <span class="nav-title">Leaderboard</span>
-              <span class="nav-subtitle">Global citizen rankings</span>
-            </div>
-            <div class="nav-arrow">→</div>
-          </router-link>
-        </div>
+        </main>
       </div>
     </div>
   </div>
@@ -183,6 +229,36 @@ const handleLogout = () => {
   -webkit-text-fill-color: #3b82f6;
 }
 
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.streak-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 20px;
+  color: #fcd34d;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.1);
+}
+
+.fire-icon {
+  font-size: 14px;
+  animation: flicker 2s infinite alternate;
+}
+
+@keyframes flicker {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  100% { transform: scale(1.1); opacity: 1; }
+}
+
 .logout-btn {
   padding: 8px 20px;
   background: rgba(239, 68, 68, 0.1);
@@ -201,14 +277,13 @@ const handleLogout = () => {
   transform: translateY(-1px);
 }
 
+
 .content {
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 40px 20px;
+  padding: 40px;
 }
-
 
 .glass-panel {
   background: rgba(30, 41, 59, 0.4);
@@ -219,84 +294,28 @@ const handleLogout = () => {
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-.dashboard-container {
+
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 32px;
+  width: 100%;
+  max-width: 1100px;
+  align-items: start;
+}
+
+
+.sidebar-nav {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 40px;
-  width: 100%;
-  max-width: 480px;
-}
-
-.welcome-card {
-  width: 100%;
-  padding: 32px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 20px;
-}
-
-.avatar-container {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.avatar-ring {
-  position: absolute;
-  width: 88px;
-  height: 88px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  opacity: 0.5;
-  filter: blur(8px);
-  animation: pulse 3s infinite alternate;
-}
-
-@keyframes pulse {
-  0% { transform: scale(0.95); opacity: 0.5; }
-  100% { transform: scale(1.05); opacity: 0.8; }
-}
-
-.avatar {
-  width: 76px;
-  height: 76px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #1e293b, #0f172a);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  color: white;
-  font-size: 32px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1;
-}
-
-.welcome-text h1 {
-  font-size: 26px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-  color: #e2e8f0;
-}
-.welcome-text h1 span {
-  color: #ffffff;
-}
-.welcome-text p {
-  color: #94a3b8;
-  font-size: 15px;
-  margin: 0;
-  line-height: 1.5;
+  position: sticky;
+  top: 40px;
 }
 
 .nav-menu {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  width: 100%;
 }
 
 .nav-btn {
@@ -339,11 +358,7 @@ const handleLogout = () => {
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.nav-icon {
-  font-size: 20px;
-}
-
-
+.nav-icon { font-size: 20px; }
 .blue-glow { box-shadow: inset 0 0 15px rgba(59, 130, 246, 0.2); }
 .purple-glow { box-shadow: inset 0 0 15px rgba(168, 85, 247, 0.2); }
 .gold-glow { box-shadow: inset 0 0 15px rgba(234, 179, 8, 0.2); }
@@ -363,7 +378,7 @@ const handleLogout = () => {
 
 .nav-subtitle {
   color: #64748b;
-  font-size: 13px;
+  font-size: 12px;
   margin-top: 4px;
 }
 
@@ -378,11 +393,105 @@ const handleLogout = () => {
 }
 
 
+.main-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.checkin-toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 24px;
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.1), rgba(30, 41, 59, 0.4));
+  border-left: 4px solid #10b981;
+}
+
+.toast-icon { font-size: 20px; }
+.toast-text {
+  color: #a7f3d0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.welcome-card {
+  width: 100%;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.avatar-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.avatar-ring {
+  position: absolute;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  opacity: 0.5;
+  filter: blur(8px);
+  animation: pulse 3s infinite alternate;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 0.5; }
+  100% { transform: scale(1.05); opacity: 0.8; }
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.welcome-text h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: #e2e8f0;
+}
+.welcome-text h1 span {
+  color: #ffffff;
+}
+.welcome-text p {
+  color: #94a3b8;
+  font-size: 15px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.activity-section {
+  padding: 24px;
+  width: 100%;
+}
+
+
 .loading-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
+  margin-top: 100px;
 }
 .spinner {
   width: 32px;
@@ -394,5 +503,39 @@ const handleLogout = () => {
 }
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 0.5s ease;
+}
+.slide-down-enter-from,
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+
+@media (max-width: 860px) {
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .sidebar-nav {
+    position: static;
+  }
+  .content {
+    padding: 20px;
+  }
 }
 </style>

@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.acrobtw.elei.domain.activity.dto.ActivityCompletionDto;
 import com.acrobtw.elei.domain.activity.dto.ActivityFeedItemDto;
 import com.acrobtw.elei.domain.activity.dto.CreateActivityDto;
-import com.acrobtw.elei.domain.activity.dto.UserStatsDto;
 import com.acrobtw.elei.domain.user.User;
+import com.acrobtw.elei.domain.user.dto.UserStatsDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

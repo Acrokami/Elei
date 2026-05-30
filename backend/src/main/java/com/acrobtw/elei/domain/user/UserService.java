@@ -1,6 +1,10 @@
 package com.acrobtw.elei.domain.user;
 
 
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +33,23 @@ public class UserService {
         User user = userRepository.findByUsername(username)
         .orElseThrow(() -> new IllegalArgumentException("No citizen with this username"));
 
-        return new UserProfileResponse(user.getUsername(), user.getEmail());
+        List<String> activeDates = user.getExperienceLogs().stream()
+            .map(log -> log.getCreatedAt().toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE))
+            .distinct()
+            .collect(Collectors.toList());
+
+        if (user.getLastActivityDate() != null) {
+            String lastActivity = user.getLastActivityDate().format(DateTimeFormatter.ISO_LOCAL_DATE);
+            if (!activeDates.contains(lastActivity)) {
+                activeDates.add(lastActivity);
+            }
+        }
+
+        return new UserProfileResponse(
+            user.getUsername(),
+            user.getEmail(),
+            activeDates 
+        );
     }
 
     @Transactional

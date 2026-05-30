@@ -4,6 +4,26 @@
  */
 
 export interface paths {
+    "/api/users/check-in": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Activate daily protocol
+         * @description Updates user streak and awards daily bonus XP
+         */
+        post: operations["dailyCheckIn"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/register": {
         parameters: {
             query?: never;
@@ -337,6 +357,14 @@ export interface components {
              * @example admin@elei.com
              */
             email: string;
+            /**
+             * @description List of dates the user was active in YYY-MM-DD format
+             * @example [
+             *       "2026-05-30",
+             *       "2026-05-31"
+             *     ]
+             */
+            activeDays?: string[];
         };
         /** @description Single entry in the global leaderboard */
         LeaderboardEntryDto: {
@@ -478,6 +506,26 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    dailyCheckIn: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
     register: {
         parameters: {
             query?: never;
