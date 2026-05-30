@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.acrobtw.elei.core.exception.ResourceNotFoundException;
+import com.acrobtw.elei.domain.user.dto.UserProfileResponse;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,12 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public UserProfileResponse getUserProfile(String username) {
+        User user = userRepository.findByUsername(username)
+        .orElseThrow(() -> new IllegalArgumentException("No citizen with this username"));
+
+        return new UserProfileResponse(user.getUsername(), user.getEmail());
+    }
 
     @Transactional
     public void updatePassword(Long userId, String newRawPassword) {
