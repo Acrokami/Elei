@@ -4,33 +4,39 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import com.acrobtw.elei.consumer.dto.NotificationPayload;
 import com.acrobtw.elei.consumer.service.TelegramSenderService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import tools.jackson.databind.ObjectMapper;
+
 
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class LevelUpConsumer {
+public class NotificationConsumer {
 
     private final TelegramSenderService telegramSenderService;
-
     private final SimpMessagingTemplate messagingTemplate;
+    private final ObjectMapper objectMapper;
 
     @KafkaListener(topics = "level-up-events", groupId = "notification-group")
-    public void listenLevelUp(String message) {
+    public void listenNotification(String message) {
         log.info("Received level-up event: {}", message);
 
         try {
-            String telegramMessage = "<b>New Achievement in Elei</b>\n\n" + message;
+            NotificationPayload payload = objectMapper.readValue(message, NotificationPayload.class);
+            String telegramMessage = String.format("<b>New Achievement in Elei</b>\n\nCitizen <b>%s</b> %s",
+                payload.getUsername(), payload.getMessage());
             telegramSenderService.sendMessage(telegramMessage);
-            messagingTemplate.convertAndSend("/topic/levelup", message);
-            log.info("[WEBSOCKET] Successfully pushed to /topic/levelup");
+
+            messagingTemplate.convertAndSend("/topic/levelup", payload);
+            log.info("[WEBSOCKET] Successfully pushed to /topic/levelup for user{}", payload);
         } catch (Exception e) {
             log.error("Failed to process level-up event", e);
-            throw e;
+            throw new RuntimeException("Error processing Kafka message", e);
         }
     }
 

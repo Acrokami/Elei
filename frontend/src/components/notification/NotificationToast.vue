@@ -29,9 +29,13 @@ onMounted(() => {
       stompClient?.subscribe('/topic/levelup', (message: IMessage) => {
         console.log('Received real-time event:', message.body);
 
-        notificationMessage.value = message.body;
+        try {
+          const payload = JSON.parse(message.body);
+          notificationMessage.value = `${payload.username} ${payload.message}`;
+        } catch (error) {
+          notificationMessage.value = message.body;
+        }
         isNotificationVisible.value = true;
-
 
         if (timeoutId) {
           clearTimeout(timeoutId);

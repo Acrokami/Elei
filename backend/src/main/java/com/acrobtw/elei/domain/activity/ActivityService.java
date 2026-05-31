@@ -19,7 +19,7 @@ import com.acrobtw.elei.domain.user.dto.UserStatsDto;
 import com.acrobtw.elei.domain.user.experience.ExperienceLog;
 import com.acrobtw.elei.domain.user.experience.ExperienceLogRepository;
 import com.acrobtw.elei.domain.user.experience.LevelService;
-import com.acrobtw.elei.kafka.LevelUpProducer;
+import com.acrobtw.elei.kafka.NotificationDispatchService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class ActivityService {
     private final LevelService levelService;
     private final LeaderboardService leaderboardService;
 
-    private final LevelUpProducer levelUpProducer;
+    private final NotificationDispatchService notificationDispatchService;
 
     @CacheEvict(value = "userStats", key = "#userId")
     @Transactional
@@ -88,7 +88,7 @@ public class ActivityService {
         leaderboardService.updateScore(user.getId(), user.getUsername(), newTotalXp);
         Long newLevel = levelService.calculateLevel(newTotalXp);
         if(newLevel > oldLevel) {
-            levelUpProducer.sendLevelUpEvent(userId, newLevel);
+            notificationDispatchService.sendLevelUpEvent(user.getUsername(), newLevel);
         }
     }
 
