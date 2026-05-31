@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.acrobtw.elei.domain.auth.enums.AuthProvider;
 import com.acrobtw.elei.domain.auth.enums.Role;
+import com.acrobtw.elei.domain.quest.UserQuestProgress;
 import com.acrobtw.elei.domain.user.experience.ExperienceLog;
 
 import jakarta.persistence.CascadeType;
@@ -20,6 +21,7 @@ import jakarta.persistence.Version;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -77,6 +79,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExperienceLog> experienceLogs = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<UserQuestProgress> questProgresses;
 
 
     public User(String username, String email, String password) {
