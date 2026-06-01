@@ -1,4 +1,4 @@
-package com.acrobtw.elei.domain.user.experience;
+package com.acrobtw.elei.domain.experience;
 
 import org.springframework.stereotype.Service;
 

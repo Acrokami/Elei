@@ -12,13 +12,13 @@ import com.acrobtw.elei.core.exception.ResourceNotFoundException;
 import com.acrobtw.elei.domain.activity.dto.ActivityFeedItemDto;
 import com.acrobtw.elei.domain.activity.dto.ActivityProgressDto;
 import com.acrobtw.elei.domain.activity.dto.CreateActivityDto;
+import com.acrobtw.elei.domain.experience.ExperienceLog;
+import com.acrobtw.elei.domain.experience.ExperienceLogRepository;
+import com.acrobtw.elei.domain.experience.LevelService;
 import com.acrobtw.elei.domain.leaderboard.LeaderboardService;
 import com.acrobtw.elei.domain.user.User;
 import com.acrobtw.elei.domain.user.UserRepository;
 import com.acrobtw.elei.domain.user.dto.UserStatsDto;
-import com.acrobtw.elei.domain.user.experience.ExperienceLog;
-import com.acrobtw.elei.domain.user.experience.ExperienceLogRepository;
-import com.acrobtw.elei.domain.user.experience.LevelService;
 import com.acrobtw.elei.kafka.NotificationDispatchService;
 
 import jakarta.transaction.Transactional;
@@ -63,6 +63,9 @@ public class ActivityService {
         activityRepository.delete(activity);
     }
 
+
+
+    // TODO get out experience logic from activity
     @CacheEvict(value = "userStats", key = "#userId")
     @Transactional
     public void addExperience(Long userId, Long activityId, Integer unitsCompleted) {
@@ -92,6 +95,8 @@ public class ActivityService {
         }
     }
 
+
+    // TODO get out User Stats also
     @Cacheable(value = "userStats", key = "#userId")
     @Transactional
     public UserStatsDto getUserStats(Long userId) {

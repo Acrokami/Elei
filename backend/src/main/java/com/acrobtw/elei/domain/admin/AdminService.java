@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 
 import com.acrobtw.elei.domain.activity.ActivityRepository;
 import com.acrobtw.elei.domain.admin.dto.SystemStatsDto;
+import com.acrobtw.elei.domain.experience.ExperienceLogRepository;
 import com.acrobtw.elei.domain.user.UserRepository;
-import com.acrobtw.elei.domain.user.experience.ExperienceLogRepository;
 
 import lombok.RequiredArgsConstructor;
 

@@ -17,8 +17,8 @@ import lombok.Setter;
 
 import java.util.*;
 
+import com.acrobtw.elei.domain.experience.ExperienceLog;
 import com.acrobtw.elei.domain.user.User;
-import com.acrobtw.elei.domain.user.experience.ExperienceLog;
 
 @Entity
 @Getter

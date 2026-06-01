@@ -12,8 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.acrobtw.elei.domain.auth.enums.AuthProvider;
 import com.acrobtw.elei.domain.auth.enums.Role;
+import com.acrobtw.elei.domain.experience.ExperienceLog;
 import com.acrobtw.elei.domain.quest.UserQuestProgress;
-import com.acrobtw.elei.domain.user.experience.ExperienceLog;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
