@@ -1,4 +1,4 @@
-package com.acrobtw.elei.domain.user;
+package com.acrobtw.elei.domain.user.service;
 
 import java.time.LocalDate;
 
@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.acrobtw.elei.core.exception.ResourceNotFoundException;
 import com.acrobtw.elei.domain.leaderboard.LeaderboardService;
+import com.acrobtw.elei.domain.user.User;
+import com.acrobtw.elei.domain.user.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

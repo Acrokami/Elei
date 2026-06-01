@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.acrobtw.elei.domain.activity.dto.ActivityCompletionDto;
 import com.acrobtw.elei.domain.activity.dto.ActivityFeedItemDto;
 import com.acrobtw.elei.domain.activity.dto.CreateActivityDto;
+import com.acrobtw.elei.domain.experience.ExperienceService;
 import com.acrobtw.elei.domain.user.User;
 import com.acrobtw.elei.domain.user.dto.UserStatsDto;
+import com.acrobtw.elei.domain.user.service.UserStatsService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,12 +34,15 @@ import lombok.RequiredArgsConstructor;
 public class ActivityController {
 
     private final ActivityService activityService;
+    private final ExperienceService experienceService;
+    private final UserStatsService userStatsService;
 
     @Operation(summary = "Create an activity", description = "Adds a new task or activity for the current user")
     @PostMapping
     public ResponseEntity<Void> createActivity(
         @Valid @RequestBody CreateActivityDto dto,
         @AuthenticationPrincipal User user) {
+
         activityService.createActivity(user.getId(), dto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -48,7 +53,8 @@ public class ActivityController {
         @Valid @RequestBody ActivityCompletionDto dto,
         @AuthenticationPrincipal User user
     ) {
-        activityService.addExperience(user.getId(), dto.activityId(), dto.unitsCompleted());
+       
+        experienceService.addExperienceFromActivity(user.getId(), dto.activityId(), dto.unitsCompleted());
         return ResponseEntity.ok().build();
     }
 
@@ -57,20 +63,20 @@ public class ActivityController {
     public ResponseEntity<UserStatsDto> getActivityStats(
         @AuthenticationPrincipal User user
     ) {
-        return ResponseEntity.ok(activityService.getUserStats(user.getId()));
-    }
 
+        return ResponseEntity.ok(userStatsService.getUserProgress(user.getId()));
+    }
 
     @Operation(summary = "Get activity feed", description = "Returns a list of recent activities to display in the feed")
     @GetMapping("/feed")
     public ResponseEntity<List<ActivityFeedItemDto>> getFeed(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(activityService.getActivityFeed(user.getId()));
-    }
 
+        return ResponseEntity.ok(experienceService.getActivityFeed(user.getId()));
+    }
 
     @Operation(summary = "Delete an activity", description = "Permanently removes an activity by its ID")
     @DeleteMapping("/{activityId}")
-    public ResponseEntity<Void>deleteActivity(
+    public ResponseEntity<Void> deleteActivity(
         @PathVariable("activityId") Long activityId,
         @AuthenticationPrincipal User user
     ) {

@@ -21,7 +21,7 @@ import com.acrobtw.elei.domain.auth.AuthController;
 import com.acrobtw.elei.domain.auth.AuthenticationService;
 import com.acrobtw.elei.domain.auth.dto.RegisterRequest;
 import com.acrobtw.elei.domain.auth.dto.RegisterResponse;
-import com.acrobtw.elei.domain.user.UserService;
+import com.acrobtw.elei.domain.user.service.UserService;
 
 import tools.jackson.databind.ObjectMapper;
 

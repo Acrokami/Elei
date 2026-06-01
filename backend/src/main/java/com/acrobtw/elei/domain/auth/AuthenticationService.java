@@ -17,7 +17,7 @@ import com.acrobtw.elei.domain.auth.dto.RegisterRequest;
 import com.acrobtw.elei.domain.auth.dto.RegisterResponse;
 import com.acrobtw.elei.domain.user.User;
 import com.acrobtw.elei.domain.user.UserRepository;
-import com.acrobtw.elei.domain.user.UserService;
+import com.acrobtw.elei.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 

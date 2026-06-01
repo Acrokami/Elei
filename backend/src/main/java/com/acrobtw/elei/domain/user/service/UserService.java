@@ -1,4 +1,4 @@
-package com.acrobtw.elei.domain.user;
+package com.acrobtw.elei.domain.user.service;
 
 
 import java.time.format.DateTimeFormatter;
@@ -9,6 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.acrobtw.elei.core.exception.ResourceNotFoundException;
+import com.acrobtw.elei.domain.user.User;
+import com.acrobtw.elei.domain.user.UserRepository;
 import com.acrobtw.elei.domain.user.dto.UserProfileResponse;
 
 import jakarta.transaction.Transactional;
@@ -31,7 +33,7 @@ public class UserService {
 
     public UserProfileResponse getUserProfile(String username) {
         User user = userRepository.findByUsername(username)
-        .orElseThrow(() -> new IllegalArgumentException("No citizen with this username"));
+        .orElseThrow(() -> new ResourceNotFoundException("User", username));
 
         List<String> activeDates = user.getExperienceLogs().stream()
             .map(log -> log.getCreatedAt().toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE))
@@ -48,7 +50,7 @@ public class UserService {
         return new UserProfileResponse(
             user.getUsername(),
             user.getEmail(),
-            activeDates 
+            activeDates
         );
     }
 

@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.acrobtw.elei.domain.user.dto.UserProfileResponse;
+import com.acrobtw.elei.domain.user.service.UserService;
+import com.acrobtw.elei.domain.user.service.UserStreakService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

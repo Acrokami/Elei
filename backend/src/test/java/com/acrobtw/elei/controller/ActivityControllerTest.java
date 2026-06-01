@@ -16,7 +16,7 @@ import com.acrobtw.elei.core.security.jwt.JwtService;
 import com.acrobtw.elei.domain.activity.ActivityController;
 import com.acrobtw.elei.domain.activity.dto.ActivityCompletionDto;
 import com.acrobtw.elei.domain.user.User;
-import com.acrobtw.elei.domain.user.UserService;
+import com.acrobtw.elei.domain.user.service.UserService;
 
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationProvider;
