@@ -21,7 +21,7 @@ public class NotificationConsumer {
     private final SimpMessagingTemplate messagingTemplate;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "level-up-events", groupId = "notification-group")
+    @KafkaListener(topics = "${kafka.topics.level-up}", groupId = "notification-group")
     public void listenNotification(String message) {
         log.info("Received level-up event: {}", message);
 
