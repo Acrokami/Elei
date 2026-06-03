@@ -7,10 +7,11 @@ import org.springframework.stereotype.Service;
 import com.acrobtw.elei.domain.experience.ExperienceService;
 import com.acrobtw.elei.domain.quest.Quest;
 import com.acrobtw.elei.domain.quest.UserQuestProgress;
+import com.acrobtw.elei.domain.quest.dto.QuestProgressDto;
 import com.acrobtw.elei.domain.quest.enums.EventType;
 import com.acrobtw.elei.domain.quest.repository.UserQuestProgressRepository;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,6 +52,22 @@ public class QuestEngineService {
         }
 
         progressRepository.saveAll(activeProgress);
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<QuestProgressDto> getUserQuests(String username) {
+        return progressRepository.findByUserUsername(username).stream()
+            .map(progress -> new QuestProgressDto(
+                progress.getQuest().getId(),
+                progress.getQuest().getTitle(),
+                progress.getQuest().getDescription(),
+                progress.getCurrentCount(),
+                progress.getQuest().getTargetCount(),
+                progress.getQuest().getRewardXp(),
+                progress.getIsCompleted()
+            ))
+            .toList();
     }
 
 }
