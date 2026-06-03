@@ -19,4 +19,6 @@ public interface UserQuestProgressRepository extends JpaRepository<UserQuestProg
         @Param("username") String username,
         @Param("eventType") EventType eventType
     );
+    @Query("SELECT p FROM UserQuestProgress p JOIN FETCH p.quest WHERE p.user.username = :username")
+    List<UserQuestProgress> findByUserUsername(@Param("username") String username);
 }
