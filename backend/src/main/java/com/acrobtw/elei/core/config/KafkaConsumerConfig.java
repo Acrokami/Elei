@@ -1,4 +1,4 @@
-package com.acrobtw.elei.consumer.config;
+package com.acrobtw.elei.core.config;
 
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +18,8 @@ public class KafkaConsumerConfig {
             (r,e) -> new TopicPartition(r.topic() + ".DLT", r.partition()));
 
         FixedBackOff backOff = new FixedBackOff(2000L, 3);
-
         return new DefaultErrorHandler(recoverer, backOff);
     }
+
+
 }

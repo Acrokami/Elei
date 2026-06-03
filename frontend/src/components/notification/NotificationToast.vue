@@ -14,7 +14,7 @@ const closeNotification = () => {
 
 onMounted(() => {
   stompClient = new Client({
-    brokerURL: 'ws://localhost:8081/ws-notifications',
+    brokerURL: 'ws://localhost:8080/ws-notifications',
     connectHeaders: {
       Authorization: `Bearer ${localStorage.getItem('user_token')}`
     },

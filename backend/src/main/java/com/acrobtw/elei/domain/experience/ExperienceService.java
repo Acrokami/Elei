@@ -5,18 +5,20 @@ import java.util.List;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
+import com.acrobtw.elei.core.exception.ResourceNotFoundException;
 import com.acrobtw.elei.domain.activity.Activity;
 import com.acrobtw.elei.domain.activity.ActivityRepository;
 import com.acrobtw.elei.domain.activity.dto.ActivityFeedItemDto;
 import com.acrobtw.elei.domain.leaderboard.LeaderboardService;
+import com.acrobtw.elei.domain.notification.NotificationProducer;
+import com.acrobtw.elei.domain.quest.enums.EventType;
+import com.acrobtw.elei.domain.quest.service.QuestEventProducer;
 import com.acrobtw.elei.domain.user.User;
 import com.acrobtw.elei.domain.user.UserRepository;
-import com.acrobtw.elei.kafka.NotificationDispatchService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.acrobtw.elei.core.exception.ResourceNotFoundException;
 
 @Slf4j
 @Service
@@ -28,7 +30,8 @@ public class ExperienceService {
     private final ExperienceLogRepository experienceLogRepository;
     private final LevelService levelService;
     private final LeaderboardService leaderboardService;
-    private final NotificationDispatchService notificationDispatchService;
+    private final NotificationProducer notificationDispatchService;
+    private final QuestEventProducer questEventProducer;
 
     @CacheEvict(value = "userStats", key = "#userId")
     @Transactional
@@ -53,6 +56,7 @@ public class ExperienceService {
         leaderboardService.updateScore(user.getId(), user.getUsername(), newTotalXp);
 
         checkAndDispatchLevelUp(user, oldLevel, newTotalXp);
+        questEventProducer.sendEvent(user.getUsername(), EventType.ACTIVITY_COMPLETED);
     }
 
 

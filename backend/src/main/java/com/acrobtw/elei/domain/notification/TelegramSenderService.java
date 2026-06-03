@@ -1,7 +1,6 @@
-package com.acrobtw.elei.consumer.service;
+package com.acrobtw.elei.domain.notification;
 
 import java.util.HashMap;
-
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +10,6 @@ import org.springframework.web.client.RestTemplate;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 
 @Slf4j
 @Service
@@ -34,8 +32,8 @@ public class TelegramSenderService {
 
         Map<String, String> request = new HashMap<>();
         request.put("chat_id", chatId);
+        request.put("parse_mode", "HTML"); 
         request.put("text", text);
-
 
         try {
             restTemplate.postForObject(url, request, String.class);

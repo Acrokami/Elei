@@ -1,43 +1,43 @@
 spring.application.name=elei
 
 
-# Database
-# Replace with your actual database host, name, user and password
-spring.datasource.url=jdbc:postgresql://localhost:5432/your_database_name
-spring.datasource.username=your_database_username
-spring.datasource.password=your_database_password
-
-# use 'validate' or 'none' in production
+# Database (Синхронизировано с переменными из docker-compose)
+spring.datasource.url=jdbc:postgresql://${DB_HOST:localhost}:5432/${DB_NAME:elei}
+spring.datasource.username=${DB_USER:postgres}
+spring.datasource.password=${DB_PASS:root}
 spring.jpa.hibernate.ddl-auto=update
-
-# Optional: log SQL queries
 spring.jpa.show-sql=true
 
+# Kafka (Системные настройки Spring)
+spring.kafka.bootstrap-servers=${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+spring.kafka.consumer.group-id=elei-default-group
+spring.kafka.consumer.auto-offset-reset=earliest
+spring.kafka.consumer.key-deserializer=org.apache.kafka.common.serialization.StringDeserializer
+spring.kafka.consumer.value-deserializer=org.apache.kafka.common.serialization.StringDeserializer
 
-# Kafka
-kafka.bootstrap-servers=${KAFKA_HOST:localhost}:9092
+# Kafka (Ваши кастомные топики для @Value)
 kafka.topics.level-up=level-up-events
+kafka.topics.user-activities=user-activities
 
-# Go to Github.com -> Settings -> Developer Setting
-# And Generate your client-secret key
+# Telegram
+telegram.bot.token=enter_bot_token
+telegram.admin.chat-id=enter_tg_id
+telegram.api.url=https://api.telegram.org
+
+# OAuth2
 spring.security.oauth2.client.registration.github.client-id=
 spring.security.oauth2.client.registration.github.client-secret=
 spring.security.oauth2.client.registration.github.scope=read:user,user:email
 
- # Go to console.cloud.google.com -> New project
 spring.security.oauth2.client.registration.google.client-id=
 spring.security.oauth2.client.registration.google.client-secret=
-
 
 # Redis
 spring.data.redis.host=${REDIS_HOST:localhost}
 spring.data.redis.port=6379
 
-
 # JWT
-# Generate secret: openssl rand -base64 64
 jwt.secret=your_generated_secret_key
-# Time in ms (86400000 = 24 hours)
 jwt.expiration=86400000
 
 # Actuator

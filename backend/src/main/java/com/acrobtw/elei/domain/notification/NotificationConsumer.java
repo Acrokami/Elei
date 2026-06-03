@@ -1,15 +1,14 @@
-package com.acrobtw.elei.consumer.kafka;
+package com.acrobtw.elei.domain.notification;
 
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import com.acrobtw.elei.consumer.dto.NotificationPayload;
-import com.acrobtw.elei.consumer.service.TelegramSenderService;
+import com.acrobtw.elei.domain.notification.dto.NotificationPayload;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import tools.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 
@@ -29,7 +28,7 @@ public class NotificationConsumer {
         try {
             NotificationPayload payload = objectMapper.readValue(message, NotificationPayload.class);
             String telegramMessage = String.format("<b>New Achievement in Elei</b>\n\nCitizen <b>%s</b> %s",
-                payload.getUsername(), payload.getMessage());
+                payload.username(), payload.message());
             telegramSenderService.sendMessage(telegramMessage);
 
             messagingTemplate.convertAndSend("/topic/levelup", payload);

@@ -1,4 +1,4 @@
-package com.acrobtw.elei.kafka;
+package com.acrobtw.elei.domain.notification;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -9,13 +9,13 @@ import com.acrobtw.elei.domain.notification.dto.NotificationPayload;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import tools.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class NotificationDispatchService {
+public class NotificationProducer {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
 

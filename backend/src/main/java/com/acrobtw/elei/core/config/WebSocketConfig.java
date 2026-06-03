@@ -1,4 +1,4 @@
-package com.acrobtw.elei.consumer.config;
+package com.acrobtw.elei.core.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

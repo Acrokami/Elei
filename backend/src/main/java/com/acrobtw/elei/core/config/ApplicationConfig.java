@@ -10,8 +10,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.client.RestTemplate;
 
 import com.acrobtw.elei.domain.user.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,7 +30,6 @@ public class ApplicationConfig {
         .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
-
     @Bean
     public AuthenticationProvider authenticationProvider(UserDetailsService uds) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(uds);
@@ -37,9 +38,20 @@ public class ApplicationConfig {
     }
 
     @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+    @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

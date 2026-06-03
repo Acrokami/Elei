@@ -40,22 +40,6 @@ services:
     networks:
       - elei-network
 
-
-  notification-service:
-    build:
-      context: ./kafka-consumer
-    container_name: elei-notification
-    restart: always
-    environment:
-        KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-    ports:
-      - "8081:8081"
-    depends_on:
-      kafka:
-        condition: service_healthy
-    networks:
-      - elei-network
-
   frontend:
     build:
       context: ./frontend
@@ -94,7 +78,6 @@ services:
     networks:
       - elei-network
 
-
   redis:
     image: redis:7-alpine
     container_name: elei-redis
@@ -103,8 +86,6 @@ services:
       - "6379:6379"
     networks:
       - elei-network
-
-
 
   prometheus:
     image: prom/prometheus:latest
@@ -115,7 +96,6 @@ services:
       - "9090:9090"
     networks:
       - elei-network
-
 
   grafana:
     image: grafana/grafana:latest
@@ -129,7 +109,6 @@ services:
       - prometheus
     networks:
       - elei-network
-
 
 networks:
   elei-network:

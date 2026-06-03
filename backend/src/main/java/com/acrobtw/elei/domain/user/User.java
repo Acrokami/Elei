@@ -52,11 +52,11 @@ public class User implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "total_experience")
+    @Column(name = "total_experience", columnDefinition = "bigint default 0")
     private Long totalExperience = 0L;
 
 
-    @Column(name = "current_streak")
+    @Column(name = "current_streak", columnDefinition = "integer default 0")
     private Integer currentStreak = 0;
 
     @Column(name = "last_activity_date")
@@ -81,7 +81,7 @@ public class User implements UserDetails {
     private List<ExperienceLog> experienceLogs = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<UserQuestProgress> questProgresses;
+    private List<UserQuestProgress> questProgresses = new ArrayList<>();
 
 
     public User(String username, String email, String password) {
