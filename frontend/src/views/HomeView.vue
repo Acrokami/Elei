@@ -108,6 +108,17 @@ const handleLogout = () => {
               <div class="nav-arrow">→</div>
             </router-link>
 
+            <router-link to="/quests" class="nav-btn glass-panel">
+              <div class="nav-icon-wrapper emerald-glow">
+                <div class="nav-icon">🎯</div>
+              </div>
+              <div class="nav-text">
+                <span class="nav-title">Active Protocols</span>
+                <span class="nav-subtitle">Manage daily tasks</span>
+              </div>
+              <div class="nav-arrow">→</div>
+            </router-link>
+
             <router-link v-if="isAdmin" to="/admin" class="nav-btn glass-panel">
               <div class="nav-icon-wrapper purple-glow">
                 <div class="nav-icon">🛡️</div>
@@ -362,6 +373,7 @@ const handleLogout = () => {
 .blue-glow { box-shadow: inset 0 0 15px rgba(59, 130, 246, 0.2); }
 .purple-glow { box-shadow: inset 0 0 15px rgba(168, 85, 247, 0.2); }
 .gold-glow { box-shadow: inset 0 0 15px rgba(234, 179, 8, 0.2); }
+.emerald-glow { box-shadow: inset 0 0 15px rgba(16, 185, 129, 0.2); }
 
 .nav-text {
   display: flex;
