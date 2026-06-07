@@ -45,4 +45,8 @@ public class Quest {
 
     @Column(nullable = false)
     private Integer rewardXp;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean isDefault = true;
 }
