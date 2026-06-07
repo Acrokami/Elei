@@ -5,6 +5,7 @@ import ActivityView from '../views/ActivityView.vue';
 import OAuth2Redirect from '../views/auth/OAuth2Redirect.vue';
 import AdminDashboard from '../components/admin/AdminDashboard.vue';
 import LeaderboardView from '../components/leaderboard/LeaderboardView.vue';
+import QuestView from '../views/QuestView.vue';
 
 
 
@@ -36,6 +37,11 @@ const router = createRouter({
             path: '/activity',
             name: 'activity',
             component: ActivityView
+        },
+        {
+            path: '/quests',
+            name: 'quests',
+            component: QuestView
         },
         {
            path: '/leaderboard',

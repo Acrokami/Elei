@@ -124,6 +124,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/quests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get user quests
+         * @description Returns the list of quests and current progress for the authenticated citizen
+         */
+        get: operations["getUserQuests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/leaderboard/top": {
         parameters: {
             query?: never;
@@ -365,6 +385,41 @@ export interface components {
              *     ]
              */
             activeDays?: string[];
+        };
+        /** @description User's progress on a specific quest */
+        QuestProgressDto: {
+            /**
+             * Format: int64
+             * @description Unique ID of the quest
+             */
+            questId?: number;
+            /**
+             * @description Name of the quest
+             * @example First Blood
+             */
+            title?: string;
+            /** @description Detailed lore/description of the quest */
+            description?: string;
+            /**
+             * Format: int32
+             * @description Current progress count
+             * @example 1
+             */
+            currentCount?: number;
+            /**
+             * Format: int32
+             * @description Target count required to complete the quest
+             * @example 5
+             */
+            targetCount?: number;
+            /**
+             * Format: int32
+             * @description Experience reward upon completion
+             * @example 100
+             */
+            rewardXp?: number;
+            /** @description Is the quest fully completed and reward claimed? */
+            isCompleted?: boolean;
         };
         /** @description Single entry in the global leaderboard */
         LeaderboardEntryDto: {
@@ -634,6 +689,26 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["UserProfileResponse"];
+                };
+            };
+        };
+    };
+    getUserQuests: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["QuestProgressDto"][];
                 };
             };
         };

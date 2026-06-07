@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.acrobtw.elei.core.exception.ResourceNotFoundException;
 import com.acrobtw.elei.domain.experience.ExperienceService;
 import com.acrobtw.elei.domain.quest.Quest;
 import com.acrobtw.elei.domain.quest.UserQuestProgress;
@@ -12,6 +13,7 @@ import com.acrobtw.elei.domain.quest.enums.EventType;
 import com.acrobtw.elei.domain.quest.repository.QuestRepository;
 import com.acrobtw.elei.domain.quest.repository.UserQuestProgressRepository;
 import com.acrobtw.elei.domain.user.User;
+import com.acrobtw.elei.domain.user.UserRepository;
 
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class QuestEngineService {
 
+    private final UserRepository userRepository;
     private final UserQuestProgressRepository progressRepository;
     private final QuestRepository questRepository;
     private final ExperienceService experienceService;
@@ -31,7 +34,7 @@ public class QuestEngineService {
 
     @Transactional
     public void assignInitialQuests(User user) {
-        List<Quest> defaultQuests = questRepository.findAll();
+        List<Quest> defaultQuests = questRepository.findByIsDefaultTrue();
 
         if(defaultQuests.isEmpty()) {
             log.warn("[SYSTEM] No core quests found in database: Initial assignment skipped");
@@ -84,9 +87,20 @@ public class QuestEngineService {
     }
 
 
-    @Transactional(readOnly = true)
+    @Transactional()
     public List<QuestProgressDto> getUserQuests(String username) {
-        return progressRepository.findByUserUsername(username).stream()
+        List<UserQuestProgress> progressList = progressRepository.findByUserUsername(username);
+
+        if(progressList.isEmpty()) {
+            log.info("[SYSTEM] Legacy citizen detected without protocols: {}. Initiating retroactive assignment...", username);
+
+            User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User", username));
+            assignInitialQuests(user);
+            progressList = progressRepository.findByUserUsername(username);
+        }
+
+        return progressList.stream()
             .map(progress -> new QuestProgressDto(
                 progress.getQuest().getId(),
                 progress.getQuest().getTitle(),
