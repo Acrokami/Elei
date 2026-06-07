@@ -7,13 +7,15 @@ import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.acrobtw.elei.core.exception.ResourceNotFoundException;
+import com.acrobtw.elei.domain.quest.service.QuestEngineService;
 import com.acrobtw.elei.domain.user.User;
 import com.acrobtw.elei.domain.user.UserRepository;
 import com.acrobtw.elei.domain.user.dto.UserProfileResponse;
 
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -21,14 +23,19 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final QuestEngineService questEngineService;
 
 
+    @Transactional
     public User registerNewUser(String username, String email, String password) {
         if(userRepository.existsByEmail(email)) throw new IllegalArgumentException("This email is taken");
 
         String hashPassword = passwordEncoder.encode(password);
         User user = new User(username, email, hashPassword);
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        questEngineService.assignInitialQuests(savedUser);
+
+        return savedUser;
     }
 
     public UserProfileResponse getUserProfile(String username) {
