@@ -32,10 +32,10 @@ public class ExperienceLog {
     @Column(name = "experience_id")
     private Long id;
 
-    @Column(name = "unitsCompleted")
+    @Column(name = "units_completed")
     private Integer unitsCompleted;
 
-    @Column(name = "earnedXp")
+    @Column(name = "earned_xp")
     private Integer earnedXp;
 
     @Column(name = "created_at", nullable = false, updatable = false)
