@@ -2,6 +2,7 @@ package com.acrobtw.elei.domain.quest.service;
 
 import java.util.List;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.acrobtw.elei.core.exception.ResourceNotFoundException;
@@ -29,6 +30,7 @@ public class QuestEngineService {
     private final UserQuestProgressRepository progressRepository;
     private final QuestRepository questRepository;
     private final ExperienceService experienceService;
+    private final SimpMessagingTemplate messagingTemplate;
 
 
 
@@ -82,8 +84,19 @@ public class QuestEngineService {
             // TODO Add NotificationDispatchService for Notification Toast from frontend
             }
         }
-
         progressRepository.saveAll(activeProgress);
+        for(UserQuestProgress progress : activeProgress) {
+            QuestProgressDto updatedQuest = new QuestProgressDto(
+                progress.getQuest().getId(),
+                progress.getQuest().getTitle(),
+                progress.getQuest().getDescription(),
+                progress.getCurrentCount(),
+                progress.getQuest().getTargetCount(),
+                progress.getQuest().getRewardXp(),
+                progress.getIsCompleted()
+            );
+            messagingTemplate.convertAndSend("/topic/quests" + username, updatedQuest);
+        }
     }
 
 
