@@ -95,7 +95,7 @@ public class QuestEngineService {
                 progress.getQuest().getRewardXp(),
                 progress.getIsCompleted()
             );
-            messagingTemplate.convertAndSend("/topic/quests" + username, updatedQuest);
+            messagingTemplate.convertAndSend("/topic/quests/" + username, updatedQuest);
         }
     }
 
