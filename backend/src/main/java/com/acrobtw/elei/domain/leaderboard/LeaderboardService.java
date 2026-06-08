@@ -70,8 +70,9 @@ public class LeaderboardService {
         })
         .collect(Collectors.toCollection(LinkedHashSet::new));
     }
-    public Optional<Long> getUserRank(Long userId) {
-        Long rank = redisTemplate.opsForZSet().reverseRank(LEADERBOARD_KEY, userId.toString());
+    public Optional<Long> getUserRank(Long userId, String username) {
+        String member = userId + ":" + username;
+        Long rank = redisTemplate.opsForZSet().reverseRank(LEADERBOARD_KEY, member);
         return Optional.ofNullable(rank).map(r -> r + 1);
     }
 
@@ -93,7 +94,9 @@ public class LeaderboardService {
                     double score = user.getTotalExperience() != null
                     ? user.getTotalExperience().doubleValue()
                     : 0.0;
-                    return new DefaultTypedTuple<>(user.getId().toString(), score);
+
+                    String member = user.getId() + ":" + user.getUsername();
+                    return new DefaultTypedTuple<>(member, score);
                 })
                 .collect(Collectors.toSet());
 
