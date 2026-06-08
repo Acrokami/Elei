@@ -61,8 +61,8 @@ public class UserStreakService {
         user.setTotalExperience(newTotalXp);
         userRepository.save(user);
         leaderboardService.updateScore(user.getId(), user.getUsername(), newTotalXp);
-
         questEventProducer.sendEvent(username, EventType.CHECK_IN);
+        questEventProducer.sendEvent(username, EventType.STREAK_MAINTAINED);
 
 
         Long newLevel = levelService.calculateLevel(newTotalXp);

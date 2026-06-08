@@ -1,13 +1,43 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import type { components } from '../../types/api-schemas';
 import api from '../../service/api';
+import { Client, type IMessage } from '@stomp/stompjs';
 
 type QuestProgressDto = components['schemas']['QuestProgressDto'];
 
 const quests = ref<QuestProgressDto[]>([]);
 const isLoading = ref<boolean>(true);
 const error = ref<string | null>(null);
+
+let stompClient: Client | null = null;
+
+
+
+// Token decoding function to get username
+const getUsernameFromToken = (): string | null => {
+  const token = localStorage.getItem('user_token');
+  if (!token) {
+    console.warn('[SYSTEM] Token not found in local storage.');
+    return null;
+  }
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    const payload = JSON.parse(jsonPayload);
+    console.log('[SYSTEM] Decoded JWT payload:', payload);
+
+
+    return payload.sub || payload.username || null;
+  } catch (e) {
+    console.error('[SYSTEM] Token decoding failed:', e);
+    return null;
+  }
+};
 
 const fetchQuests = async () => {
     try {
@@ -23,7 +53,46 @@ const fetchQuests = async () => {
     }
 };
 
-onMounted(fetchQuests);
+const connectWebSocket = () => {
+    const username = getUsernameFromToken();
+    if (!username) return;
+
+    stompClient = new Client({
+        brokerURL: 'ws://localhost:8080/ws-notifications',
+        connectHeaders: {
+            Authorization: `Bearer ${localStorage.getItem('user_token')}`
+        },
+        reconnectDelay: 5000,
+        onConnect: () => {
+            console.log('[SYSTEM] Quest live-sync activated.');
+
+            stompClient?.subscribe(`/topic/quests/${username}`, (message: IMessage) => {
+                const updatedQuest: QuestProgressDto = JSON.parse(message.body);
+
+
+                const index = quests.value.findIndex(q => q.questId === updatedQuest.questId);
+                if (index !== -1) {
+                    quests.value.splice(index, 1, updatedQuest);
+                }
+            });
+        },
+        onStompError: (frame) => {
+            console.error('[SYSTEM] Broker error:', frame.headers['message']);
+        }
+    });
+    stompClient.activate();
+};
+
+onMounted(() => {
+  fetchQuests();
+  connectWebSocket();
+});
+
+onUnmounted(() => {
+  if(stompClient) {
+    stompClient.deactivate();
+  }
+});
 
 const calculateProgress = (current?: number, target?: number): number => {
     if (!current || !target) return 0;
