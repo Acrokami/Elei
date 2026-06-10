@@ -1,38 +1,34 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed } from "vue";
 
 const props = defineProps<{
-    activeDates: string[];
+  activeDates: string[];
 }>();
 
 const heatmapDays = computed(() => {
   const ObjectDays = [];
   const today = new Date();
 
-
   let currentDayOfWeek = today.getDay() - 1;
   if (currentDayOfWeek === -1) currentDayOfWeek = 6;
 
-
-  const totalDaysHistory = (12 * 7) + currentDayOfWeek + 1;
-
+  const totalDaysHistory = 12 * 7 + currentDayOfWeek + 1;
 
   for (let i = totalDaysHistory - 1; i >= 0; i--) {
     const targetDate = new Date(today);
     targetDate.setDate(today.getDate() - i);
-    const dateString = targetDate.toISOString().split('T')[0];
+    const dateString = targetDate.toISOString().split("T")[0];
 
     ObjectDays.push({
       date: dateString,
       isActive: props.activeDates.includes(dateString),
-      isFuture: false
+      isFuture: false,
     });
   }
 
-
   const futureDaysToFill = 6 - currentDayOfWeek;
   for (let i = 1; i <= futureDaysToFill; i++) {
-     ObjectDays.push({ date: 'future', isActive: false, isFuture: true });
+    ObjectDays.push({ date: "future", isActive: false, isFuture: true });
   }
 
   return ObjectDays;
@@ -59,7 +55,13 @@ const heatmapDays = computed(() => {
           :key="day.date + index"
           class="day-block"
           :class="{ 'is-active': day.isActive, 'is-future': day.isFuture }"
-          :title="day.isFuture ? '' : (day.isActive ? `Protocol active on ${day.date}` : `No activity on ${day.date}`)"
+          :title="
+            day.isFuture
+              ? ''
+              : day.isActive
+                ? `Protocol active on ${day.date}`
+                : `No activity on ${day.date}`
+          "
         ></div>
       </div>
     </div>
@@ -76,7 +78,7 @@ const heatmapDays = computed(() => {
         </div>
       </div>
     </div>
-</div>
+  </div>
 </template>
 
 <style scoped>
@@ -140,7 +142,6 @@ const heatmapDays = computed(() => {
   padding-bottom: 4px;
 }
 
-
 .heatmap-grid::-webkit-scrollbar {
   display: none;
 }
@@ -166,11 +167,12 @@ const heatmapDays = computed(() => {
 }
 
 .day-block.is-active {
-  background-color: #3b82f6;
-  box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.2), 0 0 6px rgba(59, 130, 246, 0.3);
+  background-color: var(--primary-accent);
+  box-shadow:
+    inset 0 0 4px rgba(255, 255, 255, 0.2),
+    0 0 6px rgba(59, 130, 246, 0.3);
   border-color: rgba(59, 130, 246, 0.8);
 }
-
 
 .day-block.is-future {
   background-color: transparent;
@@ -197,7 +199,6 @@ const heatmapDays = computed(() => {
   color: #64748b;
   font-weight: 500;
 }
-
 
 .heatmap-legend span {
   margin: 0 4px;

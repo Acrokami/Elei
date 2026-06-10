@@ -1,31 +1,43 @@
 <script setup lang="ts">
-import type { components } from '../../types/api-schemas';
+import type { components } from "../../types/api-schemas";
 
-type ActivityFeedItemDto = components['schemas']['ActivityFeedItemDto'];
+type ActivityFeedItemDto = components["schemas"]["ActivityFeedItemDto"];
 
 defineProps<{
-  feed: ActivityFeedItemDto[]
+  feed: ActivityFeedItemDto[];
 }>();
 
 const formatTime = (dateString?: string) => {
-  if(!dateString) return '--:--';
+  if (!dateString) return "--:--";
   const date = new Date(dateString);
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 };
 </script>
 
 <template>
   <div class="feed-section">
     <div class="section-header">
-      <svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg
+        class="header-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
         <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
       </svg>
       <h2 class="section-title">Activity History</h2>
     </div>
 
-    <TransitionGroup v-if="feed.length > 0" name="list" tag="div" class="feed-list glass-panel">
+    <TransitionGroup
+      v-if="feed.length > 0"
+      name="list"
+      tag="div"
+      class="feed-list glass-panel"
+    >
       <div class="feed-item" v-for="(item, index) in feed" :key="item.logId">
-
         <div class="feed-time">{{ formatTime(item.createdAt) }}</div>
 
         <div class="timeline-node">
@@ -35,19 +47,26 @@ const formatTime = (dateString?: string) => {
 
         <div class="feed-content">
           <span class="feed-activity-name">{{ item.activityName }}</span>
-          <span class="feed-units">{{ item.unitsCompleted }} {{ item.unitName }}</span>
+          <span class="feed-units"
+            >{{ item.unitsCompleted }} {{ item.unitName }}</span
+          >
         </div>
 
         <div class="feed-xp-badge">
-          <span class="xp-plus">+</span>{{ item.earnedXp }} <span class="xp-label">XP</span>
+          <span class="xp-plus">+</span>{{ item.earnedXp }}
+          <span class="xp-label">XP</span>
         </div>
-
       </div>
     </TransitionGroup>
 
     <div v-else class="empty-state glass-panel">
       <div class="empty-icon-wrapper">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        >
           <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
           <line x1="3" y1="9" x2="21" y2="9"></line>
           <line x1="9" y1="21" x2="9" y2="9"></line>
@@ -88,7 +107,6 @@ const formatTime = (dateString?: string) => {
   letter-spacing: 0.02em;
 }
 
-
 .glass-panel {
   background: rgba(30, 41, 59, 0.4);
   backdrop-filter: blur(16px);
@@ -119,7 +137,6 @@ const formatTime = (dateString?: string) => {
   flex-shrink: 0;
   padding-top: 2px;
 }
-
 
 .timeline-node {
   display: flex;
@@ -166,11 +183,10 @@ const formatTime = (dateString?: string) => {
   font-size: 13px;
 }
 
-
 .feed-xp-badge {
   background: rgba(16, 185, 129, 0.1);
   border: 1px solid rgba(16, 185, 129, 0.2);
-  color: #10b981;
+  color: var(--primary-accent);
   padding: 6px 12px;
   border-radius: 8px;
   font-weight: 700;
@@ -192,7 +208,6 @@ const formatTime = (dateString?: string) => {
   opacity: 0.7;
   margin-left: 2px;
 }
-
 
 .empty-state {
   display: flex;
@@ -232,7 +247,6 @@ const formatTime = (dateString?: string) => {
   font-size: 14px;
   margin: 0;
 }
-
 
 .list-enter-active,
 .list-leave-active {

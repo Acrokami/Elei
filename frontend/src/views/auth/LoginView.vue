@@ -1,118 +1,143 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import authService from '../../service/auth.service';
-
+import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import authService from "../../service/auth.service";
 
 const router = useRouter();
 const route = useRoute();
-const errorMessage = ref('');
+const errorMessage = ref("");
 
-const username = ref('');
-const password = ref('');
+const username = ref("");
+const password = ref("");
 const apiUrl = import.meta.env.VITE_API_URL;
-
 
 onMounted(() => {
   const errorParam = route.query.error;
-  if(errorParam === 'provider_conflict') {
-    errorMessage.value = 'This email is already linked to another provider. Please use the correct login method.';
+  if (errorParam === "provider_conflict") {
+    errorMessage.value =
+      "This email is already linked to another provider. Please use the correct login method.";
     router.replace({ query: {} });
   }
-})
+});
 
-const handleLogin = async() => {
-     try {
-        await authService.login(username.value, password.value);
-        router.push('/')
-     } catch (error) {
-        errorMessage.value = 'Incorrect login/password'
-     }
-}
+const handleLogin = async () => {
+  try {
+    await authService.login(username.value, password.value);
+    router.push("/");
+  } catch (error) {
+    errorMessage.value = "Incorrect login/password";
+  }
+};
 
 const handleRegister = () => {
-  router.push('/register');
-}
-
+  router.push("/register");
+};
 </script>
 
-
-
-
-
 <template>
- <div class="login-wrapper">
+  <div class="login-wrapper">
     <div class="ambient-glow glow-1"></div>
     <div class="ambient-glow glow-2"></div>
 
     <div class="login-card glass-panel">
-        <div class="login-header">
-            <div class="logo-mark">Elei<span>.</span></div>
-            <h2>Sign in to your account</h2>
-            <p>Enter your credentials to continue</p>
-        </div>
-
-        <form class="form-container" @submit.prevent="handleLogin">
-          <div class="input-group">
-            <label>Login</label>
-            <div class="input-wrapper">
-              <input v-model="username" type="text" placeholder="Enter your login" required/>
-            </div>
-          </div>
-
-          <div class="input-group">
-            <label>Password</label>
-            <div class="input-wrapper">
-              <input v-model="password" type="password" placeholder="Enter your password" required/>
-            </div>
-          </div>
-
-          <Transition name="fade">
-            <p v-if="errorMessage" class="error-text">
-              <span class="error-icon">⚠️</span> {{ errorMessage }}
-            </p>
-          </Transition>
-
-          <button class="login-btn" type="submit">
-            Login
-          </button>
-        </form>
-
-        <div class="divider">
-          <span>or continue with</span>
-        </div>
-
-
-        <div class="social-login-stack">
-          <a :href="`${apiUrl}/oauth2/authorization/github`" class="social-btn">
-            <svg class="social-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-            </svg>
-            <span>Continue with GitHub</span>
-          </a>
-
-          <a :href="`${apiUrl}/oauth2/authorization/google`" class="social-btn">
-            <svg class="social-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-            </svg>
-            <span>Continue with Google</span>
-          </a>
-        </div>
-
-        <button class="register-btn" @click="handleRegister">
-          Don't have an account? <span>Sign up</span>
-        </button>
+      <div class="login-header">
+        <div class="logo-mark">Elei<span>.</span></div>
+        <h2>Sign in to your account</h2>
+        <p>Enter your credentials to continue</p>
       </div>
 
+      <form class="form-container" @submit.prevent="handleLogin">
+        <div class="input-group">
+          <label>Login</label>
+          <div class="input-wrapper">
+            <input
+              v-model="username"
+              type="text"
+              placeholder="Enter your login"
+              required
+            />
+          </div>
+        </div>
 
- </div>
+        <div class="input-group">
+          <label>Password</label>
+          <div class="input-wrapper">
+            <input
+              v-model="password"
+              type="password"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+        </div>
+
+        <Transition name="fade">
+          <p v-if="errorMessage" class="error-text">
+            <span class="error-icon">⚠️</span> {{ errorMessage }}
+          </p>
+        </Transition>
+
+        <button class="login-btn" type="submit">Login</button>
+      </form>
+
+      <div class="divider">
+        <span>or continue with</span>
+      </div>
+
+      <div class="social-login-stack">
+        <a :href="`${apiUrl}/oauth2/authorization/github`" class="social-btn">
+          <svg
+            class="social-icon"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path
+              d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
+            />
+          </svg>
+          <span>Continue with GitHub</span>
+        </a>
+
+        <a :href="`${apiUrl}/oauth2/authorization/google`" class="social-btn">
+          <svg
+            class="social-icon"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <path
+              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+              fill="#4285F4"
+            />
+            <path
+              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+              fill="#34A853"
+            />
+            <path
+              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+              fill="#FBBC05"
+            />
+            <path
+              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+              fill="#EA4335"
+            />
+          </svg>
+          <span>Continue with Google</span>
+        </a>
+      </div>
+
+      <button class="register-btn" @click="handleRegister">
+        Don't have an account? <span>Sign up</span>
+      </button>
+    </div>
+  </div>
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 * {
   box-sizing: border-box;
@@ -121,17 +146,16 @@ const handleRegister = () => {
 }
 
 .login-wrapper {
-    min-height: 100vh;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #0b1120;
-    font-family: 'Inter', sans-serif;
-    position: relative;
-    overflow: hidden;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #0b1120;
+  font-family: "Inter", sans-serif;
+  position: relative;
+  overflow: hidden;
 }
-
 
 .ambient-glow {
   position: absolute;
@@ -156,24 +180,23 @@ const handleRegister = () => {
   right: -50px;
 }
 
-
 .glass-panel {
-    background: rgba(30, 41, 59, 0.4);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
 .login-card {
-    width: 100%;
-    max-width: 400px;
-    display: flex;
-    flex-direction: column;
-    padding: 40px;
-    border-radius: 20px;
-    position: relative;
-    z-index: 1;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  padding: 40px;
+  border-radius: 20px;
+  position: relative;
+  z-index: 1;
 }
 
 .logo-mark {
@@ -188,8 +211,8 @@ const handleRegister = () => {
   text-align: center;
 }
 .logo-mark span {
-  color: #3b82f6;
-  -webkit-text-fill-color: #3b82f6;
+  color: var(--primary-accent);
+  -webkit-text-fill-color: var(--primary-accent);
 }
 
 .login-header {
@@ -198,11 +221,11 @@ const handleRegister = () => {
 }
 
 .login-header h2 {
-    color: #f8fafc;
-    font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    letter-spacing: -0.02em;
+  color: #f8fafc;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
 }
 
 .login-header p {
@@ -247,7 +270,7 @@ input {
 }
 
 input:focus {
-  border-color: #3b82f6;
+  border-color: var(--primary-accent);
   background: rgba(15, 23, 42, 0.8);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
@@ -257,22 +280,22 @@ input::placeholder {
 }
 
 .error-text {
-    color: #f87171;
-    font-size: 13px;
-    margin: -4px 0 0 0;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(248, 113, 113, 0.1);
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: 1px solid rgba(248, 113, 113, 0.2);
+  color: #f87171;
+  font-size: 13px;
+  margin: -4px 0 0 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(248, 113, 113, 0.1);
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(248, 113, 113, 0.2);
 }
 
 .login-btn {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, var(--primary-accent), #2563eb);
   color: white;
   border: none;
   border-radius: 10px;
@@ -304,7 +327,7 @@ input::placeholder {
 
 .divider::before,
 .divider::after {
-  content: '';
+  content: "";
   flex: 1;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -317,7 +340,7 @@ input::placeholder {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
-  width: 100%
+  width: 100%;
 }
 
 .social-login-stack {
@@ -371,7 +394,7 @@ input::placeholder {
 }
 
 .register-btn span {
-  color: #3b82f6;
+  color: var(--primary-accent);
   font-weight: 600;
 }
 
@@ -384,10 +407,11 @@ input::placeholder {
   text-decoration: underline;
 }
 
-
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .fade-enter-from,

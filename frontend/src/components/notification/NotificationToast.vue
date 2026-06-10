@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import {ref, onMounted, onUnmounted} from 'vue';
-import { Client, type IMessage, type IFrame } from '@stomp/stompjs';
+import { ref, onMounted, onUnmounted } from "vue";
+import { Client, type IMessage, type IFrame } from "@stomp/stompjs";
 
-const notificationMessage = ref<string>('');
+const notificationMessage = ref<string>("");
 const isNotificationVisible = ref<boolean>(false);
 
 let stompClient: Client | null = null;
@@ -10,24 +10,23 @@ let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
 const closeNotification = () => {
   isNotificationVisible.value = false;
-}
+};
 
 onMounted(() => {
   stompClient = new Client({
-    brokerURL: 'ws://localhost:8080/ws-notifications',
+    brokerURL: "ws://localhost:8080/ws-notifications",
     connectHeaders: {
-      Authorization: `Bearer ${localStorage.getItem('user_token')}`
+      Authorization: `Bearer ${localStorage.getItem("user_token")}`,
     },
     reconnectDelay: 5000,
     heartbeatIncoming: 4000,
     heartbeatOutgoing: 4000,
 
     onConnect: () => {
-      console.log('Connected to notification WebSocket server.');
+      console.log("Connected to notification WebSocket server.");
 
-
-      stompClient?.subscribe('/topic/levelup', (message: IMessage) => {
-        console.log('Received real-time event:', message.body);
+      stompClient?.subscribe("/topic/levelup", (message: IMessage) => {
+        console.log("Received real-time event:", message.body);
 
         try {
           const payload = JSON.parse(message.body);
@@ -48,8 +47,8 @@ onMounted(() => {
     },
 
     onStompError: (frame: IFrame) => {
-      console.error('Broker reported error:', frame.headers['message']);
-      console.error('Additional details:', frame.body);
+      console.error("Broker reported error:", frame.headers["message"]);
+      console.error("Additional details:", frame.body);
     },
   });
 
@@ -57,20 +56,30 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-    if(timeoutId) clearTimeout(timeoutId);
-    if(stompClient) stompClient.deactivate();
+  if (timeoutId) clearTimeout(timeoutId);
+  if (stompClient) stompClient.deactivate();
 });
-
 </script>
 
 <template>
-<Transition name="toast">
+  <Transition name="toast">
     <div v-if="isNotificationVisible" class="toast-card">
       <div class="toast-body">
         <div class="icon-wrapper">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-award">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="feather feather-award"
+          >
             <circle cx="12" cy="8" r="7"></circle>
-            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+            <polyline
+              points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"
+            ></polyline>
           </svg>
         </div>
 
@@ -79,8 +88,20 @@ onUnmounted(() => {
           <p class="toast-text">{{ notificationMessage }}</p>
         </div>
 
-        <button @click="closeNotification" class="close-btn" aria-label="Close notification">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <button
+          @click="closeNotification"
+          class="close-btn"
+          aria-label="Close notification"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
@@ -93,8 +114,6 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-
-
 .toast-card {
   position: fixed;
   top: 24px;
@@ -104,9 +123,11 @@ onUnmounted(() => {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-left: 4px solid #10b981;
+  border-left: 4px solid var(--primary-accent);
   border-radius: 12px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.5),
+    0 10px 10px -5px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   z-index: 9999;
 }
@@ -118,7 +139,6 @@ onUnmounted(() => {
   gap: 16px;
 }
 
-
 .icon-wrapper {
   display: flex;
   align-items: center;
@@ -126,7 +146,7 @@ onUnmounted(() => {
   width: 40px;
   height: 40px;
   background: rgba(16, 185, 129, 0.1);
-  color: #10b981;
+  color: var(--primary-accent);
   border-radius: 8px;
   flex-shrink: 0;
   box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
@@ -136,7 +156,6 @@ onUnmounted(() => {
   width: 22px;
   height: 22px;
 }
-
 
 .content-wrapper {
   flex-grow: 1;
@@ -156,7 +175,6 @@ onUnmounted(() => {
   color: #9ca3af;
   line-height: 1.4;
 }
-
 
 .close-btn {
   background: none;
@@ -185,14 +203,18 @@ onUnmounted(() => {
   bottom: 0;
   left: 0;
   height: 3px;
-  background: linear-gradient(90deg, #10b981, #059669);
+  background: linear-gradient(90deg, var(--primary-accent), #059669);
   width: 100%;
   animation: countdown 5s linear forwards;
 }
 
 @keyframes countdown {
-  from { width: 100%; }
-  to { width: 0%; }
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
 }
 
 .toast-enter-active {

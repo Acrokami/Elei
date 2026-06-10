@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import type { components } from '../../types/api-schemas';
+import type { components } from "../../types/api-schemas";
 import activityService from "../../service/activity.service";
 
-type ActivityProgressDto = components['schemas']['ActivityProgressDto'];
+type ActivityProgressDto = components["schemas"]["ActivityProgressDto"];
 
 const props = defineProps<{
   categories: ActivityProgressDto[];
 }>();
 
-const emit = defineEmits(['experience-added', 'activity-deleted']);
+const emit = defineEmits(["experience-added", "activity-deleted"]);
 
 const amounts = ref<Record<number, number | string>>({});
 
@@ -38,24 +38,31 @@ const handleAddActivity = async (activityId: number) => {
   }
 };
 
-
 const handleDeleteActivity = async (activityId: number) => {
-  if(!confirm('System will delete this activity and the whole history. Continue?')) return;
+  if (
+    !confirm(
+      "System will delete this activity and the whole history. Continue?",
+    )
+  )
+    return;
 
   try {
     await activityService.deleteActivity(activityId);
-    emit('activity-deleted');
+    emit("activity-deleted");
   } catch (error) {
     console.error("Error deleting activity", error);
   }
-}
-
+};
 </script>
 
 <template>
   <div class="categories-container">
-
-    <TransitionGroup v-if="categories && categories.length > 0" name="list" tag="div" class="categories">
+    <TransitionGroup
+      v-if="categories && categories.length > 0"
+      name="list"
+      tag="div"
+      class="categories"
+    >
       <div
         class="category-card glass-panel"
         v-for="category in categories"
@@ -64,10 +71,23 @@ const handleDeleteActivity = async (activityId: number) => {
         <div class="category-info">
           <div class="title-row">
             <h3>{{ category.name }}</h3>
-            <button class="delete-btn" @click="handleDeleteActivity(category.activityId)" title="Delete category">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <button
+              class="delete-btn"
+              @click="handleDeleteActivity(category.activityId)"
+              title="Delete category"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
                 <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <path
+                  d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                ></path>
               </svg>
             </button>
           </div>
@@ -94,7 +114,14 @@ const handleDeleteActivity = async (activityId: number) => {
             :disabled="!amounts[category.activityId]"
             title="Add progress"
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
               <line x1="12" y1="5" x2="12" y2="19"></line>
               <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
@@ -105,23 +132,29 @@ const handleDeleteActivity = async (activityId: number) => {
 
     <div v-else class="empty-state glass-panel">
       <div class="empty-icon-wrapper">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        >
           <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
           <line x1="12" y1="8" x2="12" y2="16"></line>
           <line x1="8" y1="12" x2="16" y2="12"></line>
         </svg>
       </div>
       <p class="empty-title">No categories found</p>
-      <p class="empty-subtitle">Create your first category above to start tracking progress.</p>
+      <p class="empty-subtitle">
+        Create your first category above to start tracking progress.
+      </p>
     </div>
-
   </div>
 </template>
 
 <style scoped>
 * {
   box-sizing: border-box;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .categories-container {
@@ -133,7 +166,6 @@ const handleDeleteActivity = async (activityId: number) => {
   flex-direction: column;
   gap: 16px;
 }
-
 
 .glass-panel {
   background: rgba(30, 41, 59, 0.4);
@@ -210,7 +242,7 @@ const handleDeleteActivity = async (activityId: number) => {
 }
 
 .xp-value {
-  color: #10b981;
+  color: var(--primary-accent);
   font-size: 15px;
   font-weight: 700;
 }
@@ -259,7 +291,7 @@ const handleDeleteActivity = async (activityId: number) => {
   justify-content: center;
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, var(--primary-accent), #2563eb);
   color: white;
   border: none;
   border-radius: 10px;
@@ -290,7 +322,6 @@ const handleDeleteActivity = async (activityId: number) => {
   cursor: not-allowed;
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
-
 
 .empty-state {
   display: flex;
@@ -331,7 +362,6 @@ const handleDeleteActivity = async (activityId: number) => {
   font-size: 14px;
   margin: 0;
 }
-
 
 .list-enter-active,
 .list-leave-active {

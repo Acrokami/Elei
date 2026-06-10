@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import type { components } from '../../types/api-schemas';
-import api from '../../service/api';
-import { Client, type IMessage } from '@stomp/stompjs';
+import { ref, onMounted, onUnmounted } from "vue";
+import type { components } from "../../types/api-schemas";
+import api from "../../service/api";
+import { Client, type IMessage } from "@stomp/stompjs";
 
-type QuestProgressDto = components['schemas']['QuestProgressDto'];
+type QuestProgressDto = components["schemas"]["QuestProgressDto"];
 
 const quests = ref<QuestProgressDto[]>([]);
 const isLoading = ref<boolean>(true);
@@ -12,75 +12,82 @@ const error = ref<string | null>(null);
 
 let stompClient: Client | null = null;
 
-
-
 // Token decoding function to get username
 const getUsernameFromToken = (): string | null => {
-  const token = localStorage.getItem('user_token');
+  const token = localStorage.getItem("user_token");
   if (!token) {
-    console.warn('[SYSTEM] Token not found in local storage.');
+    console.warn("[SYSTEM] Token not found in local storage.");
     return null;
   }
   try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      window
+        .atob(base64)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join(""),
+    );
 
     const payload = JSON.parse(jsonPayload);
-    console.log('[SYSTEM] Decoded JWT payload:', payload);
-
+    console.log("[SYSTEM] Decoded JWT payload:", payload);
 
     return payload.sub || payload.username || null;
   } catch (e) {
-    console.error('[SYSTEM] Token decoding failed:', e);
+    console.error("[SYSTEM] Token decoding failed:", e);
     return null;
   }
 };
 
 const fetchQuests = async () => {
-    try {
-        isLoading.value = true;
-        error.value = null;
-        const response = await api.get('/quests');
-        quests.value = response.data;
-    } catch (e) {
-        error.value = 'Failed to synchronize quests protocols';
-        console.error('Failed to synchronize quests protocols', e);
-    } finally {
-        isLoading.value = false;
-    }
+  try {
+    isLoading.value = true;
+    error.value = null;
+    const response = await api.get("/quests");
+    quests.value = response.data;
+  } catch (e) {
+    error.value = "Failed to synchronize quests protocols";
+    console.error("Failed to synchronize quests protocols", e);
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 const connectWebSocket = () => {
-    const username = getUsernameFromToken();
-    if (!username) return;
+  const username = getUsernameFromToken();
+  if (!username) return;
 
-    stompClient = new Client({
-        brokerURL: 'ws://localhost:8080/ws-notifications',
-        connectHeaders: {
-            Authorization: `Bearer ${localStorage.getItem('user_token')}`
+  stompClient = new Client({
+    brokerURL: "ws://localhost:8080/ws-notifications",
+    connectHeaders: {
+      Authorization: `Bearer ${localStorage.getItem("user_token")}`,
+    },
+    reconnectDelay: 5000,
+    onConnect: () => {
+      console.log("[SYSTEM] Quest live-sync activated.");
+
+      stompClient?.subscribe(
+        `/topic/quests/${username}`,
+        (message: IMessage) => {
+          const updatedQuest: QuestProgressDto = JSON.parse(message.body);
+
+          const index = quests.value.findIndex(
+            (q) => q.questId === updatedQuest.questId,
+          );
+          if (index !== -1) {
+            quests.value.splice(index, 1, updatedQuest);
+          }
         },
-        reconnectDelay: 5000,
-        onConnect: () => {
-            console.log('[SYSTEM] Quest live-sync activated.');
-
-            stompClient?.subscribe(`/topic/quests/${username}`, (message: IMessage) => {
-                const updatedQuest: QuestProgressDto = JSON.parse(message.body);
-
-
-                const index = quests.value.findIndex(q => q.questId === updatedQuest.questId);
-                if (index !== -1) {
-                    quests.value.splice(index, 1, updatedQuest);
-                }
-            });
-        },
-        onStompError: (frame) => {
-            console.error('[SYSTEM] Broker error:', frame.headers['message']);
-        }
-    });
-    stompClient.activate();
+      );
+    },
+    onStompError: (frame) => {
+      console.error("[SYSTEM] Broker error:", frame.headers["message"]);
+    },
+  });
+  stompClient.activate();
 };
 
 onMounted(() => {
@@ -89,14 +96,14 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  if(stompClient) {
+  if (stompClient) {
     stompClient.deactivate();
   }
 });
 
 const calculateProgress = (current?: number, target?: number): number => {
-    if (!current || !target) return 0;
-    return Math.min((current / target) * 100, 100);
+  if (!current || !target) return 0;
+  return Math.min((current / target) * 100, 100);
 };
 </script>
 
@@ -118,12 +125,24 @@ const calculateProgress = (current?: number, target?: number): number => {
 
     <div v-else-if="quests.length === 0" class="empty-state glass-panel">
       <div class="empty-icon-wrapper">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+          ></path>
         </svg>
       </div>
       <h3 class="empty-title">No Active Protocols</h3>
-      <p class="empty-desc">Your quest log is currently empty. The system will automatically assign new objectives based on your progression.</p>
+      <p class="empty-desc">
+        Your quest log is currently empty. The system will automatically assign
+        new objectives based on your progression.
+      </p>
     </div>
 
     <div v-else class="protocols-grid">
@@ -134,30 +153,49 @@ const calculateProgress = (current?: number, target?: number): number => {
         :class="{ 'is-completed': quest.isCompleted }"
       >
         <div class="status-icon">
-          <svg v-if="quest.isCompleted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg
+            v-if="quest.isCompleted"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
             <path d="M20 6L9 17l-5-5"></path>
           </svg>
-          <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg
+            v-else
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
             <circle cx="12" cy="12" r="10"></circle>
             <polyline points="12 6 12 12 16 14"></polyline>
           </svg>
         </div>
 
-        <h3 class="quest-title">{{ quest.title ?? '—' }}</h3>
-        <p class="quest-desc">{{ quest.description ?? '—' }}</p>
+        <h3 class="quest-title">{{ quest.title ?? "—" }}</h3>
+        <p class="quest-desc">{{ quest.description ?? "—" }}</p>
 
         <div class="progress-section">
           <div class="progress-stats">
             <span class="xp-reward">+{{ quest.rewardXp ?? 0 }} XP</span>
             <span class="count-tracker">
-              {{ Math.min(quest.currentCount ?? 0, quest.targetCount ?? 0) }} / {{ quest.targetCount ?? 0 }}
+              {{ Math.min(quest.currentCount ?? 0, quest.targetCount ?? 0) }} /
+              {{ quest.targetCount ?? 0 }}
             </span>
           </div>
 
           <div class="progress-track">
             <div
               class="progress-fill"
-              :style="{ width: `${calculateProgress(quest.currentCount, quest.targetCount)}%` }"
+              :style="{
+                width: `${calculateProgress(quest.currentCount, quest.targetCount)}%`,
+              }"
             ></div>
           </div>
         </div>
@@ -167,15 +205,14 @@ const calculateProgress = (current?: number, target?: number): number => {
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 .protocols-wrapper {
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
-
 
 .section-header {
   display: flex;
@@ -187,7 +224,7 @@ const calculateProgress = (current?: number, target?: number): number => {
 .header-accent {
   width: 6px;
   height: 24px;
-  background: #3b82f6;
+  background: var(--primary-accent);
   border-radius: 4px;
   box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
 }
@@ -200,7 +237,6 @@ const calculateProgress = (current?: number, target?: number): number => {
   margin: 0;
 }
 
-
 .glass-panel {
   background: rgba(30, 41, 59, 0.4);
   backdrop-filter: blur(16px);
@@ -210,13 +246,11 @@ const calculateProgress = (current?: number, target?: number): number => {
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-
 .protocols-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 20px;
 }
-
 
 .quest-card {
   position: relative;
@@ -228,11 +262,18 @@ const calculateProgress = (current?: number, target?: number): number => {
 }
 
 .quest-card::before {
-  content: '';
+  content: "";
   position: absolute;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(59, 130, 246, 0.5),
+    transparent
+  );
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -246,7 +287,6 @@ const calculateProgress = (current?: number, target?: number): number => {
 .quest-card:hover::before {
   opacity: 1;
 }
-
 
 .quest-title {
   font-size: 16px;
@@ -268,7 +308,6 @@ const calculateProgress = (current?: number, target?: number): number => {
   flex-grow: 1;
 }
 
-
 .status-icon {
   position: absolute;
   top: 24px;
@@ -278,7 +317,6 @@ const calculateProgress = (current?: number, target?: number): number => {
   color: #64748b;
   transition: color 0.3s ease;
 }
-
 
 .progress-section {
   display: flex;
@@ -296,7 +334,7 @@ const calculateProgress = (current?: number, target?: number): number => {
 }
 
 .xp-reward {
-  color: #3b82f6;
+  color: var(--primary-accent);
 }
 
 .count-tracker {
@@ -313,12 +351,11 @@ const calculateProgress = (current?: number, target?: number): number => {
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  background: linear-gradient(90deg, #2563eb, var(--primary-accent));
   border-radius: 4px;
   transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
 }
-
 
 .quest-card.is-completed {
   background: rgba(16, 185, 129, 0.03);
@@ -330,25 +367,30 @@ const calculateProgress = (current?: number, target?: number): number => {
 }
 
 .quest-card.is-completed::before {
-  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.8), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(16, 185, 129, 0.8),
+    transparent
+  );
 }
 
 .quest-card.is-completed .status-icon {
-  color: #10b981;
+  color: var(--primary-accent);
 }
 
 .quest-card.is-completed .xp-reward {
-  color: #10b981;
+  color: var(--primary-accent);
   text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
 }
 
 .quest-card.is-completed .progress-fill {
-  background: linear-gradient(90deg, #059669, #10b981);
+  background: linear-gradient(90deg, #059669, var(--primary-accent));
   box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
 }
 
-
-.loading-state, .error-state {
+.loading-state,
+.error-state {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -360,7 +402,7 @@ const calculateProgress = (current?: number, target?: number): number => {
 }
 
 .loading-state span {
-  color: #3b82f6;
+  color: var(--primary-accent);
   font-size: 14px;
   font-weight: 500;
 }
@@ -369,7 +411,7 @@ const calculateProgress = (current?: number, target?: number): number => {
   width: 20px;
   height: 20px;
   border: 2px solid rgba(59, 130, 246, 0.2);
-  border-top-color: #3b82f6;
+  border-top-color: var(--primary-accent);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -401,7 +443,7 @@ const calculateProgress = (current?: number, target?: number): number => {
   height: 64px;
   border-radius: 50%;
   background: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
+  color: var(--primary-accent);
   margin-bottom: 20px;
   border: 1px solid rgba(59, 130, 246, 0.2);
   box-shadow: 0 0 20px rgba(59, 130, 246, 0.1);
@@ -428,6 +470,8 @@ const calculateProgress = (current?: number, target?: number): number => {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

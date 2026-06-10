@@ -3,3 +3,23 @@ html, body {
   padding: 0;
   background-color: #0f172a;
 }
+
+:root, :root[data-theme="emerald"] {
+  --primary-accent: #10b981;
+  --primary-glow: rgba(16, 185, 129, 0.2);
+}
+
+:root[data-theme="blue"] {
+  --primary-accent: #3b82f6;
+  --primary-glow: rgba(59, 130, 246, 0.2);
+}
+
+:root[data-theme="purple"] {
+  --primary-accent: #a855f7;
+  --primary-glow: rgba(168, 85, 247, 0.2);
+}
+
+:root[data-theme="rose"] {
+  --primary-accent: #e11d48;
+  --primary-glow: rgba(225, 29, 72, 0.2);
+}

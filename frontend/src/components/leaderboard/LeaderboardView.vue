@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import leaderboardService from '../../service/leaderboard.service';
-import type { LeaderboardEntryDto } from '../../service/leaderboard.service';
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import leaderboardService from "../../service/leaderboard.service";
+import type { LeaderboardEntryDto } from "../../service/leaderboard.service";
 
 const router = useRouter();
 const leaderboard = ref<LeaderboardEntryDto[]>([]);
@@ -10,35 +10,33 @@ const isLoading = ref<boolean>(true);
 const errorMessage = ref<string | null>(null);
 
 const fetchLeaderboard = async () => {
-    try {
-        isLoading.value = true;
-        errorMessage.value = null;
-        leaderboard.value = await leaderboardService.getTopCitizens(10);
-
-    } catch (error) {
-        console.error('Failed to load leaderboard', error);
-        errorMessage.value = 'Failed to load leaderboard. Server connection error.';
-    } finally {
-        isLoading.value = false;
-    }
+  try {
+    isLoading.value = true;
+    errorMessage.value = null;
+    leaderboard.value = await leaderboardService.getTopCitizens(10);
+  } catch (error) {
+    console.error("Failed to load leaderboard", error);
+    errorMessage.value = "Failed to load leaderboard. Server connection error.";
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 onMounted(() => {
-    fetchLeaderboard();
+  fetchLeaderboard();
 });
 
 const getRankBadge = (index: number) => {
-    if (index === 0) return '🥇';
-    if (index === 1) return '🥈';
-    if (index === 2) return '🥉';
-    return `#${index + 1}`;
+  if (index === 0) return "🥇";
+  if (index === 1) return "🥈";
+  if (index === 2) return "🥉";
+  return `#${index + 1}`;
 };
 
 const handleHome = () => {
-  router.push('/');
-}
+  router.push("/");
+};
 </script>
-
 
 <template>
   <div class="page-wrapper">
@@ -48,7 +46,15 @@ const handleHome = () => {
     <div class="topbar">
       <span class="logo">Elei<span>.</span></span>
       <button class="back-btn" @click="handleHome">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="back-icon">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="back-icon"
+        >
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
@@ -80,7 +86,11 @@ const handleHome = () => {
           v-for="(player, index) in leaderboard"
           :key="player.id"
           class="rank-card glass-panel"
-          :class="{ 'rank-1': index === 0, 'rank-2': index === 1, 'rank-3': index === 2 }"
+          :class="{
+            'rank-1': index === 0,
+            'rank-2': index === 1,
+            'rank-3': index === 2,
+          }"
         >
           <div class="rank-position">
             <span class="badge">{{ getRankBadge(index) }}</span>
@@ -101,11 +111,11 @@ const handleHome = () => {
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 * {
   box-sizing: border-box;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .page-wrapper {
@@ -117,7 +127,6 @@ const handleHome = () => {
   position: relative;
   overflow-x: hidden;
 }
-
 
 .ambient-glow {
   position: absolute;
@@ -142,7 +151,6 @@ const handleHome = () => {
   bottom: 0;
   right: -100px;
 }
-
 
 .topbar {
   display: flex;
@@ -169,8 +177,8 @@ const handleHome = () => {
 }
 
 .logo span {
-  color: #3b82f6;
-  -webkit-text-fill-color: #3b82f6;
+  color: var(--primary-accent);
+  -webkit-text-fill-color: var(--primary-accent);
 }
 
 .back-btn {
@@ -204,7 +212,6 @@ const handleHome = () => {
   transform: translateX(-3px);
 }
 
-
 .leaderboard-container {
   max-width: 800px;
   width: 100%;
@@ -228,7 +235,7 @@ const handleHome = () => {
 }
 
 .subtitle {
-  color: #10b981;
+  color: var(--primary-accent);
   text-transform: uppercase;
   letter-spacing: 2px;
   font-size: 0.9rem;
@@ -258,7 +265,9 @@ const handleHome = () => {
 }
 
 @keyframes spin {
-  100% { transform: rotate(360deg); }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .ranking-list {
@@ -266,7 +275,6 @@ const handleHome = () => {
   flex-direction: column;
   gap: 12px;
 }
-
 
 .glass-panel {
   background: rgba(30, 41, 59, 0.4);
@@ -281,7 +289,11 @@ const handleHome = () => {
   gap: 16px;
   border-radius: 12px;
   padding: 16px 24px;
-  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .rank-card:hover {
@@ -322,7 +334,7 @@ const handleHome = () => {
 .xp-value {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #10b981;
+  color: var(--primary-accent);
 }
 
 .xp-label {
@@ -331,20 +343,33 @@ const handleHome = () => {
   color: #9ca3af;
 }
 
-
 .rank-1 {
-  background: linear-gradient(90deg, rgba(251, 191, 36, 0.15), rgba(30, 41, 59, 0.4));
+  background: linear-gradient(
+    90deg,
+    rgba(251, 191, 36, 0.15),
+    rgba(30, 41, 59, 0.4)
+  );
   border-left: 4px solid #fbbf24;
 }
-.rank-1 .player-name { color: #fbbf24; }
+.rank-1 .player-name {
+  color: #fbbf24;
+}
 
 .rank-2 {
-  background: linear-gradient(90deg, rgba(156, 163, 175, 0.15), rgba(30, 41, 59, 0.4));
+  background: linear-gradient(
+    90deg,
+    rgba(156, 163, 175, 0.15),
+    rgba(30, 41, 59, 0.4)
+  );
   border-left: 4px solid #9ca3af;
 }
 
 .rank-3 {
-  background: linear-gradient(90deg, rgba(180, 83, 9, 0.15), rgba(30, 41, 59, 0.4));
+  background: linear-gradient(
+    90deg,
+    rgba(180, 83, 9, 0.15),
+    rgba(30, 41, 59, 0.4)
+  );
   border-left: 4px solid #d97706;
 }
 

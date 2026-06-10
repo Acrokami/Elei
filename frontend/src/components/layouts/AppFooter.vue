@@ -17,7 +17,7 @@ const currentYear = new Date().getFullYear();
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 .app-footer {
   width: 100%;
@@ -27,7 +27,7 @@ const currentYear = new Date().getFullYear();
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   padding: 24px 0;
   margin-top: auto;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   position: relative;
   z-index: 10;
 }
@@ -67,8 +67,8 @@ const currentYear = new Date().getFullYear();
 }
 
 .logo-dot {
-  color: #3b82f6;
-  -webkit-text-fill-color: #3b82f6;
+  color: var(--primary-accent);
+  -webkit-text-fill-color: var(--primary-accent);
 }
 
 .version {
@@ -97,7 +97,6 @@ const currentYear = new Date().getFullYear();
 .author:hover {
   color: #38bdf8;
 }
-
 
 @media (max-width: 600px) {
   .footer-content {
