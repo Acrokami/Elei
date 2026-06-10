@@ -17,10 +17,10 @@ import static org.mockito.ArgumentMatchers.any;
 
 import com.acrobtw.elei.core.exception.GlobalExceptionHandler;
 import com.acrobtw.elei.core.security.jwt.JwtAuthenticationFilter;
-import com.acrobtw.elei.domain.auth.AuthController;
 import com.acrobtw.elei.domain.auth.AuthenticationService;
 import com.acrobtw.elei.domain.auth.dto.RegisterRequest;
 import com.acrobtw.elei.domain.auth.dto.RegisterResponse;
+import com.acrobtw.elei.domain.controller.AuthController;
 import com.acrobtw.elei.domain.user.service.UserService;
 
 import tools.jackson.databind.ObjectMapper;

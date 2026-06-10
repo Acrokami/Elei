@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import api from "../service/api";
 
 const router = useRouter();
 const username = ref("");
-// const password = ref('');
 const email = ref("");
 const currentPassword = ref("");
 const newPassword = ref("");
@@ -26,19 +26,50 @@ const changeTheme = (themeId: string) => {
 };
 
 const handleProfileSave = async () => {
-  isSaving.value = true;
-  // TODO API for profile update
-  setTimeout(() => {
-    isSaving.value = false;
-    console.log("[SYSTEM] Profile update simulated.");
-  }, 1000);
+    if (!email.value) return;
+
+    isSaving.value = true;
+    try {
+        await api.put('/settings/email', { newEmail: email.value });
+        alert('[SYSTEM] Identity parameters updated successfully.');
+    } catch (e: any) {
+        alert(e.response?.data || 'Failed to update identity parameters.');
+    } finally {
+        isSaving.value = false;
+    }
+};
+
+const handlePasswordUpdate = async () => {
+    if (!currentPassword.value || !newPassword.value) {
+        alert('Please provide both current and new authorization codes.');
+        return;
+    }
+
+    try {
+        await api.put('/settings/password', {
+            currentPassword: currentPassword.value,
+            newPassword: newPassword.value
+        });
+        alert('[SYSTEM] Security protocols updated successfully.');
+        currentPassword.value = '';
+        newPassword.value = '';
+    } catch (e: any) {
+        alert(e.response?.data || 'Failed to update security protocols.');
+    }
+};
+
+const fetchUserProfile = async () => {
+    try {
+        const response = await api.get('/users/profile');
+        username.value = response.data.username;
+        email.value = response.data.email;
+    } catch (e: any) {
+        console.error('[SYSTEM] Failed to load citizen identity:', e);
+    }
 };
 
 onMounted(() => {
-  // Plug
-  username.value = "Acrobtw";
-  email.value = "acrobtw@elei.com";
-
+  fetchUserProfile();
   const savedTheme = localStorage.getItem("elei_theme") || "emerald";
   changeTheme(savedTheme);
 });
@@ -73,7 +104,7 @@ onMounted(() => {
               <form @submit.prevent="handleProfileSave" class="space-y-4">
                 <div class="input-group">
                   <label>Citizen ID (Username)</label>
-                  <input type="text" v-model="username" class="glass-input" />
+                  <input type="text" v-model="username" class="glass-input disabled-input" disabled />
                 </div>
                 <div class="input-group">
                   <label>Communication Link (Email)</label>
@@ -87,7 +118,7 @@ onMounted(() => {
 
             <div class="glass-panel p-6">
               <h3 class="panel-title">Security Protocols</h3>
-              <form class="space-y-4">
+              <form @submit.prevent="handlePasswordUpdate" class="space-y-4">
                 <div class="input-group">
                   <label>Current Authorization Code</label>
                   <input
@@ -106,7 +137,7 @@ onMounted(() => {
                     placeholder="••••••••"
                   />
                 </div>
-                <button type="button" class="action-btn danger-btn">
+                <button type="submit" class="action-btn danger-btn">
                   Update Security
                 </button>
               </form>
@@ -115,7 +146,7 @@ onMounted(() => {
 
           <div class="settings-column">
             <div class="glass-panel p-6">
-              <h3 class="panel-title">Visual Interface Interface (HUD)</h3>
+              <h3 class="panel-title">Visual Interface (HUD)</h3>
               <p class="panel-desc">
                 Select the primary accent color for your workspace.
               </p>
@@ -130,7 +161,7 @@ onMounted(() => {
                 >
                   <span
                     class="theme-color-dot"
-                    :style="{ backgroundColor: theme.color }"
+                    :style="{ backgroundColor: theme.color, boxShadow: `0 0 10px ${theme.color}` }"
                   ></span>
                   <span class="theme-name">{{ theme.name }}</span>
                   <svg
@@ -160,6 +191,24 @@ onMounted(() => {
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
+/* Определение тем (без этого var(--primary-accent) не работает) */
+:root {
+  --primary-accent: #10b981;
+  --primary-glow: rgba(16, 185, 129, 0.2);
+}
+[data-theme="blue"] {
+  --primary-accent: #3b82f6;
+  --primary-glow: rgba(59, 130, 246, 0.2);
+}
+[data-theme="purple"] {
+  --primary-accent: #a855f7;
+  --primary-glow: rgba(168, 85, 247, 0.2);
+}
+[data-theme="rose"] {
+  --primary-accent: #e11d48;
+  --primary-glow: rgba(225, 29, 72, 0.2);
+}
+
 .page-wrapper {
   min-height: 100vh;
   background-color: #0b1120;
@@ -178,18 +227,19 @@ onMounted(() => {
   z-index: 0;
   opacity: 0.3;
   pointer-events: none;
+  transition: background 0.5s ease;
 }
 .glow-1 {
   width: 400px;
   height: 400px;
-  background: var(--primary-accent, var(--primary-accent));
+  background: var(--primary-accent);
   top: -100px;
   left: -100px;
 }
 .glow-2 {
   width: 500px;
   height: 500px;
-  background: rgba(59, 130, 246, 0.15);
+  background: var(--primary-glow);
   bottom: -200px;
   right: -100px;
 }
@@ -215,7 +265,8 @@ onMounted(() => {
   color: #fff;
 }
 .logo-dot {
-  color: var(--primary-accent, var(--primary-accent));
+  color: var(--primary-accent);
+  transition: color 0.5s ease;
 }
 
 .glass-panel {
@@ -224,12 +275,8 @@ onMounted(() => {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
 }
-.p-6 {
-  padding: 24px;
-}
-.mb-6 {
-  margin-bottom: 24px;
-}
+.p-6 { padding: 24px; }
+.mb-6 { margin-bottom: 24px; }
 
 .back-btn {
   display: flex;
@@ -271,9 +318,10 @@ onMounted(() => {
 .header-accent {
   width: 6px;
   height: 24px;
-  background: var(--primary-accent, var(--primary-accent));
+  background: var(--primary-accent);
   border-radius: 4px;
-  box-shadow: 0 0 10px var(--primary-glow, rgba(16, 185, 129, 0.5));
+  box-shadow: 0 0 10px var(--primary-glow);
+  transition: all 0.5s ease;
 }
 .section-header h2 {
   font-size: 20px;
@@ -287,9 +335,7 @@ onMounted(() => {
   gap: 24px;
 }
 @media (max-width: 768px) {
-  .settings-grid {
-    grid-template-columns: 1fr;
-  }
+  .settings-grid { grid-template-columns: 1fr; }
 }
 
 .panel-title {
@@ -327,23 +373,27 @@ onMounted(() => {
   transition: border-color 0.3s;
 }
 .glass-input:focus {
-  border-color: var(--primary-accent, var(--primary-accent));
+  border-color: var(--primary-accent);
+}
+.disabled-input {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .action-btn {
   width: 100%;
   padding: 10px;
-  background: var(--primary-accent, var(--primary-accent));
+  background: var(--primary-accent);
   color: #fff;
   border: none;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.3s;
+  transition: all 0.3s;
   margin-top: 8px;
 }
 .action-btn:hover {
-  opacity: 0.9;
+  filter: brightness(1.1);
 }
 .action-btn:disabled {
   opacity: 0.5;
@@ -356,7 +406,7 @@ onMounted(() => {
 }
 .danger-btn:hover {
   background: rgba(239, 68, 68, 0.1);
-  opacity: 1;
+  filter: brightness(1);
 }
 
 .theme-selector {
@@ -380,15 +430,14 @@ onMounted(() => {
   background: rgba(255, 255, 255, 0.05);
 }
 .theme-btn.active {
-  border-color: var(--primary-accent, var(--primary-accent));
-  background: var(--primary-glow, rgba(16, 185, 129, 0.05));
+  border-color: var(--primary-accent);
+  background: var(--primary-glow);
   color: #fff;
 }
 .theme-color-dot {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  box-shadow: 0 0 10px currentColor;
 }
 .theme-name {
   flex: 1;
@@ -399,6 +448,6 @@ onMounted(() => {
 .check-icon {
   width: 18px;
   height: 18px;
-  color: var(--primary-accent, var(--primary-accent));
+  color: var(--primary-accent);
 }
 </style>

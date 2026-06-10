@@ -1,4 +1,4 @@
-package com.acrobtw.elei.domain.auth;
+package com.acrobtw.elei.domain.controller;
 
 
 import org.springframework.http.ResponseEntity;
@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.acrobtw.elei.domain.auth.AuthenticationService;
 import com.acrobtw.elei.domain.auth.dto.LoginRequest;
 import com.acrobtw.elei.domain.auth.dto.LoginResponse;
 import com.acrobtw.elei.domain.auth.dto.RegisterRequest;

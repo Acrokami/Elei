@@ -24,8 +24,8 @@ CREATE TABLE activities (
 
 CREATE TABLE experience_logs (
     experience_id  BIGSERIAL PRIMARY KEY,
-    "unitsCompleted" INTEGER,
-    "earnedXp"       INTEGER,
+    units_completed INTEGER,
+    earned_xp       INTEGER,
     created_at     TIMESTAMP NOT NULL DEFAULT now(),
     user_id        BIGINT NOT NULL,
     activity_id    BIGINT NOT NULL,

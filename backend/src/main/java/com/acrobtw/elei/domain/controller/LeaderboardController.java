@@ -1,4 +1,4 @@
-package com.acrobtw.elei.domain.leaderboard;
+package com.acrobtw.elei.domain.controller;
 
 import java.util.Set;
 
@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.acrobtw.elei.domain.leaderboard.LeaderboardService;
 import com.acrobtw.elei.domain.leaderboard.dto.LeaderboardEntryDto;
 
 import io.swagger.v3.oas.annotations.Operation;

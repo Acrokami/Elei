@@ -17,7 +17,10 @@ import com.acrobtw.elei.domain.user.dto.UserProfileResponse;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -61,15 +64,31 @@ public class UserService {
         );
     }
 
-    @Transactional
-    public void updatePassword(Long userId, String newRawPassword) {
-        User user = userRepository.findById(userId)
-        .orElseThrow(() -> new ResourceNotFoundException("User", userId));
 
-        String encodedPassword = passwordEncoder.encode(newRawPassword);
-        user.changePassword(encodedPassword);
+    @Transactional
+    public void updateEmail(String username, String newEmail) {
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new ResourceNotFoundException("User", username));
+        if(userRepository.existsByEmail(newEmail)) {
+            throw new IllegalArgumentException("This communication link (email) is already in use.");
+        }
+
+        user.setEmail(newEmail);
+        userRepository.save(user);
+        log.info("[SYSTEM] Citizen {} successfully updated their email.", username);
     }
 
+    @Transactional
+    public void updatePassword(String username, String currentPassword, String newPassword) {
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new ResourceNotFoundException("User", username));
 
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new IllegalArgumentException("Invalid current security authorization code.");
+        }
 
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        log.info("[SYSTEM] Citizen {} successfully rotated their security code.", username);
+    }
 }
