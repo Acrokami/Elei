@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
 
-import QuestList from '../components/quest/QuestList.vue';
+import QuestList from "../components/quest/QuestList.vue";
 
 const router = useRouter();
 
 const returnToHub = () => {
-  router.push('/');
+  router.push("/");
 };
 </script>
 
@@ -35,12 +35,12 @@ const returnToHub = () => {
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 .page-wrapper {
   min-height: 100vh;
   background-color: #0b1120;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -71,7 +71,8 @@ const returnToHub = () => {
   right: -100px;
 }
 
-.topbar, .content {
+.topbar,
+.content {
   position: relative;
   z-index: 1;
 }
@@ -95,8 +96,8 @@ const returnToHub = () => {
   -webkit-text-fill-color: transparent;
 }
 .logo-dot {
-  color: #10b981; 
-  -webkit-text-fill-color: #10b981;
+  color: var(--primary-accent);
+  -webkit-text-fill-color: var(--primary-accent);
 }
 
 .topbar-actions {

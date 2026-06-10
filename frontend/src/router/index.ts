@@ -6,6 +6,7 @@ import OAuth2Redirect from '../views/auth/OAuth2Redirect.vue';
 import AdminDashboard from '../components/admin/AdminDashboard.vue';
 import LeaderboardView from '../components/leaderboard/LeaderboardView.vue';
 import QuestView from '../views/QuestView.vue';
+import SettingsView from '../views/SettingsView.vue';
 
 
 
@@ -26,6 +27,12 @@ const router = createRouter({
             path: '/login',
             name: 'login',
             component: LoginView
+        },
+        {
+            path: '/settings',
+            name: 'settings',
+            component: SettingsView,
+            meta: {requiresAuth: true}
         },
         {
             path: '/',

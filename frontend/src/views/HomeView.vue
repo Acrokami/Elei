@@ -1,73 +1,72 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router'
-import userService from '../service/user.service';
-import type { UserProfileResponse } from '../service/user.service';
-import authService from '../service/auth.service';
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import userService from "../service/user.service";
+import type { UserProfileResponse } from "../service/user.service";
+import authService from "../service/auth.service";
 
-
-import ActivityHeatmap from '../components/activity/ActivityHeatmap.vue';
+import ActivityHeatmap from "../components/activity/ActivityHeatmap.vue";
 
 const router = useRouter();
 
 const userProfile = ref<UserProfileResponse | null>(null);
 const isAdmin = ref(false);
 
-
 const isCheckedInToday = ref(false);
-const checkInMessage = ref('');
-
-
+const checkInMessage = ref("");
 
 onMounted(async () => {
-    try {
-        userProfile.value = await userService.getUserProfile();
-        checkAdminStatus();
+  try {
+    userProfile.value = await userService.getUserProfile();
+    checkAdminStatus();
 
+    const message = await userService.activateDailyProtocol();
+    if (message) {
+      isCheckedInToday.value = true;
+      checkInMessage.value = message;
 
-        const message = await userService.activateDailyProtocol();
-        if (message) {
-            isCheckedInToday.value = true;
-            checkInMessage.value = message;
-
-
-            setTimeout(() => {
-                checkInMessage.value = '';
-            }, 5000);
-        }
-    } catch (error) {
-        console.error("Error retrieving profile");
+      setTimeout(() => {
+        checkInMessage.value = "";
+      }, 5000);
     }
+  } catch (error) {
+    console.error("Error retrieving profile");
+  }
 });
 
 const checkAdminStatus = () => {
-  const token = localStorage.getItem('user_token');
+  const token = localStorage.getItem("user_token");
 
-  if(token) {
+  if (token) {
     try {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map(function (c) {
+            return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join(""),
+      );
       const payload = JSON.parse(jsonPayload);
-      if (payload.role === 'ADMIN') {
+      if (payload.role === "ADMIN") {
         isAdmin.value = true;
       }
     } catch (e) {
-      console.error('Error parsing JWT token:', e)
+      console.error("Error parsing JWT token:", e);
     }
   }
-}
+};
 
 const handleLogout = () => {
-    authService.logout();
-    router.push('/login');
+  authService.logout();
+  router.push("/login");
 };
 </script>
 
 <template>
-<div class="page-wrapper">
+  <div class="page-wrapper">
     <div class="ambient-glow glow-1"></div>
     <div class="ambient-glow glow-2"></div>
 
@@ -76,10 +75,29 @@ const handleLogout = () => {
 
       <div class="topbar-actions">
         <Transition name="fade">
-            <div v-if="isCheckedInToday" class="streak-badge">
-                <span class="fire-icon">🔥</span> Protocol Active
-            </div>
+          <div v-if="isCheckedInToday" class="streak-badge">
+            <span class="fire-icon">🔥</span> Protocol Active
+          </div>
         </Transition>
+
+        <router-link to="/settings" class="settings-icon-btn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="3"></circle>
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+            ></path>
+          </svg>
+        </router-link>
 
         <button class="logout-btn" @click="handleLogout">
           <span>Logout</span>
@@ -94,7 +112,6 @@ const handleLogout = () => {
       </div>
 
       <div v-else class="dashboard-layout">
-
         <aside class="sidebar-nav">
           <div class="nav-menu">
             <router-link to="/activity" class="nav-btn glass-panel">
@@ -144,21 +161,24 @@ const handleLogout = () => {
         </aside>
 
         <main class="main-workspace">
-
           <Transition name="slide-down">
-              <div v-if="checkInMessage" class="checkin-toast glass-panel">
-                  <div class="toast-icon">✨</div>
-                  <div class="toast-text">{{ checkInMessage }}</div>
-              </div>
+            <div v-if="checkInMessage" class="checkin-toast glass-panel">
+              <div class="toast-icon">✨</div>
+              <div class="toast-text">{{ checkInMessage }}</div>
+            </div>
           </Transition>
 
           <div class="welcome-card glass-panel">
             <div class="avatar-container">
               <div class="avatar-ring"></div>
-              <div class="avatar">{{ userProfile.username[0].toUpperCase() }}</div>
+              <div class="avatar">
+                {{ userProfile.username[0].toUpperCase() }}
+              </div>
             </div>
             <div class="welcome-text">
-              <h1>Welcome back, <span>{{ userProfile.username }}</span></h1>
+              <h1>
+                Welcome back, <span>{{ userProfile.username }}</span>
+              </h1>
               <p>Your dashboard is ready. What is our objective today?</p>
             </div>
           </div>
@@ -166,7 +186,6 @@ const handleLogout = () => {
           <div class="activity-section glass-panel">
             <ActivityHeatmap :activeDates="userProfile?.activeDays || []" />
           </div>
-
         </main>
       </div>
     </div>
@@ -174,19 +193,18 @@ const handleLogout = () => {
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 .page-wrapper {
   min-height: 100vh;
   background-color: #0b1120;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
   color: #f8fafc;
 }
-
 
 .ambient-glow {
   position: absolute;
@@ -199,7 +217,7 @@ const handleLogout = () => {
 .glow-1 {
   width: 400px;
   height: 400px;
-  background: rgba(59, 130, 246, 0.3);
+  background: var(--primary-glow);
   top: -100px;
   left: -100px;
 }
@@ -211,8 +229,8 @@ const handleLogout = () => {
   right: -100px;
 }
 
-
-.topbar, .content {
+.topbar,
+.content {
   position: relative;
   z-index: 1;
 }
@@ -236,8 +254,8 @@ const handleLogout = () => {
   -webkit-text-fill-color: transparent;
 }
 .logo-dot {
-  color: #3b82f6;
-  -webkit-text-fill-color: #3b82f6;
+  color: var(--primary-accent);
+  -webkit-text-fill-color: var(--primary-accent);
 }
 
 .topbar-actions {
@@ -266,8 +284,14 @@ const handleLogout = () => {
 }
 
 @keyframes flicker {
-  0% { transform: scale(0.95); opacity: 0.8; }
-  100% { transform: scale(1.1); opacity: 1; }
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
 }
 
 .logout-btn {
@@ -288,7 +312,6 @@ const handleLogout = () => {
   transform: translateY(-1px);
 }
 
-
 .content {
   flex: 1;
   display: flex;
@@ -305,7 +328,6 @@ const handleLogout = () => {
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-
 .dashboard-layout {
   display: grid;
   grid-template-columns: 320px 1fr;
@@ -314,7 +336,6 @@ const handleLogout = () => {
   max-width: 1100px;
   align-items: start;
 }
-
 
 .sidebar-nav {
   display: flex;
@@ -340,10 +361,13 @@ const handleLogout = () => {
 }
 
 .nav-btn::before {
-  content: '';
+  content: "";
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(90deg, rgba(255,255,255,0.03), transparent);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.03), transparent);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -369,11 +393,21 @@ const handleLogout = () => {
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.nav-icon { font-size: 20px; }
-.blue-glow { box-shadow: inset 0 0 15px rgba(59, 130, 246, 0.2); }
-.purple-glow { box-shadow: inset 0 0 15px rgba(168, 85, 247, 0.2); }
-.gold-glow { box-shadow: inset 0 0 15px rgba(234, 179, 8, 0.2); }
-.emerald-glow { box-shadow: inset 0 0 15px rgba(16, 185, 129, 0.2); }
+.nav-icon {
+  font-size: 20px;
+}
+.blue-glow {
+  box-shadow: inset 0 0 15px var(--primary-glow);
+}
+.purple-glow {
+  box-shadow: inset 0 0 15px rgba(168, 85, 247, 0.2);
+}
+.gold-glow {
+  box-shadow: inset 0 0 15px rgba(234, 179, 8, 0.2);
+}
+.emerald-glow {
+  box-shadow: inset 0 0 15px rgba(16, 185, 129, 0.2);
+}
 
 .nav-text {
   display: flex;
@@ -397,13 +431,14 @@ const handleLogout = () => {
 .nav-arrow {
   color: #475569;
   font-size: 20px;
-  transition: transform 0.3s ease, color 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    color 0.3s ease;
 }
 .nav-btn:hover .nav-arrow {
   transform: translateX(4px);
   color: #f8fafc;
 }
-
 
 .main-workspace {
   display: flex;
@@ -417,11 +452,17 @@ const handleLogout = () => {
   gap: 12px;
   width: 100%;
   padding: 16px 24px;
-  background: linear-gradient(90deg, rgba(16, 185, 129, 0.1), rgba(30, 41, 59, 0.4));
-  border-left: 4px solid #10b981;
+  background: linear-gradient(
+    90deg,
+    rgba(16, 185, 129, 0.1),
+    rgba(30, 41, 59, 0.4)
+  );
+  border-left: 4px solid var(--primary-accent);
 }
 
-.toast-icon { font-size: 20px; }
+.toast-icon {
+  font-size: 20px;
+}
 .toast-text {
   color: #a7f3d0;
   font-size: 14px;
@@ -450,15 +491,21 @@ const handleLogout = () => {
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  background: linear-gradient(135deg, var(--primary-accent), #8b5cf6);
   opacity: 0.5;
   filter: blur(8px);
   animation: pulse 3s infinite alternate;
 }
 
 @keyframes pulse {
-  0% { transform: scale(0.95); opacity: 0.5; }
-  100% { transform: scale(1.05); opacity: 0.8; }
+  0% {
+    transform: scale(0.95);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
 }
 
 .avatar {
@@ -497,7 +544,6 @@ const handleLogout = () => {
   width: 100%;
 }
 
-
 .loading-state {
   display: flex;
   flex-direction: column;
@@ -509,14 +555,15 @@ const handleLogout = () => {
   width: 32px;
   height: 32px;
   border: 3px solid rgba(59, 130, 246, 0.2);
-  border-top-color: #3b82f6;
+  border-top-color: var(--primary-accent);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
-
 
 .slide-down-enter-active,
 .slide-down-leave-active {
@@ -536,7 +583,6 @@ const handleLogout = () => {
 .fade-leave-to {
   opacity: 0;
 }
-
 
 @media (max-width: 860px) {
   .dashboard-layout {

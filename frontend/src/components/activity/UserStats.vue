@@ -1,33 +1,37 @@
 <script setup lang="ts">
-import {computed} from 'vue';
+import { computed } from "vue";
 
 const props = defineProps<{
-    xp: number;
-    level: number;
-    nextLevelXp: number;
+  xp: number;
+  level: number;
+  nextLevelXp: number;
 }>();
-
 
 const progressPercentage = computed(() => {
   const currentLevelStartXp = Math.pow(props.level - 1, 2) * 100;
   const xpNeededForThisLevel = props.nextLevelXp - currentLevelStartXp;
   const xpEarnedOnThisLevel = props.xp - currentLevelStartXp;
 
-  if(xpNeededForThisLevel <= 0) return 0;
+  if (xpNeededForThisLevel <= 0) return 0;
   let percent = (xpEarnedOnThisLevel / xpNeededForThisLevel) * 100;
   return Math.min(Math.max(percent, 0), 100);
-
-})
-
+});
 </script>
 
 <template>
   <div class="stats-container">
-
     <div class="stats-header">
       <div class="stat-card glass-panel">
         <div class="stat-icon-wrapper blue-glow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-icon">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="stat-icon"
+          >
             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
           </svg>
         </div>
@@ -39,8 +43,18 @@ const progressPercentage = computed(() => {
 
       <div class="stat-card glass-panel">
         <div class="stat-icon-wrapper purple-glow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-icon">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="stat-icon"
+          >
+            <polygon
+              points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+            ></polygon>
           </svg>
         </div>
         <div class="stat-info">
@@ -53,7 +67,9 @@ const progressPercentage = computed(() => {
     <div class="progress-section glass-panel">
       <div class="progress-labels">
         <span class="progress-title">Level Progress</span>
-        <span class="progress-numbers"><span class="highlight">{{ xp }}</span> / {{ nextLevelXp }} XP</span>
+        <span class="progress-numbers"
+          ><span class="highlight">{{ xp }}</span> / {{ nextLevelXp }} XP</span
+        >
       </div>
 
       <div class="progress-bar-bg">
@@ -66,17 +82,18 @@ const progressPercentage = computed(() => {
       </div>
 
       <div class="progress-footer">
-        <span>{{ Math.round(progressPercentage) }}% to Level {{ level + 1 }}</span>
+        <span
+          >{{ Math.round(progressPercentage) }}% to Level {{ level + 1 }}</span
+        >
       </div>
     </div>
-
   </div>
 </template>
 
 <style scoped>
 * {
   box-sizing: border-box;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .stats-container {
@@ -86,7 +103,6 @@ const progressPercentage = computed(() => {
   width: 100%;
 }
 
-
 .glass-panel {
   background: rgba(30, 41, 59, 0.4);
   backdrop-filter: blur(16px);
@@ -94,7 +110,6 @@ const progressPercentage = computed(() => {
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
-
 
 .stats-header {
   display: flex;
@@ -108,7 +123,9 @@ const progressPercentage = computed(() => {
   display: flex;
   align-items: center;
   gap: 16px;
-  transition: transform 0.3s ease, border-color 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .stat-card:hover {
@@ -134,7 +151,7 @@ const progressPercentage = computed(() => {
 }
 
 .blue-glow {
-  color: #3b82f6;
+  color: var(--primary-accent);
   box-shadow: inset 0 0 15px rgba(59, 130, 246, 0.2);
 }
 
@@ -166,7 +183,6 @@ const progressPercentage = computed(() => {
   letter-spacing: -0.02em;
   line-height: 1;
 }
-
 
 .progress-section {
   border-radius: 16px;
@@ -211,13 +227,12 @@ const progressPercentage = computed(() => {
 
 .progress-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #3b82f6, #06b6d4);
+  background: linear-gradient(90deg, var(--primary-accent), #06b6d4);
   border-radius: 8px;
   transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 }
-
 
 .progress-glow {
   position: absolute;

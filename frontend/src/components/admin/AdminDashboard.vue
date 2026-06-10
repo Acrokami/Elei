@@ -1,53 +1,62 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import api from '../../service/api';
-import type { components } from '../../types/api-schemas';
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import api from "../../service/api";
+import type { components } from "../../types/api-schemas";
 
-type SystemStatsDto = components['schemas']['SystemStatsDto'];
+type SystemStatsDto = components["schemas"]["SystemStatsDto"];
 
 const router = useRouter();
 
 const stats = ref<SystemStatsDto | null>(null);
 const isLoading = ref<boolean>(true);
-const errorMessage = ref<string>('');
+const errorMessage = ref<string>("");
 const grafanaUrl = import.meta.env.VITE_GRAFANA_URL;
 
 onMounted(async () => {
-    try {
-        isLoading.value = true;
-        const response = await api.get<SystemStatsDto>('/admin/telemetry');
-        stats.value = response.data;
-    } catch (error: any) {
-        if (error.message && error.message.includes('403')) {
-            errorMessage.value = 'Access Denied: Level 4 Security Clearance (ADMIN) required';
-        } else {
-            errorMessage.value = error.message || 'Failed to synchronize with backend server.';
-        }
-    } finally {
-        isLoading.value = false;
+  try {
+    isLoading.value = true;
+    const response = await api.get<SystemStatsDto>("/admin/telemetry");
+    stats.value = response.data;
+  } catch (error: any) {
+    if (error.message && error.message.includes("403")) {
+      errorMessage.value =
+        "Access Denied: Level 4 Security Clearance (ADMIN) required";
+    } else {
+      errorMessage.value =
+        error.message || "Failed to synchronize with backend server.";
     }
+  } finally {
+    isLoading.value = false;
+  }
 });
 
-
 const handleHome = () => {
-  router.push('/');
+  router.push("/");
 };
 </script>
 
-
 <template>
   <div class="dashboard-container">
-
-
-
     <div class="topbar">
       <span class="logo">Elei<span class="logo-dot">.</span></span>
 
-
       <div class="topbar-actions">
-        <a :href="grafanaUrl" target="_blank" rel="noopener noreferrer" class="grafana-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="action-icon">
+        <a
+          :href="grafanaUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="grafana-btn"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="action-icon"
+          >
             <path d="M2 12h4l2-9 5 18 2-9h5"></path>
           </svg>
           Grafana
@@ -55,7 +64,15 @@ const handleHome = () => {
       </div>
 
       <button class="back-btn" @click="handleHome">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="back-icon">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="back-icon"
+        >
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
@@ -75,7 +92,16 @@ const handleHome = () => {
       </div>
 
       <div v-else-if="errorMessage" class="error-container">
-        <svg xmlns="http://www.w3.org/2000/svg" class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="error-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
           <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
           <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
         </svg>
@@ -86,7 +112,15 @@ const handleHome = () => {
       <div v-else-if="stats" class="stats-grid">
         <div class="stat-card">
           <div class="icon-box blue-glow">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
               <circle cx="9" cy="7" r="4"></circle>
               <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -101,7 +135,15 @@ const handleHome = () => {
 
         <div class="stat-card">
           <div class="icon-box purple-glow">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
             </svg>
           </div>
@@ -113,8 +155,18 @@ const handleHome = () => {
 
         <div class="stat-card">
           <div class="icon-box green-glow">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polygon
+                points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"
+              ></polygon>
             </svg>
           </div>
           <div class="stat-info">
@@ -133,11 +185,10 @@ const handleHome = () => {
   width: 100%;
   background-color: #0b0c10;
   color: #c5c6c7;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: "Inter", system-ui, sans-serif;
   display: flex;
   flex-direction: column;
 }
-
 
 .topbar {
   display: flex;
@@ -153,7 +204,8 @@ const handleHome = () => {
   z-index: 50;
 }
 
-.back-btn, .grafana-btn {
+.back-btn,
+.grafana-btn {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -169,7 +221,8 @@ const handleHome = () => {
   transition: all 0.2s ease;
 }
 
-.back-btn:hover, .grafana-btn:hover {
+.back-btn:hover,
+.grafana-btn:hover {
   background: rgba(102, 252, 241, 0.1);
   border-color: rgba(102, 252, 241, 0.4);
   color: #ffffff;
@@ -234,7 +287,6 @@ const handleHome = () => {
   transform: translateX(-3px);
 }
 
-
 .content {
   flex: 1;
   padding: 40px 20px;
@@ -286,7 +338,9 @@ const handleHome = () => {
 .stat-card:hover {
   transform: translateY(-5px);
   border-color: rgba(102, 252, 241, 0.4);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(102, 252, 241, 0.1);
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(102, 252, 241, 0.1);
 }
 
 .icon-box {
@@ -306,7 +360,7 @@ const handleHome = () => {
 }
 
 .blue-glow {
-  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+  background: linear-gradient(135deg, #1e3a8a, var(--primary-accent));
   box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
 }
 
@@ -316,7 +370,7 @@ const handleHome = () => {
 }
 
 .green-glow {
-  background: linear-gradient(135deg, #064e3b, #10b981);
+  background: linear-gradient(135deg, #064e3b, var(--primary-accent));
   box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
 }
 
@@ -338,7 +392,8 @@ const handleHome = () => {
   line-height: 1;
 }
 
-.error-container, .loader-container {
+.error-container,
+.loader-container {
   text-align: center;
   margin-top: 100px;
 }
@@ -366,6 +421,8 @@ const handleHome = () => {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

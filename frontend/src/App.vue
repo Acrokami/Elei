@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { RouterView }from 'vue-router';
+import { onMounted } from 'vue';
 import AppFooter from './components/layouts/AppFooter.vue';
 import NotificationToast from './components/notification/NotificationToast.vue';
+
+onMounted(() => {
+  const savedTheme = localStorage.getItem('elei_theme') || 'emerald';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  console.log(`[SYSTEM] Visual interface initialized with theme: ${savedTheme}`);
+});
 </script>
 
 

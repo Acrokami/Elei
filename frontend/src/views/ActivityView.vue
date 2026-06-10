@@ -3,7 +3,6 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import activityService from "../service/activity.service";
 
-
 import type { ActivityFeedItemDto } from "../service/activity.service";
 import type { components } from "../types/api-schemas";
 
@@ -12,16 +11,13 @@ import CreateActivityForm from "../components/activity/CreateActivityForm.vue";
 import ActivityList from "../components/activity/ActivityList.vue";
 import ActivityFeed from "../components/activity/ActivityFeed.vue";
 
-
 const router = useRouter();
 
-
-type ActivityProgressDto = components['schemas']['ActivityProgressDto'];
+type ActivityProgressDto = components["schemas"]["ActivityProgressDto"];
 
 const totalExperience = ref(0);
 const currentLevel = ref(1);
 const nextLevelXp = ref(100);
-
 
 const categories = ref<ActivityProgressDto[]>([]);
 const feed = ref<ActivityFeedItemDto[]>([]);
@@ -56,7 +52,15 @@ onMounted(() => {
     <div class="topbar">
       <span class="logo">Elei<span>.</span></span>
       <button class="back-btn" @click="handleHome">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="back-icon">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="back-icon"
+        >
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
@@ -72,9 +76,7 @@ onMounted(() => {
           :nextLevelXp="nextLevelXp"
         />
 
-        <CreateActivityForm
-          @activity-created="loadStats"
-        />
+        <CreateActivityForm @activity-created="loadStats" />
 
         <ActivityList
           :categories="categories"
@@ -82,28 +84,25 @@ onMounted(() => {
           @activity-deleted="loadStats"
         />
 
-        <ActivityFeed
-          :feed="feed"
-        />
+        <ActivityFeed :feed="feed" />
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 .page-wrapper {
   min-height: 100vh;
   width: 100%;
   background-color: #0b1120;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   display: flex;
   flex-direction: column;
   position: relative;
   overflow-x: hidden;
 }
-
 
 .ambient-glow {
   position: absolute;
@@ -127,7 +126,6 @@ onMounted(() => {
   bottom: 10%;
   right: -100px;
 }
-
 
 .topbar {
   display: flex;
@@ -154,8 +152,8 @@ onMounted(() => {
 }
 
 .logo span {
-  color: #3b82f6;
-  -webkit-text-fill-color: #3b82f6;
+  color: var(--primary-accent);
+  -webkit-text-fill-color: var(--primary-accent);
 }
 
 .back-btn {
@@ -198,7 +196,6 @@ onMounted(() => {
   position: relative;
   z-index: 1;
 }
-
 
 .dashboard-stack {
   display: flex;

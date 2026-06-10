@@ -1,92 +1,84 @@
 <script setup lang="ts">
-import { ref, reactive, type Ref, } from 'vue';
-import { useRouter } from 'vue-router';
-import authService from '../../service/auth.service';
-
-
+import { ref, reactive, type Ref } from "vue";
+import { useRouter } from "vue-router";
+import authService from "../../service/auth.service";
 
 const router = useRouter();
-const errorMessage = ref('');
+const errorMessage = ref("");
 
-const username = ref('');
-const email = ref('');
-const password = ref('');
+const username = ref("");
+const email = ref("");
+const password = ref("");
 
 const errors = reactive({
-  username: '',
-  email: '',
-  password: ''
+  username: "",
+  email: "",
+  password: "",
 });
-
-
 
 const validators = {
   username: (val: string) => {
-    if(!val.trim()) return 'Username cannot be empty'
-    if(val.length < 3 || val.length > 20) return 'Username must be between 3 and 20 characters'
-    return ''
+    if (!val.trim()) return "Username cannot be empty";
+    if (val.length < 3 || val.length > 20)
+      return "Username must be between 3 and 20 characters";
+    return "";
   },
   email: (val: string) => {
-    if(!val.trim()) return 'Email cannot be empty'
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) return 'Invalid email format'
-    return ''
+    if (!val.trim()) return "Email cannot be empty";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) return "Invalid email format";
+    return "";
   },
   password: (val: string) => {
-    if(!val.trim()) return 'Password cannot be empty'
-    if(val.length < 6) return 'Password must be at least 6 characters long'
-    return ''
-  }
+    if (!val.trim()) return "Password cannot be empty";
+    if (val.length < 6) return "Password must be at least 6 characters long";
+    return "";
+  },
 };
 
-type FieldName = 'username' | 'email' | 'password';
+type FieldName = "username" | "email" | "password";
 const fieldRefs: Record<FieldName, Ref<string>> = { username, email, password };
 
 const validateField = (field: FieldName) => {
   errors[field] = validators[field](fieldRefs[field].value);
-}
+};
 
 const validateAll = () => {
-  let isValid = true
+  let isValid = true;
   for (const field of Object.keys(validators) as FieldName[]) {
-    errors[field] = validators[field](fieldRefs[field].value)
-    if (errors[field]) isValid = false
+    errors[field] = validators[field](fieldRefs[field].value);
+    if (errors[field]) isValid = false;
   }
-  return isValid
-}
+  return isValid;
+};
 
-
-const handleRegister = async() => {
-     errorMessage.value = '';
-     if(!validateAll()) return;
-     try {
-        await authService.register(username.value, email.value, password.value);
-        await authService.login(username.value, password.value)
-        router.push('/')
-     } catch (error) {
-        errorMessage.value = 'Register error'
-     }
-}
-
+const handleRegister = async () => {
+  errorMessage.value = "";
+  if (!validateAll()) return;
+  try {
+    await authService.register(username.value, email.value, password.value);
+    await authService.login(username.value, password.value);
+    router.push("/");
+  } catch (error) {
+    errorMessage.value = "Register error";
+  }
+};
 
 const handleLoginRedirect = () => {
-  router.push('/login');
-}
-
+  router.push("/login");
+};
 </script>
 
 <template>
-
-<div class="signup-wrapper">
+  <div class="signup-wrapper">
     <div class="ambient-glow glow-1"></div>
     <div class="ambient-glow glow-2"></div>
 
     <div class="signup-card glass-panel">
-
-        <div class="signup-header">
-            <div class="logo-mark">Elei<span>.</span></div>
-            <h2>Create an account</h2>
-            <p>Join the community today</p>
-        </div>
+      <div class="signup-header">
+        <div class="logo-mark">Elei<span>.</span></div>
+        <h2>Create an account</h2>
+        <p>Join the community today</p>
+      </div>
 
       <div class="form-container">
         <div class="input-group">
@@ -96,13 +88,13 @@ const handleLoginRedirect = () => {
               v-model="username"
               type="text"
               placeholder="Enter your username"
-              :class="{'input-error': errors.username}"
+              :class="{ 'input-error': errors.username }"
               @blur="validateField('username')"
             />
           </div>
           <Transition name="fade">
             <span v-if="errors.username" class="field-error">
-               <span class="error-icon">⚠️</span> {{ errors.username }}
+              <span class="error-icon">⚠️</span> {{ errors.username }}
             </span>
           </Transition>
         </div>
@@ -114,7 +106,7 @@ const handleLoginRedirect = () => {
               v-model="email"
               type="email"
               placeholder="Enter your email"
-              :class="{'input-error': errors.email}"
+              :class="{ 'input-error': errors.email }"
               @blur="validateField('email')"
             />
           </div>
@@ -132,7 +124,7 @@ const handleLoginRedirect = () => {
               v-model="password"
               type="password"
               placeholder="Create a password"
-              :class="{'input-error': errors.password}"
+              :class="{ 'input-error': errors.password }"
               @blur="validateField('password')"
             />
           </div>
@@ -157,13 +149,12 @@ const handleLoginRedirect = () => {
       <button class="login-redirect-btn" @click="handleLoginRedirect">
         Already have an account? <span>Sign in</span>
       </button>
-
     </div>
- </div>
+  </div>
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 * {
   box-sizing: border-box;
@@ -172,18 +163,17 @@ const handleLoginRedirect = () => {
 }
 
 .signup-wrapper {
-    min-height: 100vh;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #0b1120;
-    font-family: 'Inter', sans-serif;
-    position: relative;
-    overflow: hidden;
-    padding: 20px 0;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #0b1120;
+  font-family: "Inter", sans-serif;
+  position: relative;
+  overflow: hidden;
+  padding: 20px 0;
 }
-
 
 .ambient-glow {
   position: absolute;
@@ -208,24 +198,23 @@ const handleLoginRedirect = () => {
   left: -50px;
 }
 
-
 .glass-panel {
-    background: rgba(30, 41, 59, 0.4);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
 .signup-card {
-    width: 100%;
-    max-width: 420px;
-    display: flex;
-    flex-direction: column;
-    padding: 40px;
-    border-radius: 20px;
-    position: relative;
-    z-index: 1;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  padding: 40px;
+  border-radius: 20px;
+  position: relative;
+  z-index: 1;
 }
 
 .logo-mark {
@@ -240,8 +229,8 @@ const handleLoginRedirect = () => {
   text-align: center;
 }
 .logo-mark span {
-  color: #3b82f6;
-  -webkit-text-fill-color: #3b82f6;
+  color: var(--primary-accent);
+  -webkit-text-fill-color: var(--primary-accent);
 }
 
 .signup-header {
@@ -250,11 +239,11 @@ const handleLoginRedirect = () => {
 }
 
 .signup-header h2 {
-    color: #f8fafc;
-    font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    letter-spacing: -0.02em;
+  color: #f8fafc;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
 }
 
 .signup-header p {
@@ -300,7 +289,7 @@ input {
 }
 
 input:focus {
-  border-color: #3b82f6;
+  border-color: var(--primary-accent);
   background: rgba(15, 23, 42, 0.8);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
@@ -309,7 +298,6 @@ input::placeholder {
   color: #475569;
 }
 
-
 .input-error {
   border-color: #f87171 !important;
   background: rgba(248, 113, 113, 0.05) !important;
@@ -317,7 +305,6 @@ input::placeholder {
 .input-error:focus {
   box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.2) !important;
 }
-
 
 .field-error {
   color: #fca5a5;
@@ -333,22 +320,22 @@ input::placeholder {
 }
 
 .global-error-text {
-    color: #f87171;
-    font-size: 13px;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(248, 113, 113, 0.1);
-    padding: 10px 12px;
-    border-radius: 8px;
-    border: 1px solid rgba(248, 113, 113, 0.2);
+  color: #f87171;
+  font-size: 13px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(248, 113, 113, 0.1);
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(248, 113, 113, 0.2);
 }
 
 .signup-btn {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, var(--primary-accent), #2563eb);
   color: white;
   border: none;
   border-radius: 10px;
@@ -382,7 +369,7 @@ input::placeholder {
 }
 
 .login-redirect-btn span {
-  color: #3b82f6;
+  color: var(--primary-accent);
   font-weight: 600;
 }
 
@@ -395,10 +382,11 @@ input::placeholder {
   text-decoration: underline;
 }
 
-
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .fade-enter-from,

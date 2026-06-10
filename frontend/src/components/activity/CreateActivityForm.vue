@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import type { components } from '../../types/api-schemas';
+import type { components } from "../../types/api-schemas";
 import activityService from "../../service/activity.service";
 
-type CreateActivityDto = components['schemas']['CreateActivityDto'];
+type CreateActivityDto = components["schemas"]["CreateActivityDto"];
 const emit = defineEmits(["activity-created"]);
 
 const showCreateForm = ref(false);
@@ -35,11 +35,23 @@ const handleCreateActivity = async () => {
         @click="showCreateForm = !showCreateForm"
       >
         <span class="btn-icon">
-          <svg v-if="!showCreateForm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg
+            v-if="!showCreateForm"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
-          <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg
+            v-else
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
@@ -52,7 +64,6 @@ const handleCreateActivity = async () => {
       <div v-if="showCreateForm" class="form-wrapper">
         <div class="create-form-card glass-panel">
           <form @submit.prevent="handleCreateActivity" class="create-form">
-
             <div class="form-group">
               <label>Category Name</label>
               <div class="input-wrapper">
@@ -93,14 +104,21 @@ const handleCreateActivity = async () => {
             </div>
 
             <button type="submit" class="submit-btn">
-              <svg class="save-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <svg
+                class="save-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
+                ></path>
                 <polyline points="17 21 17 13 7 13 7 21"></polyline>
                 <polyline points="7 3 7 8 15 8"></polyline>
               </svg>
               Save Category
             </button>
-
           </form>
         </div>
       </div>
@@ -109,11 +127,10 @@ const handleCreateActivity = async () => {
 </template>
 
 <style scoped>
-
- * {
-  font-family: 'Inter', sans-serif;
+* {
+  font-family: "Inter", sans-serif;
   box-sizing: border-box;
- }
+}
 
 .form-container {
   display: flex;
@@ -126,7 +143,6 @@ const handleCreateActivity = async () => {
   display: flex;
   justify-content: flex-end;
 }
-
 
 .toggle-form-btn {
   display: flex;
@@ -163,7 +179,6 @@ const handleCreateActivity = async () => {
   width: 16px;
   height: 16px;
 }
-
 
 .glass-panel {
   background: rgba(30, 41, 59, 0.4);
@@ -235,7 +250,6 @@ const handleCreateActivity = async () => {
   color: #475569;
 }
 
-
 .submit-btn {
   display: flex;
   justify-content: center;
@@ -243,7 +257,7 @@ const handleCreateActivity = async () => {
   gap: 8px;
   margin-top: 8px;
   padding: 14px;
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, var(--primary-accent), #059669);
   color: white;
   border: none;
   border-radius: 10px;
@@ -267,7 +281,6 @@ const handleCreateActivity = async () => {
   width: 18px;
   height: 18px;
 }
-
 
 .expand-enter-active,
 .expand-leave-active {
