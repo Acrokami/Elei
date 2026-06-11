@@ -13,6 +13,7 @@ import com.acrobtw.elei.domain.user.dto.UpdateEmailRequest;
 import com.acrobtw.elei.domain.user.dto.UpdatePasswordRequest;
 import com.acrobtw.elei.domain.user.service.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -23,7 +24,7 @@ public class SettingsController {
     private final UserService userService;
 
     @PutMapping("/email")
-    public ResponseEntity<?> updateEmail(Principal principal, @RequestBody UpdateEmailRequest request) {
+    public ResponseEntity<?> updateEmail(Principal principal, @Valid @RequestBody UpdateEmailRequest request) {
         try {
             userService.updateEmail(principal.getName(), request.newEmail());
             return ResponseEntity.ok().body("Email successfully updated");
@@ -33,7 +34,7 @@ public class SettingsController {
     }
 
     @PutMapping("/password")
-    public ResponseEntity<?> updatePassword(Principal principal, @RequestBody UpdatePasswordRequest request) {
+    public ResponseEntity<?> updatePassword(Principal principal, @Valid @RequestBody UpdatePasswordRequest request) {
         try {
             userService.updatePassword(principal.getName(), request.currentPassword(), request.newPassword());
             return ResponseEntity.ok().body("Security code successfully updated");

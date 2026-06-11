@@ -120,7 +120,7 @@ onMounted(() => {
               <h3 class="panel-title">Security Protocols</h3>
               <form @submit.prevent="handlePasswordUpdate" class="space-y-4">
                 <div class="input-group">
-                  <label>Current Authorization Code</label>
+                  <label>Current Password</label>
                   <input
                     type="password"
                     v-model="currentPassword"
@@ -129,7 +129,7 @@ onMounted(() => {
                   />
                 </div>
                 <div class="input-group">
-                  <label>New Authorization Code</label>
+                  <label>New Password</label>
                   <input
                     type="password"
                     v-model="newPassword"
