@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.acrobtw.elei.core.exception.ResourceNotFoundException;
+import com.acrobtw.elei.domain.auth.enums.AuthProvider;
 import com.acrobtw.elei.domain.quest.service.QuestEngineService;
 import com.acrobtw.elei.domain.user.User;
 import com.acrobtw.elei.domain.user.UserRepository;
@@ -60,6 +61,7 @@ public class UserService {
         return new UserProfileResponse(
             user.getUsername(),
             user.getEmail(),
+            user.getProvider(),
             activeDates
         );
     }
@@ -82,6 +84,12 @@ public class UserService {
     public void updatePassword(String username, String currentPassword, String newPassword) {
         User user = userRepository.findByUsername(username)
             .orElseThrow(() -> new ResourceNotFoundException("User", username));
+
+       if (user.getProvider() != null && user.getProvider() != AuthProvider.LOCAL) {
+        throw new IllegalArgumentException(
+        "Security clearance denied: Your identity is managed by an external provider (" + user.getProvider().name() + ")."
+    );
+}
 
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
             throw new IllegalArgumentException("Invalid current security authorization code.");

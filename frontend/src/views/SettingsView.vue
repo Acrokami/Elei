@@ -209,7 +209,7 @@ onMounted(() => {
               </div>
 
             </div>
-          </div>
+        </div>
 
           <div class="settings-column">
             <div class="glass-panel p-6">
