@@ -6,6 +6,7 @@ import api from "../service/api";
 const router = useRouter();
 const username = ref("");
 const email = ref("");
+const provider = ref("");
 const currentPassword = ref("");
 const newPassword = ref("");
 const isSaving = ref(false);
@@ -63,6 +64,7 @@ const fetchUserProfile = async () => {
         const response = await api.get('/users/profile');
         username.value = response.data.username;
         email.value = response.data.email;
+        provider.value = response.data.provider;
     } catch (e: any) {
         console.error('[SYSTEM] Failed to load citizen identity:', e);
     }
@@ -118,7 +120,8 @@ onMounted(() => {
 
             <div class="glass-panel p-6">
               <h3 class="panel-title">Security Protocols</h3>
-              <form @submit.prevent="handlePasswordUpdate" class="space-y-4">
+
+              <form v-if="provider === 'LOCAL' || !provider" @submit.prevent="handlePasswordUpdate" class="space-y-4">
                 <div class="input-group">
                   <label>Current Authorization Code</label>
                   <input
@@ -141,8 +144,16 @@ onMounted(() => {
                   Update Security
                 </button>
               </form>
+
+              <div v-else>
+                <p class="panel-desc" style="margin-bottom: 0;">
+                  Your identity is securely managed by <strong style="color: var(--primary-accent); text-transform: capitalize;">{{ provider }}</strong>.
+                  <br><br>
+                  Security authorization codes must be updated via the external provider's interface.
+                </p>
+              </div>
             </div>
-          </div>
+        </div>
 
           <div class="settings-column">
             <div class="glass-panel p-6">
