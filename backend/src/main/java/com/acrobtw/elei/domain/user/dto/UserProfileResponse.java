@@ -1,6 +1,9 @@
 package com.acrobtw.elei.domain.user.dto;
 
+
 import java.util.List;
+
+import com.acrobtw.elei.domain.auth.enums.AuthProvider;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
@@ -17,6 +20,10 @@ public record UserProfileResponse(
     @NotBlank
     @Email
     String email,
+
+    @Schema(description = "User's provider", example = "GITHUB", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotBlank
+    AuthProvider provider,
 
     @Schema(description = "List of dates the user was active in YYY-MM-DD format", example = "[\"2026-05-30\", \"2026-05-31\"]")
     List<String> activeDays
