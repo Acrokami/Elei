@@ -7,6 +7,7 @@ import AdminDashboard from '../components/admin/AdminDashboard.vue';
 import LeaderboardView from '../components/leaderboard/LeaderboardView.vue';
 import QuestView from '../views/QuestView.vue';
 import SettingsView from '../views/SettingsView.vue';
+import ShopView from '../views/ShopView.vue';
 
 
 
@@ -39,6 +40,12 @@ const router = createRouter({
             name: 'home',
             component: () => import('../views/HomeView.vue'),
             meta: { requiresAuth: true }
+        },
+        {
+        path: '/market',
+        name: 'Market',
+        component: ShopView,
+        meta: { requiresAuth: true }
         },
         {
             path: '/activity',

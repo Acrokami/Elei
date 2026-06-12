@@ -1,8 +1,10 @@
 package com.acrobtw.elei.domain.economy;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,5 +30,17 @@ public class ShopController {
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @Operation(summary = "Get wallet balance", description = "Returns the current in-game currency balance of the authenticated user.")
+    @GetMapping("/wallet")
+    public ResponseEntity<Long> getWalletBalance(Principal principal) {
+        return ResponseEntity.ok(shopService.getWalletBalance(principal.getName()));
+    }
+
+    @Operation(summary = "Get available items", description = "Returns a list of items currently available for purchase in the shop, including their price and stock information.")
+    @GetMapping("/items")
+    public ResponseEntity<List<ShopItem>> getAvailableItems() {
+        return ResponseEntity.ok(shopService.getAvailableItems());
     }
 }

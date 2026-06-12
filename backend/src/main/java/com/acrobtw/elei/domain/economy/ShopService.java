@@ -1,5 +1,7 @@
 package com.acrobtw.elei.domain.economy;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,5 +54,20 @@ public class ShopService {
         inventoryRepository.save(inventoryItem);
 
         log.info("[SYSTEM] Purchase successful. User {} bought {} for {} credits.", username, item.getTitle(), item.getPrice());
+    }
+
+
+
+
+    @Transactional(readOnly = true)
+    public Long getWalletBalance(String username) {
+        return walletRepository.findByUserUsernameForUpdate(username)
+                .map(Wallet::getBalance)
+                .orElse(0L);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ShopItem> getAvailableItems() {
+        return shopItemRepository.findAll();
     }
 }
