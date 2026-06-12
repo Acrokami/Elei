@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,7 @@ import com.acrobtw.elei.domain.quest.service.QuestEngineService;
 import com.acrobtw.elei.domain.user.User;
 import com.acrobtw.elei.domain.user.UserRepository;
 import com.acrobtw.elei.domain.user.dto.UserProfileResponse;
-
+import com.acrobtw.elei.domain.user.event.UserRegisteredEvent;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final QuestEngineService questEngineService;
     private final LevelService levelService;
+    private final ApplicationEventPublisher eventPublisher;
 
 
     @Transactional
@@ -41,6 +43,8 @@ public class UserService {
         User savedUser = userRepository.save(user);
         questEngineService.assignInitialQuests(savedUser);
 
+        log.info("[SYSTEM] Citizen {} successfully registered.", savedUser.getUsername());
+        eventPublisher.publishEvent(new UserRegisteredEvent(savedUser));
         return savedUser;
     }
 
@@ -64,6 +68,7 @@ public class UserService {
         Long currentLevel = levelService.calculateLevel(currentXp);
         Long nextLevelXp = levelService.calculateNextLevelUp(currentLevel);
         String rank = determineRank(currentLevel);
+
 
         return new UserProfileResponse(
         user.getUsername(),
