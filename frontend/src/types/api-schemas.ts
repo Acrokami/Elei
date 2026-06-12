@@ -184,6 +184,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/shop/wallet": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get wallet balance
+         * @description Returns the current in-game currency balance of the authenticated user.
+         */
+        get: operations["getWalletBalance"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/shop/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get available items
+         * @description Returns a list of items currently available for purchase in the shop, including their price and stock information.
+         */
+        get: operations["getAvailableItems"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/quests": {
         parameters: {
             query?: never;
@@ -493,6 +533,16 @@ export interface components {
              * @example Novice
              */
             rank: string;
+        };
+        ShopItem: {
+            /** Format: int64 */
+            id?: number;
+            title?: string;
+            description?: string;
+            /** Format: int64 */
+            price?: number;
+            /** Format: int32 */
+            stock?: number;
         };
         /** @description User's progress on a specific quest */
         QuestProgressDto: {
@@ -867,6 +917,46 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["UserProfileResponse"];
+                };
+            };
+        };
+    };
+    getWalletBalance: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": number;
+                };
+            };
+        };
+    };
+    getAvailableItems: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ShopItem"][];
                 };
             };
         };

@@ -21,7 +21,6 @@ const isAdmin = ref(false);
 const isCheckedInToday = ref(false);
 const checkInMessage = ref("");
 
-
 const xpPercentage = computed(() => {
   if (nextLevelXp.value === 0) return 0;
   const percent = (currentXp.value / nextLevelXp.value) * 100;
@@ -147,6 +146,17 @@ const handleLogout = () => {
               <div class="nav-text">
                 <span class="nav-title">Active Protocols</span>
                 <span class="nav-subtitle">Manage daily tasks</span>
+              </div>
+              <div class="nav-arrow">→</div>
+            </router-link>
+
+            <router-link to="/market" class="nav-btn glass-panel">
+              <div class="nav-icon-wrapper amber-glow">
+                <div class="nav-icon">💎</div>
+              </div>
+              <div class="nav-text">
+                <span class="nav-title">System Market</span>
+                <span class="nav-subtitle">Exchange assets</span>
               </div>
               <div class="nav-arrow">→</div>
             </router-link>
@@ -434,6 +444,7 @@ const handleLogout = () => {
 .purple-glow { box-shadow: inset 0 0 15px rgba(168, 85, 247, 0.2); }
 .gold-glow { box-shadow: inset 0 0 15px rgba(234, 179, 8, 0.2); }
 .emerald-glow { box-shadow: inset 0 0 15px rgba(16, 185, 129, 0.2); }
+.amber-glow { box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.2); } /* НОВЫЙ ЭФФЕКТ ДЛЯ МАРКЕТА */
 
 .nav-text { display: flex; flex-direction: column; flex: 1; }
 .nav-title { color: #f8fafc; font-size: 16px; font-weight: 600; letter-spacing: 0.01em; }
