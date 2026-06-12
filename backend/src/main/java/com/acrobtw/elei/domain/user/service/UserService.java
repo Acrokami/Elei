@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.acrobtw.elei.core.exception.ResourceNotFoundException;
 import com.acrobtw.elei.domain.auth.enums.AuthProvider;
+import com.acrobtw.elei.domain.experience.LevelService;
 import com.acrobtw.elei.domain.quest.service.QuestEngineService;
 import com.acrobtw.elei.domain.user.User;
 import com.acrobtw.elei.domain.user.UserRepository;
@@ -28,6 +29,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final QuestEngineService questEngineService;
+    private final LevelService levelService;
 
 
     @Transactional
@@ -58,12 +60,29 @@ public class UserService {
             }
         }
 
+        Long currentXp = user.getTotalExperience();
+        Long currentLevel = levelService.calculateLevel(currentXp);
+        Long nextLevelXp = levelService.calculateNextLevelUp(currentLevel);
+        String rank = determineRank(currentLevel);
+
         return new UserProfileResponse(
-            user.getUsername(),
-            user.getEmail(),
-            user.getProvider(),
-            activeDates
+        user.getUsername(),
+        user.getEmail(),
+        user.getProvider(),
+        activeDates,
+        currentLevel.intValue(),
+        currentXp,
+        nextLevelXp,
+        rank
         );
+    }
+
+    private String determineRank(Long level) {
+        if (level < 5) return "Initiate";
+        if (level < 10) return "Adept";
+        if (level < 25) return "Veteran";
+        if (level < 50) return "Elite";
+        return "Grandmaster";
     }
 
 

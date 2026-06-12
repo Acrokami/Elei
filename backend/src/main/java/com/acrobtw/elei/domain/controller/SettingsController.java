@@ -13,16 +13,22 @@ import com.acrobtw.elei.domain.user.dto.UpdateEmailRequest;
 import com.acrobtw.elei.domain.user.dto.UpdatePasswordRequest;
 import com.acrobtw.elei.domain.user.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+
 
 @RestController
 @RequestMapping("/api/settings")
 @RequiredArgsConstructor
+@Tag(name = "Settings", description = "Endpoints for updating user settings such as email and password")
 public class SettingsController {
 
     private final UserService userService;
 
+    @Operation(summary = "Update email", description = "Allows the authenticated user to update their registered email address")
     @PutMapping("/email")
     public ResponseEntity<?> updateEmail(Principal principal, @Valid @RequestBody UpdateEmailRequest request) {
         try {
@@ -33,6 +39,7 @@ public class SettingsController {
         }
     }
 
+    @Operation(summary = "Update password", description = "Allows the authenticated user to update their password by providing the current password and a new password")
     @PutMapping("/password")
     public ResponseEntity<?> updatePassword(Principal principal, @Valid @RequestBody UpdatePasswordRequest request) {
         try {
