@@ -1,4 +1,4 @@
-package com.acrobtw.elei.domain.controller;
+package com.acrobtw.elei.domain.user;
 
 import java.security.Principal;
 

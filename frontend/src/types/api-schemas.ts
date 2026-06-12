@@ -12,6 +12,10 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
+        /**
+         * Update password
+         * @description Allows the authenticated user to update their password by providing the current password and a new password
+         */
         put: operations["updatePassword"];
         post?: never;
         delete?: never;
@@ -28,6 +32,10 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
+        /**
+         * Update email
+         * @description Allows the authenticated user to update their registered email address
+         */
         put: operations["updateEmail"];
         post?: never;
         delete?: never;
@@ -50,6 +58,26 @@ export interface paths {
          * @description Updates user streak and awards daily bonus XP
          */
         post: operations["dailyCheckIn"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/shop/purchase/{itemId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Purchase item
+         * @description Allows the authenticated user to purchase an item from the shop using their in-game currency balance. The item is transferred to the user's inventory upon successful purchase.
+         */
+        post: operations["purchaseItem"];
         delete?: never;
         options?: never;
         head?: never;
@@ -148,6 +176,46 @@ export interface paths {
          * @description Returns basic profile data for the currently authenticated user
          */
         get: operations["getProfile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/shop/wallet": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get wallet balance
+         * @description Returns the current in-game currency balance of the authenticated user.
+         */
+        get: operations["getWalletBalance"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/shop/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get available items
+         * @description Returns a list of items currently available for purchase in the shop, including their price and stock information.
+         */
+        get: operations["getAvailableItems"];
         put?: never;
         post?: never;
         delete?: never;
@@ -429,13 +497,52 @@ export interface components {
              */
             email: string;
             /**
+             * @description User's provider
+             * @example GITHUB
+             * @enum {string}
+             */
+            provider: "LOCAL" | "GOOGLE" | "GITHUB";
+            /**
              * @description List of dates the user was active in YYY-MM-DD format
              * @example [
              *       "2026-05-30",
              *       "2026-05-31"
              *     ]
              */
-            activeDays?: string[];
+            activeDays: string[];
+            /**
+             * Format: int32
+             * @description User's current level
+             * @example 2
+             */
+            level: number;
+            /**
+             * Format: int64
+             * @description Total accumulated experience
+             * @example 150
+             */
+            totalExperience: number;
+            /**
+             * Format: int64
+             * @description Experience required for the next level
+             * @example 300
+             */
+            nextLevelExperience: number;
+            /**
+             * @description Citizen rank title
+             * @example Novice
+             */
+            rank: string;
+        };
+        ShopItem: {
+            /** Format: int64 */
+            id?: number;
+            title?: string;
+            description?: string;
+            /** Format: int64 */
+            price?: number;
+            /** Format: int32 */
+            stock?: number;
         };
         /** @description User's progress on a specific quest */
         QuestProgressDto: {
@@ -680,6 +787,28 @@ export interface operations {
             };
         };
     };
+    purchaseItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                itemId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
     register: {
         parameters: {
             query?: never;
@@ -788,6 +917,46 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["UserProfileResponse"];
+                };
+            };
+        };
+    };
+    getWalletBalance: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": number;
+                };
+            };
+        };
+    };
+    getAvailableItems: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ShopItem"][];
                 };
             };
         };
