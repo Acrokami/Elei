@@ -12,6 +12,9 @@ public class LevelService {
     }
 
     public Long calculateNextLevelUp(Long currentLevel) {
+        if (currentLevel == null || currentLevel < 1) {
+        throw new IllegalArgumentException("System Error: Level anomaly detected. Current level cannot be null or less than 1.");
+    }
         return (long) Math.pow(currentLevel,2)  * 100;
     }
 }

@@ -4,9 +4,11 @@ import java.security.Principal;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,4 +45,11 @@ public class ShopController {
     public ResponseEntity<List<ShopItem>> getAvailableItems() {
         return ResponseEntity.ok(shopService.getAvailableItems());
     }
+
+    @Operation(summary = "Add new item", description = "Allows an administrator to add a new item to the shop. The item will be available for purchase by all users.")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ShopItem> addNewItem(@RequestBody ShopItem item) {
+        return ResponseEntity.ok(shopService.addShopItem(item));
+    }
+
 }
