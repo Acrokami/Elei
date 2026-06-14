@@ -57,6 +57,11 @@ public class ShopService {
     }
 
 
+    @Transactional
+    public ShopItem addShopItem(ShopItem item) {
+        log.info("[ADMIN] Adding new item to market: {}", item.getTitle());
+        return shopItemRepository.save(item);
+    }
 
 
     @Transactional(readOnly = true)
