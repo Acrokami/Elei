@@ -23,15 +23,15 @@ const showStatus = (message: string, type: 'success' | 'error') => {
 
 const loadMarketData = async () => {
   try {
-
-    balance.value = await shopService.getWalletBalance().catch(() => 500);
-    items.value = await shopService.getAvailableItems().catch(() => [
-      { id: 1, title: 'Cheat Meal', description: 'Permission to order a large pizza.', price: 300, stock: 5 },
-      { id: 2, title: 'Gaming Session', description: '2 hours of guilt-free gaming.', price: 150, stock: 99 },
-      { id: 3, title: 'New Keyboard Fund', description: 'Invest tokens into a real-world purchase.', price: 5000, stock: 1 }
-    ]);
+    balance.value = await shopService.getWalletBalance();
   } catch (e) {
-    console.error('[SYSTEM] Failed to connect to economy network.');
+    console.error('[ECONOMY] Failed to retrieve wallet balance.', e);
+  }
+
+  try {
+    items.value = await shopService.getAvailableItems();
+  } catch (e) {
+    console.error('[ECONOMY] Failed to load market inventory.', e);
   }
 };
 
@@ -45,7 +45,7 @@ const handlePurchase = async (item: ShopItem) => {
   try {
     await shopService.purchaseItem(item.id);
     showStatus(`Asset [${item.title}] successfully acquired!`, 'success');
-    await loadMarketData(); 
+    await loadMarketData();
   } catch (e: any) {
     showStatus(e.response?.data || 'Transaction failed.', 'error');
   } finally {

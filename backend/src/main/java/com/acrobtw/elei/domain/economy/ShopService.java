@@ -66,7 +66,7 @@ public class ShopService {
 
     @Transactional(readOnly = true)
     public Long getWalletBalance(String username) {
-        return walletRepository.findByUserUsernameForUpdate(username)
+       return walletRepository.findByUserUsername(username)
                 .map(Wallet::getBalance)
                 .orElse(0L);
     }
