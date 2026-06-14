@@ -8,9 +8,13 @@ Designed with resilience, clean architecture, and enterprise-grade patterns in m
 
 
 Domain-Driven Design (DDD): Business logic is strictly separated into independent domains — user, economy, experience, and quest.
+
 ACID & Concurrency Control: The System Market is protected against race conditions using pessimistic database locks (@Lock(LockModeType.PESSIMISTIC_WRITE)).
+
 Event-Driven Architecture: Spring ApplicationEvents decouple modules — for example, wallet initialization is triggered asynchronously on citizen registration.
+
 Sliced Testing: Data-layer integration tests run against an isolated PostgreSQL instance spun up via Testcontainers, validating concurrent transaction correctness.
+
 CI/CD Pipeline: GitHub Actions pipeline with automated builds, dependency caching (Node 24 / JDK 21), and DockerHub image publishing.
 
 
