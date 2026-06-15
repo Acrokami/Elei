@@ -11,4 +11,4 @@ INSERT INTO activities (name, points_multiplier, measurement_unit) VALUES
 ('Deep Work Session', 20, 'pomodoros'),
 ('Code Commits', 25, 'commits');
 
-UPDATE users SET role = 'ADMIN' WHERE user_id = 1;
+

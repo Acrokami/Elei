@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.acrobtw.elei.core.exception.ResourceNotFoundException;
 import com.acrobtw.elei.domain.auth.enums.AuthProvider;
+import com.acrobtw.elei.domain.auth.enums.Role;
 import com.acrobtw.elei.domain.experience.LevelService;
 import com.acrobtw.elei.domain.quest.service.QuestEngineService;
 import com.acrobtw.elei.domain.user.User;
@@ -34,12 +36,16 @@ public class UserService {
     private final ApplicationEventPublisher eventPublisher;
 
 
+    @Value("${app.admin.username}")
+    private String adminUsername;
+
     @Transactional
     public User registerNewUser(String username, String email, String password) {
         if(userRepository.existsByEmail(email)) throw new IllegalArgumentException("This email is taken");
 
         String hashPassword = passwordEncoder.encode(password);
         User user = new User(username, email, hashPassword);
+        user.setRole(username.equals(adminUsername) ? Role.ADMIN : Role.USER);
         User savedUser = userRepository.save(user);
         questEngineService.assignInitialQuests(savedUser);
 
