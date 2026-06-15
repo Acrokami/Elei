@@ -76,11 +76,19 @@ const checkAdminStatus = () => {
           .join(""),
       );
       const payload = JSON.parse(jsonPayload);
-      if (payload.role === "ADMIN") {
+
+      console.log("[SYSTEM] Decoded JWT Payload:", payload);
+      const userRole = payload.role || payload.roles;
+
+      if (
+        userRole === "ADMIN" ||
+        userRole === "ROLE_ADMIN" ||
+        (Array.isArray(userRole) && (userRole.includes("ADMIN") || userRole.includes("ROLE_ADMIN")))
+      ) {
         isAdmin.value = true;
       }
     } catch (e) {
-      console.error("Error parsing JWT token:", e);
+      console.error("[SYSTEM] Error parsing JWT token:", e);
     }
   }
 };

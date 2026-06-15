@@ -17,7 +17,6 @@ import com.acrobtw.elei.domain.user.User;
 import com.acrobtw.elei.domain.user.UserRepository;
 import com.acrobtw.elei.domain.user.dto.UserStatsDto;
 
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +31,6 @@ public class UserStatsService {
     private final ExperienceLogRepository experienceLogRepository;
     private final LevelService levelService;
 
-
     @Cacheable(value = "userStats", key = "#userId")
     @Transactional
     public UserStatsDto getUserProgress(Long userId) {
@@ -44,7 +42,9 @@ public class UserStatsService {
         Long currentLevel = levelService.calculateLevel(totalXp);
         Long nextLevelUp = levelService.calculateNextLevelUp(currentLevel);
 
-        List<Activity> userActivities = activityRepository.findByUserId(userId);
+
+        List<Activity> systemActivities = activityRepository.findAll();
+
         List<Object[]> groupedXp = experienceLogRepository.sumAllPointsByUserGroupedByActivity(userId);
 
         Map<Long, Integer> xpByActivityMap = groupedXp.stream()
@@ -53,7 +53,7 @@ public class UserStatsService {
                         row -> ((Number) row[1]).intValue()
                 ));
 
-        List<ActivityProgressDto> categories = userActivities.stream()
+        List<ActivityProgressDto> categories = systemActivities.stream()
                 .map(activity -> {
                     int sum = xpByActivityMap.getOrDefault(activity.getId(), 0);
                     return new ActivityProgressDto(
@@ -61,7 +61,7 @@ public class UserStatsService {
                             activity.getName(),
                             activity.getPointsMultiplier(),
                             sum,
-                            activity.getUnitName()
+                            activity.getMeasurementUnit() 
                     );
                 })
                 .toList();

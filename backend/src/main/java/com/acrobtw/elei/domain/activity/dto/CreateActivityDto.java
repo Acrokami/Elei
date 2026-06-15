@@ -18,5 +18,5 @@ public record CreateActivityDto(
 
     @Schema(description = "Measurement unit for the activity (e.g., pages, hours, tasks)", example = "pages", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank
-    String unitName
+    String measurementName
 ) {}

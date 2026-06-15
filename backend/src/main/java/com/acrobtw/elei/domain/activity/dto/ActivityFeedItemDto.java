@@ -16,13 +16,13 @@ public record ActivityFeedItemDto(
     @NotBlank
     String activityName,
 
-    @Schema(description = "Number of units completed during this event", example = "15", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Number of measurement completed during this event", example = "15", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull
-    Integer unitsCompleted,
+    Integer measurementCompleted,
 
     @Schema(description = "Measurement unit of the activity", example = "pages", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank
-    String unitName,
+    String measurementName,
 
     @Schema(description = "Experience points awarded for this transaction", example = "30", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull

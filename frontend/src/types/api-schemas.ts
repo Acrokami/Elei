@@ -131,11 +131,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * Get all system activities
+         * @description Returns default system activities available for completion
+         */
+        get: operations["getAllActivities"];
         put?: never;
         /**
-         * Create an activity
-         * @description Adds a new task or activity for the current user
+         * Create system activity
+         * @description ADMIN ONLY: Adds a new global activity protocol
          */
         post: operations["createActivity"];
         delete?: never;
@@ -324,26 +328,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/activity/{activityId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Delete an activity
-         * @description Permanently removes an activity by its ID
-         */
-        delete: operations["deleteActivity"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -466,7 +450,7 @@ export interface components {
              * @description Measurement unit for the activity (e.g., pages, hours, tasks)
              * @example pages
              */
-            unitName: string;
+            measurementName: string;
         };
         /** @description Payload for submitting progress on a specific activity */
         ActivityCompletionDto: {
@@ -478,10 +462,10 @@ export interface components {
             activityId: number;
             /**
              * Format: int32
-             * @description Amount of units completed in this transaction
+             * @description Amount of measurement completed in this transaction
              * @example 1
              */
-            unitsCompleted: number;
+            measurementCompleted: number;
         };
         /** @description Basic profile information of the user */
         UserProfileResponse: {
@@ -620,6 +604,79 @@ export interface components {
              */
             totalExperienceLogs: number;
         };
+        Activity: {
+            /** Format: int64 */
+            id?: number;
+            name?: string;
+            /** Format: int32 */
+            pointsMultiplier?: number;
+            measurementUnit?: string;
+            experienceLogs?: components["schemas"]["ExperienceLog"][];
+        };
+        ExperienceLog: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: int32 */
+            unitsCompleted?: number;
+            /** Format: int32 */
+            earnedXp?: number;
+            /** Format: date-time */
+            createdAt?: string;
+            user?: components["schemas"]["User"];
+            activity?: components["schemas"]["Activity"];
+        };
+        GrantedAuthority: {
+            authority?: string;
+        };
+        Quest: {
+            /** Format: int64 */
+            id?: number;
+            title?: string;
+            description?: string;
+            /** @enum {string} */
+            eventType?: "CHECK_IN" | "LEVEL_UP" | "ACTIVITY_COMPLETED" | "STREAK_MAINTAINED";
+            /** Format: int32 */
+            targetCount?: number;
+            /** Format: int32 */
+            rewardXp?: number;
+            isDefault?: boolean;
+        };
+        User: {
+            /** Format: int64 */
+            id?: number;
+            username?: string;
+            email?: string;
+            password?: string;
+            /** Format: int64 */
+            totalExperience?: number;
+            /** Format: int32 */
+            currentStreak?: number;
+            /** Format: date */
+            lastActivityDate?: string;
+            /** @enum {string} */
+            provider?: "LOCAL" | "GOOGLE" | "GITHUB";
+            providerId?: string;
+            /** @enum {string} */
+            role?: "USER" | "ADMIN";
+            /** Format: int32 */
+            version?: number;
+            experienceLogs?: components["schemas"]["ExperienceLog"][];
+            questProgresses?: components["schemas"]["UserQuestProgress"][];
+            credentialsNonExpired?: boolean;
+            authorities?: components["schemas"]["GrantedAuthority"][];
+            accountNonExpired?: boolean;
+            accountNonLocked?: boolean;
+            enabled?: boolean;
+        };
+        UserQuestProgress: {
+            /** Format: int64 */
+            id?: number;
+            user?: components["schemas"]["User"];
+            quest?: components["schemas"]["Quest"];
+            /** Format: int32 */
+            currentCount?: number;
+            isCompleted?: boolean;
+        };
         /** @description User's progress details within a specific activity category */
         ActivityProgressDto: {
             /**
@@ -646,10 +703,10 @@ export interface components {
              */
             userCategoryExperience: number;
             /**
-             * @description Measurement unit for the activity
+             * @description Measurement measurement for the activity
              * @example pages
              */
-            unitName: string;
+            measurementName: string;
         };
         /** @description Aggregated statistics and progression data for a user */
         UserStatsDto: {
@@ -689,15 +746,15 @@ export interface components {
             activityName: string;
             /**
              * Format: int32
-             * @description Number of units completed during this event
+             * @description Number of measurement completed during this event
              * @example 15
              */
-            unitsCompleted: number;
+            measurementCompleted: number;
             /**
              * @description Measurement unit of the activity
              * @example pages
              */
-            unitName: string;
+            measurementName: string;
             /**
              * Format: int32
              * @description Experience points awarded for this transaction
@@ -853,6 +910,26 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["LoginResponse"];
+                };
+            };
+        };
+    };
+    getAllActivities: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["Activity"][];
                 };
             };
         };
@@ -1060,26 +1137,6 @@ export interface operations {
                 content: {
                     "*/*": components["schemas"]["ActivityFeedItemDto"][];
                 };
-            };
-        };
-    };
-    deleteActivity: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                activityId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
         };
     };

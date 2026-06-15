@@ -48,7 +48,7 @@ const formatTime = (dateString?: string) => {
         <div class="feed-content">
           <span class="feed-activity-name">{{ item.activityName }}</span>
           <span class="feed-units"
-            >{{ item.unitsCompleted }} {{ item.unitName }}</span
+            > {{ item.measurementName }} </span
           >
         </div>
 
@@ -159,7 +159,7 @@ const formatTime = (dateString?: string) => {
 
 .timeline-line {
   width: 2px;
-  height: calc(100% + 20px); /* Соединяет текущую точку со следующей */
+  height: calc(100% + 20px);
   background: rgba(255, 255, 255, 0.1);
   margin-top: 4px;
 }

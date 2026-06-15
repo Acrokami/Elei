@@ -9,7 +9,7 @@ const props = defineProps<{
   categories: ActivityProgressDto[];
 }>();
 
-const emit = defineEmits(["experience-added", "activity-deleted"]);
+const emit = defineEmits(["experience-added"]);
 
 const amounts = ref<Record<number, number | string>>({});
 
@@ -37,22 +37,6 @@ const handleAddActivity = async (activityId: number) => {
     console.error("Error adding activity:", error);
   }
 };
-
-const handleDeleteActivity = async (activityId: number) => {
-  if (
-    !confirm(
-      "System will delete this activity and the whole history. Continue?",
-    )
-  )
-    return;
-
-  try {
-    await activityService.deleteActivity(activityId);
-    emit("activity-deleted");
-  } catch (error) {
-    console.error("Error deleting activity", error);
-  }
-};
 </script>
 
 <template>
@@ -71,26 +55,7 @@ const handleDeleteActivity = async (activityId: number) => {
         <div class="category-info">
           <div class="title-row">
             <h3>{{ category.name }}</h3>
-            <button
-              class="delete-btn"
-              @click="handleDeleteActivity(category.activityId)"
-              title="Delete category"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path
-                  d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-                ></path>
-              </svg>
-            </button>
-          </div>
+            </div>
 
           <div class="xp-badge">
             <span class="xp-value">{{ category.userCategoryExperience }}</span>
@@ -103,7 +68,7 @@ const handleDeleteActivity = async (activityId: number) => {
             <input
               type="number"
               v-model="amounts[category.activityId]"
-              :placeholder="category.unitName"
+              :placeholder="category.measurementName || 'units'"
               class="amount-input"
               min="1"
             />
@@ -114,14 +79,7 @@ const handleDeleteActivity = async (activityId: number) => {
             :disabled="!amounts[category.activityId]"
             title="Add progress"
           >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"></line>
               <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
@@ -131,22 +89,8 @@ const handleDeleteActivity = async (activityId: number) => {
     </TransitionGroup>
 
     <div v-else class="empty-state glass-panel">
-      <div class="empty-icon-wrapper">
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-        >
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-          <line x1="12" y1="8" x2="12" y2="16"></line>
-          <line x1="8" y1="12" x2="16" y2="12"></line>
-        </svg>
-      </div>
-      <p class="empty-title">No categories found</p>
-      <p class="empty-subtitle">
-        Create your first category above to start tracking progress.
-      </p>
+      <p class="empty-title">No system protocols found</p>
+      <p class="empty-subtitle">Awaiting central system initialization.</p>
     </div>
   </div>
 </template>

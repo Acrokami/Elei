@@ -10,13 +10,13 @@ const showCreateForm = ref(false);
 const newActivity = ref<CreateActivityDto>({
   name: "",
   pointsMultiplier: 1,
-  unitName: "",
+  measurementName: "",
 });
 
 const handleCreateActivity = async () => {
   try {
     await activityService.createActivity(newActivity.value);
-    newActivity.value = { name: "", pointsMultiplier: 1, unitName: "" };
+    newActivity.value = { name: "", pointsMultiplier: 1, measurementName: "" };
     showCreateForm.value = false;
 
     emit("activity-created");
@@ -94,7 +94,7 @@ const handleCreateActivity = async () => {
                 <label>Unit of Measurement</label>
                 <div class="input-wrapper">
                   <input
-                    v-model="newActivity.unitName"
+                    v-model="newActivity.measurementName"
                     type="text"
                     required
                     placeholder="e.g. pages, minutes, km"
