@@ -25,7 +25,7 @@ public record ActivityProgressDto(
     @NotNull
     Integer userCategoryExperience,
 
-    @Schema(description = "Measurement unit for the activity", example = "pages", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Measurement measurement for the activity", example = "pages", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank
-    String unitName
+    String measurementName
 ) implements Serializable {}

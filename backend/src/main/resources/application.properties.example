@@ -55,3 +55,4 @@ management.prometheus.metrics.export.enabled=true
 
 # Frontend URL (e.g. http://localhost:5173 for local Vite dev server)
 app.frontend.url=
+app.admin.username=

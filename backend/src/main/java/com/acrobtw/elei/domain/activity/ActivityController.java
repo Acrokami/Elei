@@ -4,14 +4,9 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.acrobtw.elei.domain.activity.dto.ActivityCompletionDto;
 import com.acrobtw.elei.domain.activity.dto.ActivityFeedItemDto;
@@ -26,25 +21,20 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-
 @RestController
 @RequestMapping("/api/activity")
 @RequiredArgsConstructor
-@Tag(name = "Activity", description = "User activity and progress management")
+@Tag(name = "Activity", description = "System activities and progress management")
 public class ActivityController {
 
     private final ActivityService activityService;
     private final ExperienceService experienceService;
     private final UserStatsService userStatsService;
 
-    @Operation(summary = "Create an activity", description = "Adds a new task or activity for the current user")
-    @PostMapping
-    public ResponseEntity<Void> createActivity(
-        @Valid @RequestBody CreateActivityDto dto,
-        @AuthenticationPrincipal User user) {
-
-        activityService.createActivity(user.getId(), dto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    @Operation(summary = "Get all system activities", description = "Returns default system activities available for completion")
+    @GetMapping
+    public ResponseEntity<List<Activity>> getAllActivities() {
+        return ResponseEntity.ok(activityService.getAllSystemActivities());
     }
 
     @Operation(summary = "Complete an activity", description = "Awards experience points for completing activity units")
@@ -53,34 +43,29 @@ public class ActivityController {
         @Valid @RequestBody ActivityCompletionDto dto,
         @AuthenticationPrincipal User user
     ) {
-       
-        experienceService.addExperienceFromActivity(user.getId(), dto.activityId(), dto.unitsCompleted());
+        experienceService.addExperienceFromActivity(user.getId(), dto.activityId(), dto.measurementCompleted());
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Get user statistics", description = "Returns aggregated activity statistics for the current user")
     @GetMapping("/stats")
-    public ResponseEntity<UserStatsDto> getActivityStats(
-        @AuthenticationPrincipal User user
-    ) {
-
+    public ResponseEntity<UserStatsDto> getActivityStats(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(userStatsService.getUserProgress(user.getId()));
     }
 
     @Operation(summary = "Get activity feed", description = "Returns a list of recent activities to display in the feed")
     @GetMapping("/feed")
     public ResponseEntity<List<ActivityFeedItemDto>> getFeed(@AuthenticationPrincipal User user) {
-
         return ResponseEntity.ok(experienceService.getActivityFeed(user.getId()));
     }
 
-    @Operation(summary = "Delete an activity", description = "Permanently removes an activity by its ID")
-    @DeleteMapping("/{activityId}")
-    public ResponseEntity<Void> deleteActivity(
-        @PathVariable("activityId") Long activityId,
-        @AuthenticationPrincipal User user
-    ) {
-        activityService.deleteActivity(user.getId(), activityId);
-        return ResponseEntity.noContent().build();
+
+
+    @Operation(summary = "Create system activity", description = "ADMIN ONLY: Adds a new global activity protocol")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping
+    public ResponseEntity<Void> createActivity(@Valid @RequestBody CreateActivityDto dto) {
+        activityService.createSystemActivity(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

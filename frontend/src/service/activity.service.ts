@@ -18,11 +18,11 @@ class ActivityService {
         await api.delete(`/activity/${activityId}`);
     }
 
-    async completeActivity(activityId: number, unitsCompleted: number): Promise<void> {
+    async completeActivity(activityId: number, measurementCompleted: number): Promise<void> {
 
         const payload: ActivityCompletionDto = {
             activityId: activityId,
-            unitsCompleted: unitsCompleted
+            measurementCompleted: measurementCompleted
         };
         const response = await api.post('/activity/complete', payload);
         return response.data;

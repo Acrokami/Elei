@@ -43,5 +43,9 @@ public record UserProfileResponse(
 
     @Schema(description = "Citizen rank title", example = "Novice", requiredMode =  Schema.RequiredMode.REQUIRED)
     @NotBlank
-    String rank
+    String rank,
+
+    @Schema(description = "User role in the system", example = "USER", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotBlank
+    String role
 ) {}

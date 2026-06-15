@@ -59,7 +59,6 @@ public class ExperienceService {
         questEventProducer.sendEvent(user.getUsername(), EventType.ACTIVITY_COMPLETED);
     }
 
-
     @Transactional
     public void addRawExperience(String username, Long bonusXp) {
         User user = userRepository.findByUsername(username)
@@ -84,18 +83,17 @@ public class ExperienceService {
                     log.getId(),
                     log.getActivity().getName(),
                     log.getUnitsCompleted(),
-                    log.getActivity().getUnitName(),
+                    log.getActivity().getMeasurementUnit(), 
                     log.getEarnedXp(),
                     log.getCreatedAt()
             ))
             .toList();
     }
 
-
     private void checkAndDispatchLevelUp(User user, Long oldLevel, Long newTotalXp) {
         Long newLevel = levelService.calculateLevel(newTotalXp);
         if (newLevel > oldLevel) {
             notificationDispatchService.sendLevelUpEvent(user.getUsername(), newLevel);
         }
-}
+    }
 }

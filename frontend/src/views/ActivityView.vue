@@ -1,3 +1,4 @@
+
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
@@ -7,7 +8,7 @@ import type { ActivityFeedItemDto } from "../service/activity.service";
 import type { components } from "../types/api-schemas";
 
 import UserStats from "../components/activity/UserStats.vue";
-import CreateActivityForm from "../components/activity/CreateActivityForm.vue";
+
 import ActivityList from "../components/activity/ActivityList.vue";
 import ActivityFeed from "../components/activity/ActivityFeed.vue";
 
@@ -61,6 +62,7 @@ onMounted(() => {
           stroke-linejoin="round"
           class="back-icon"
         >
+
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
@@ -76,12 +78,9 @@ onMounted(() => {
           :nextLevelXp="nextLevelXp"
         />
 
-        <CreateActivityForm @activity-created="loadStats" />
-
         <ActivityList
           :categories="categories"
           @experience-added="loadStats"
-          @activity-deleted="loadStats"
         />
 
         <ActivityFeed :feed="feed" />

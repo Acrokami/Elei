@@ -35,6 +35,10 @@ const fetchDashboardData = async () => {
     currentXp.value = response.data.totalExperience || 0;
     nextLevelXp.value = response.data.nextLevelExperience || 100;
     rankName.value = response.data.rank || 'Initiate';
+
+    if (response.data.role === 'ADMIN') {
+        isAdmin.value = true;
+    }
   } catch (e) {
     console.error('[SYSTEM] Failed to load telemetry:', e);
   }
@@ -43,7 +47,7 @@ const fetchDashboardData = async () => {
 onMounted(async () => {
   try {
     userProfile.value = await userService.getUserProfile();
-    checkAdminStatus();
+
 
     const message = await userService.activateDailyProtocol();
     if (message) {
@@ -60,30 +64,6 @@ onMounted(async () => {
   }
 });
 
-const checkAdminStatus = () => {
-  const token = localStorage.getItem("user_token");
-
-  if (token) {
-    try {
-      const base64Url = token.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split("")
-          .map(function (c) {
-            return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-          })
-          .join(""),
-      );
-      const payload = JSON.parse(jsonPayload);
-      if (payload.role === "ADMIN") {
-        isAdmin.value = true;
-      }
-    } catch (e) {
-      console.error("Error parsing JWT token:", e);
-    }
-  }
-};
 
 const handleLogout = () => {
   authService.logout();
