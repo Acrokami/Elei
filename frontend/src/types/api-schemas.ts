@@ -517,6 +517,11 @@ export interface components {
              * @example Novice
              */
             rank: string;
+            /**
+             * @description User role in the system
+             * @example USER
+             */
+            role: string;
         };
         ShopItem: {
             /** Format: int64 */

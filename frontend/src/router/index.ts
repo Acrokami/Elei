@@ -65,7 +65,8 @@ const router = createRouter({
         {
             path: '/admin',
             name: 'admin-dashboard',
-            component: AdminDashboard
+            component: AdminDashboard,
+            meta: { requiresAdmin: true }
         }
     ]
 });

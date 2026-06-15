@@ -84,7 +84,8 @@ public class UserService {
         currentLevel.intValue(),
         currentXp,
         nextLevelXp,
-        rank
+        rank,
+        user.getRole().name()
         );
     }
 
